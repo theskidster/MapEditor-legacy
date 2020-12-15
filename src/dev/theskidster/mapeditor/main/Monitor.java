@@ -1,6 +1,6 @@
 package dev.theskidster.mapeditor.main;
 
-import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
+import static org.lwjgl.glfw.GLFW.*;
 import org.lwjgl.glfw.GLFWVidMode;
 
 /**
@@ -10,13 +10,21 @@ import org.lwjgl.glfw.GLFWVidMode;
 
 final class Monitor {
     
+    int width;
+    int height;
+    int refreshRate;
+    
     final long handle;
     
     GLFWVidMode videoMode;
     
-    Monitor(long handle) {
-        this.handle = handle;
-        videoMode   = glfwGetVideoMode(handle);
+    Monitor() {        
+        handle    = glfwGetPrimaryMonitor();
+        videoMode = glfwGetVideoMode(handle);
+        
+        width       = videoMode.width();
+        height      = videoMode.height();
+        refreshRate = videoMode.refreshRate();
     }
     
 }
