@@ -8,36 +8,35 @@ import static org.lwjgl.glfw.GLFW.*;
  */
 
 /**
- * Encapsulates program state into a single file.
+ * Encapsulates all program state into a single convenient static class.
  */
 public final class App {
     
-    private static boolean vSync;
+    private static boolean vSync = true; //TODO: pull these values in from prefrences file
     
-    public static final String VERSION = "0.1.0";
+    public static final String VERSION = "0.2.0";
     
     private Monitor monitor;
     private Window window;
     
-    void loadPrefrences() {
-        
-    }
-    
+    /**
+     * Initializes various dependencies then enters a loop that will only terminate once the user decides to exit the application.
+     */
     void start() {
         glfwInit();
-        
-        loadPrefrences();
         
         monitor = new Monitor();
         window  = new Window("RG Map Editor", monitor);
         
         window.show(monitor);
         
+        Logger.printSystemInfo();
+        
         while(!glfwWindowShouldClose(window.handle)) {
             glfwPollEvents();
-            
-            
         }
+        
+        Logger.close();
     }
     
 }

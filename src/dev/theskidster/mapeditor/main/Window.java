@@ -43,10 +43,20 @@ final class Window {
         handle = glfwCreateWindow(width, height, title, NULL, NULL);
     }
     
+    /**
+     * Sets the icon image of the window. Images should be at least 32x32 pixels large, but no larger than 64x64.
+     * 
+     * @param filename the name of the file to load. Expects the file extension to be included.
+     */
     private void setWindowIcon(String filename) {
         
     }
     
+    /**
+     * Displays the window and establishes its input callback events.
+     * 
+     * @param monitor the monitor to display this window on
+     */
     void show(Monitor monitor) {
         glfwSetWindowMonitor(handle, NULL, position.x, position.y, width, height, monitor.refreshRate);
         glfwSetWindowPos(handle, position.x, position.y);

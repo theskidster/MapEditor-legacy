@@ -4,8 +4,10 @@ All notable changes to this project will be documented in this file. The format 
 
 
 
-## [0.0.0] - UNRELEASED
+## [0.2.0] - UNRELEASED
 
 ### Added
 
-* 
+* New "Window" and "Monitor" classes for displaying the applications viewport.
+* Static class "Logger" for tracking the applications state changes.
+

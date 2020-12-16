@@ -1,0 +1,9 @@
+INFO: --------------------------------------------------------------------------------
+INFO: OS NAME:		Windows 10
+INFO: JAVA VERSION:	12.0.1
+INFO: GLFW VERSION:	3.4.0 Win32 WGL EGL OSMesa VisualC DLL
+INFO: GL VERSION:	3
+INFO: APP VERSION:	0.2.0
+INFO: --------------------------------------------------------------------------------
+
+INFO: test log
