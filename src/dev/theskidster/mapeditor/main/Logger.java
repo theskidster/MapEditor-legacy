@@ -1,13 +1,13 @@
 package dev.theskidster.mapeditor.main;
 
+import dev.theskidster.mapeditor.main.App;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import static org.lwjgl.glfw.GLFW.glfwGetVersionString;
-import static org.lwjgl.opengl.GL11.GL_VERSION;
-import static org.lwjgl.opengl.GL11.glGetString;
+import static org.lwjgl.opengl.GL11.*;
 
 /**
  * @author J Hoffman
@@ -114,7 +114,7 @@ public final class Logger {
         log(LogLevel.INFO, "OS NAME:\t\t" + System.getProperty("os.name"));
         log(LogLevel.INFO, "JAVA VERSION:\t" + System.getProperty("java.version"));
         log(LogLevel.INFO, "GLFW VERSION:\t" + glfwGetVersionString());
-        //log(LogLevel.INFO, "OPENGL VERSION:\t" + glGetString(GL_VERSION));
+        log(LogLevel.INFO, "OPENGL VERSION:\t" + glGetString(GL_VERSION));
         log(LogLevel.INFO, "APP VERSION:\t" + App.VERSION);
         log(LogLevel.INFO, "--------------------------------------------------------------------------------");
         

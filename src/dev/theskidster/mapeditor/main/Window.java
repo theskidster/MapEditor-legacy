@@ -75,6 +75,8 @@ final class Window {
         glfwSetCursorPosCallback(handle, (window, xPos, yPos) -> {
             
         });
+        
+        //TODO: specify viewport bounds.
     }
     
 }

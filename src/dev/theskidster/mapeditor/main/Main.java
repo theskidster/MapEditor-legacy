@@ -1,10 +1,5 @@
 package dev.theskidster.mapeditor.main;
 
-import java.awt.Font;
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.InputStream;
-
 /**
  * @author J Hoffman
  * Created: Dec 15, 2020
