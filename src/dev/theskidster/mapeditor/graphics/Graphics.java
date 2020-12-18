@@ -21,4 +21,22 @@ public class Graphics {
     
     public Matrix4f modelMatrix = new Matrix4f();
     
+    public void bindBuffers() {
+        glBindVertexArray(vao);
+        
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW);
+        
+        if(indices != null) {
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, GL_STATIC_DRAW);
+        }
+    }
+    
+    public void freeBuffers() {
+        glDeleteVertexArrays(vao);
+        glDeleteBuffers(vbo);
+        glDeleteBuffers(ibo);
+    }
+    
 }

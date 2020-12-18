@@ -1,5 +1,6 @@
 package dev.theskidster.mapeditor.main;
 
+import dev.theskidster.mapeditor.scene.Scene;
 import java.util.ArrayList;
 import java.util.List;
 import org.joml.Matrix3f;
@@ -26,7 +27,9 @@ public final class App {
     
     private Monitor monitor;
     private Window window;
-    private ShaderProgram program;
+    private static ShaderProgram program;
+    private Camera camera;
+    private Scene scene;
     
     /**
      * Initializes the graphics API and establishes the graphics pipeline using a custom {@linkplain ShaderProgram shader program}.
@@ -47,6 +50,9 @@ public final class App {
         program.addUniform(ShaderBufferType.MAT4, "uView");
         program.addUniform(ShaderBufferType.MAT4, "uProjection");
         program.addUniform(ShaderBufferType.INT, "uType");
+        
+        camera = new Camera(window.width, window.height);
+        scene  = new Scene();
     }
     
     /**
@@ -60,7 +66,7 @@ public final class App {
         
         glInit();
         
-        glViewport(0, 0, window.width / 2, window.height / 2);
+        glViewport(0, 0, window.width, window.height);
         
         window.show(monitor);
         Logger.printSystemInfo();
@@ -68,8 +74,14 @@ public final class App {
         while(!glfwWindowShouldClose(window.handle)) {
             glfwPollEvents();
             
-            glClearColor(0, 0, 1, 0);
+            glClearColor(1, 1, 1, 0);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            
+            camera.update();
+            scene.update();
+            
+            camera.render();
+            scene.render();
             
             glfwSwapBuffers(window.handle);
         }
@@ -80,28 +92,61 @@ public final class App {
         glfwTerminate();
     }
     
-    public void setUniform(String name, int value) {
-        
+    public static void setUniform(String name, int value) {
+        glUniform1i(
+                program.getUniform(name).location, 
+                value);
     }
     
-    public void setUniform(String name, float value) {
-        
+    public static void setUniform(String name, float value) {
+        glUniform1f(
+                program.getUniform(name).location, 
+                value);
     }
     
-    public void setUniform(String name, Vector2f value) {
-        
+    public static void setUniform(String name, Vector2f value) {
+        glUniform2fv(
+                program.getUniform(name).location,
+                value.get(program.getUniform(name).asFloatBuffer()));
     }
     
-    public void setUniform(String name, Vector3f value) {
-        
+    public static void setUniform(String name, Vector3f value) {
+        glUniform3fv(
+                program.getUniform(name).location,
+                value.get(program.getUniform(name).asFloatBuffer()));
     }
     
-    public void setUniform(String name, Matrix3f value) {
-        
+    public static void setUniform(String name, boolean transpose, Matrix3f value) {
+        glUniformMatrix3fv(
+                program.getUniform(name).location,
+                transpose,
+                value.get(program.getUniform(name).asFloatBuffer()));
     }
     
-    public void setUniform(String name, Matrix4f value) {
+    public static void setUniform(String name, boolean transpose, Matrix4f value) {
+        glUniformMatrix4fv(
+                program.getUniform(name).location,
+                transpose,
+                value.get(program.getUniform(name).asFloatBuffer()));
+    }
+    
+    public static void checkGLError() {
+        int glError = glGetError();
         
+        if(glError != GL_NO_ERROR) {
+            String desc = "";
+            
+            switch(glError) {
+                case GL_INVALID_ENUM:      desc = "invalid enum";      break;
+                case GL_INVALID_VALUE:     desc = "invalid value";     break;
+                case GL_INVALID_OPERATION: desc = "invalid operation"; break;
+                case GL_STACK_OVERFLOW:    desc = "stack overflow";    break;
+                case GL_STACK_UNDERFLOW:   desc = "stack underflow";   break;
+                case GL_OUT_OF_MEMORY:     desc = "out of memory";     break;
+            }
+            
+            Logger.log(LogLevel.SEVERE, "OpenGL Error: (" + glError + ") " + desc);
+        }
     }
     
 }
