@@ -23,7 +23,7 @@ public final class App {
     
     private static boolean vSync = true; //TODO: pull these values in from prefrences file
     
-    public static final String VERSION = "0.5.0";
+    public static final String VERSION = "0.6.0";
     
     private Monitor monitor;
     private Window window;
@@ -66,24 +66,52 @@ public final class App {
         
         glInit();
         
+        //TODO: temp, will likely be moved elsewhere eventually
         glViewport(0, 0, window.width, window.height);
+        glClearColor(1, 1, 1, 0);
         
         window.show(monitor);
         Logger.printSystemInfo();
         
+        final double TARGET_DELTA = 1/ 60.0;
+        double currTime;
+        double prevTime = glfwGetTime();
+        double delta = 0;
+        boolean ticked;
+        
         while(!glfwWindowShouldClose(window.handle)) {
             glfwPollEvents();
             
-            glClearColor(1, 1, 1, 0);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            currTime = glfwGetTime();
             
-            camera.update();
-            scene.update();
+            delta += currTime - prevTime;
+            if(delta < TARGET_DELTA && vSync) delta = TARGET_DELTA;
+            
+            prevTime = currTime;
+            ticked   = false;
+            
+            while(delta >= TARGET_DELTA) {
+                delta   -= TARGET_DELTA;
+                ticked  = true;
+                
+                camera.update();
+                scene.update();
+            }
+            
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             
             camera.render();
             scene.render();
             
             glfwSwapBuffers(window.handle);
+            
+            if(!ticked) {
+                try {
+                    Thread.sleep(1);
+                } catch(InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         
         glDeleteProgram(program.handle);

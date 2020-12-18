@@ -4,12 +4,13 @@ All notable changes to this project will be documented in this file. The format 
 
 
 
-## [0.5.0] - UNRELEASED
+## [0.6.0] - UNRELEASED
 
 ### Added
 
 * New "Window" and "Monitor" classes for displaying the applications viewport.
 * Static class "Logger" for tracking the applications state changes.
 * Established graphics pipeline using custom shader objects.
-* Added Graphics and Camera utility classes.
+* Graphics and Camera utility classes.
+* Fixed timestep for improved performance.
 
