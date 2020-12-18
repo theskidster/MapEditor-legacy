@@ -8,15 +8,15 @@ import org.joml.Vector3f;
  * Created: Dec 17, 2020
  */
 
-class Camera {
+final class Camera {
     
-    private Vector3f position;
-    private Vector3f direction;
-    private Vector3f up;
-    private Vector3f tempFront;
+    private final Vector3f position;
+    private final Vector3f direction;
+    private final Vector3f up;
+    private final Vector3f tempFront;
     
-    private Matrix4f view;
-    private Matrix4f proj;
+    private final Matrix4f view;
+    private final Matrix4f proj;
     
     Camera(float width, float height) {
         position  = new Vector3f();
@@ -31,7 +31,9 @@ class Camera {
         App.setUniform("uProjection", false, proj);
     }
     
-    void update() {}
+    void update() {
+        //TODO: add camera control via keyboard
+    }
     
     void render() {
         view.setLookAt(position, position.add(direction, tempFront), up);

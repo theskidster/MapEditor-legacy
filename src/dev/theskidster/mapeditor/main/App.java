@@ -120,30 +120,56 @@ public final class App {
         glfwTerminate();
     }
     
+    /**
+     * 
+     * @param name
+     * @param value 
+     */
     public static void setUniform(String name, int value) {
         glUniform1i(
                 program.getUniform(name).location, 
                 value);
     }
     
+    /**
+     * 
+     * @param name
+     * @param value 
+     */
     public static void setUniform(String name, float value) {
         glUniform1f(
                 program.getUniform(name).location, 
                 value);
     }
     
+    /**
+     * 
+     * @param name
+     * @param value 
+     */
     public static void setUniform(String name, Vector2f value) {
         glUniform2fv(
                 program.getUniform(name).location,
                 value.get(program.getUniform(name).asFloatBuffer()));
     }
     
+    /**
+     * 
+     * @param name
+     * @param value 
+     */
     public static void setUniform(String name, Vector3f value) {
         glUniform3fv(
                 program.getUniform(name).location,
                 value.get(program.getUniform(name).asFloatBuffer()));
     }
     
+    /**
+     * 
+     * @param name
+     * @param transpose
+     * @param value 
+     */
     public static void setUniform(String name, boolean transpose, Matrix3f value) {
         glUniformMatrix3fv(
                 program.getUniform(name).location,
@@ -151,6 +177,12 @@ public final class App {
                 value.get(program.getUniform(name).asFloatBuffer()));
     }
     
+    /**
+     * 
+     * @param name
+     * @param transpose
+     * @param value 
+     */
     public static void setUniform(String name, boolean transpose, Matrix4f value) {
         glUniformMatrix4fv(
                 program.getUniform(name).location,
@@ -158,6 +190,9 @@ public final class App {
                 value.get(program.getUniform(name).asFloatBuffer()));
     }
     
+    /**
+     * 
+     */
     public static void checkGLError() {
         int glError = glGetError();
         
