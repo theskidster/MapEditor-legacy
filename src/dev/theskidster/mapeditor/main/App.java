@@ -2,6 +2,10 @@ package dev.theskidster.mapeditor.main;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
+import org.joml.Vector2f;
+import org.joml.Vector3f;
 import static org.lwjgl.glfw.GLFW.*;
 import org.lwjgl.opengl.GL;
 import static org.lwjgl.opengl.GL20.*;
@@ -81,6 +85,22 @@ public final class App {
     }
     
     public void setUniform(String name, float value) {
+        
+    }
+    
+    public void setUniform(String name, Vector2f value) {
+        
+    }
+    
+    public void setUniform(String name, Vector3f value) {
+        
+    }
+    
+    public void setUniform(String name, Matrix3f value) {
+        
+    }
+    
+    public void setUniform(String name, Matrix4f value) {
         
     }
     

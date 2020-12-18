@@ -7,4 +7,16 @@ package dev.theskidster.mapeditor.scene;
 
 public class Scene {
     
+    public Scene() {
+        
+    }
+    
+    public void update() {
+        
+    }
+    
+    public void render() {
+        
+    }
+    
 }
