@@ -8,6 +8,9 @@ import org.joml.Vector3f;
  * Created: Dec 17, 2020
  */
 
+/**
+ * Represents a camera that can be used to move throughout the {@link dev.theskidster.mapeditor.scene.Scene Scene}.
+ */
 final class Camera {
     
     private final Vector3f position;

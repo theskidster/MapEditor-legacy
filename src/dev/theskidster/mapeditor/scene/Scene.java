@@ -15,7 +15,7 @@ public class Scene {
     private TestObject test;
     
     /**
-     * Constructs a new scene instance to contain renderable objects.
+     * Constructs a new scene instance and initializes any objects that will be present in it.
      */
     public Scene() {
         test = new TestObject(new Vector3f(0, 0, -50));
