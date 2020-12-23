@@ -1,6 +1,7 @@
 package dev.theskidster.mapeditor.main;
 
 import dev.theskidster.mapeditor.scene.Scene;
+import dev.theskidster.mapeditor.ui.TrueTypeFont;
 import java.util.ArrayList;
 import java.util.List;
 import org.joml.Matrix3f;
@@ -53,6 +54,8 @@ public final class App {
         
         camera = new Camera(window.width, window.height);
         scene  = new Scene();
+        
+        TrueTypeFont font = new TrueTypeFont("fnt_karlaregular.ttf");
     }
     
     /**
