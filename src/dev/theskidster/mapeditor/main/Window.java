@@ -12,6 +12,8 @@ import org.lwjgl.nuklear.NkAllocator;
 import org.lwjgl.nuklear.NkBuffer;
 import org.lwjgl.nuklear.NkContext;
 import org.lwjgl.nuklear.NkDrawNullTexture;
+import org.lwjgl.nuklear.NkMouse;
+import org.lwjgl.nuklear.NkRect;
 import org.lwjgl.nuklear.NkUserFont;
 import org.lwjgl.nuklear.NkVec2;
 import static org.lwjgl.nuklear.Nuklear.*;
@@ -30,6 +32,9 @@ final class Window {
 
     int width;
     int height;
+    
+    int viewWidth;
+    int viewHeight;
     
     private int vao;
     private int vbo;
@@ -114,6 +119,10 @@ final class Window {
     }
     
     private NkContext setCallbacks() {
+        glfwSetWindowSizeCallback(handle, (window, w, h) -> {
+            System.out.println(w + " " + h);
+        });
+        
         glfwSetScrollCallback(handle, (window, xOffset, yOffset) -> {
             try(MemoryStack stack = MemoryStack.stackPush()) {
                 NkVec2 scroll = NkVec2.mallocStack(stack)
@@ -339,6 +348,64 @@ final class Window {
         
         nkContext = NkContext.create();
         nkContext = setCallbacks();
+    }
+    
+    void pollInput() {
+        try(MemoryStack stack = MemoryStack.stackPush()) {
+            IntBuffer widthBuf  = stack.mallocInt(1);
+            IntBuffer heightBuf = stack.mallocInt(1);
+            
+            glfwGetWindowSize(handle, widthBuf, heightBuf);
+            
+            width  = widthBuf.get(0);
+            height = heightBuf.get(0);
+            
+            glfwGetFramebufferSize(handle, widthBuf, heightBuf);
+            
+            viewWidth  = widthBuf.get(0);
+            viewHeight = heightBuf.get(0);
+        }
+        
+        nk_input_begin(nkContext);
+        glfwPollEvents();
+        
+        NkMouse mouse = nkContext.input().mouse();
+        
+        if(mouse.grab()) {
+            glfwSetInputMode(handle, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+        } else if(mouse.grabbed()) {
+            float prevX = mouse.prev().x();
+            float prevY = mouse.prev().y();
+            
+            glfwSetCursorPos(handle, prevX, prevY);
+            
+            mouse.pos().x(prevX);
+            mouse.pos().y(prevY);
+        } else if(mouse.ungrab()) {
+            glfwSetInputMode(handle, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        }
+        
+        nk_input_end(nkContext);
+    }
+    
+    public void textTest() {
+        try(MemoryStack stack = MemoryStack.stackPush()) {
+            NkRect rect = NkRect.mallocStack(stack);
+            
+            //TODO: investigate nullpointer
+            if(nk_begin(nkContext, title, nk_rect(50, 50, 300, 200, rect), NK_WINDOW_TITLE | NK_WINDOW_BORDER | NK_WINDOW_MINIMIZABLE)) {
+                float rowHeight = 50;
+                int itemsPerRow = 1;
+                
+                nk_layout_row_dynamic(nkContext, rowHeight, itemsPerRow);
+            }
+            
+            nk_end(nkContext);
+        }
+    }
+    
+    public void useProgram() {
+        glUseProgram(program);
     }
     
 }

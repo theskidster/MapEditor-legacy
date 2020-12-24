@@ -1,6 +1,7 @@
 package dev.theskidster.mapeditor.main;
 
 import dev.theskidster.mapeditor.scene.Scene;
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import org.joml.Matrix3f;
@@ -10,6 +11,7 @@ import org.joml.Vector3f;
 import static org.lwjgl.glfw.GLFW.*;
 import org.lwjgl.opengl.GL;
 import static org.lwjgl.opengl.GL20.*;
+import org.lwjgl.system.MemoryStack;
 
 /**
  * @author J Hoffman
@@ -66,10 +68,6 @@ public final class App {
         
         glInit();
         
-        //TODO: temp, will likely be moved elsewhere eventually
-        glViewport(0, 0, window.width, window.height);
-        glClearColor(1, 1, 1, 0);
-        
         window.show(monitor);
         Logger.printSystemInfo();
         
@@ -80,7 +78,7 @@ public final class App {
         boolean ticked;
         
         while(!glfwWindowShouldClose(window.handle)) {
-            glfwPollEvents();
+            window.pollInput();
             
             currTime = glfwGetTime();
             
@@ -96,6 +94,20 @@ public final class App {
                 
                 camera.update();
                 scene.update();
+                
+                //window.useProgram();
+                //window.textTest();
+                glUseProgram(program.handle);
+                
+                try(MemoryStack stack = MemoryStack.stackPush()) {
+                    IntBuffer widthBuf  = stack.mallocInt(1);
+                    IntBuffer heightBuf = stack.mallocInt(1);
+                    
+                    glfwGetWindowSize(window.handle, widthBuf, heightBuf);
+                    
+                    glViewport(0, 0, widthBuf.get(0), heightBuf.get(0));
+                    glClearColor(1, 1, 1, 0);
+                }
             }
             
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
