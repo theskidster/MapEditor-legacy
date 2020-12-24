@@ -1,7 +1,6 @@
 package dev.theskidster.mapeditor.main;
 
 import dev.theskidster.mapeditor.scene.Scene;
-import dev.theskidster.mapeditor.ui.TrueTypeFont;
 import java.util.ArrayList;
 import java.util.List;
 import org.joml.Matrix3f;
@@ -54,8 +53,6 @@ public final class App {
         
         camera = new Camera(window.width, window.height);
         scene  = new Scene();
-        
-        TrueTypeFont font = new TrueTypeFont("fnt_karlaregular.ttf");
     }
     
     /**
@@ -213,6 +210,12 @@ public final class App {
             }
             
             Logger.log(LogLevel.SEVERE, "OpenGL Error: (" + glError + ") " + desc);
+        }
+    }
+    
+    public static void checkShaderError(int handle, String filename) {
+        if(glGetShaderi(handle, GL_COMPILE_STATUS) != GL_TRUE) {
+            Logger.log(LogLevel.SEVERE, "Failed to compile GLSL file: \"" + filename + "\" " + glGetShaderInfoLog(handle));
         }
     }
     

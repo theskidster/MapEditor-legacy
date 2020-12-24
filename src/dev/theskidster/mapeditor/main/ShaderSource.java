@@ -50,9 +50,7 @@ final class ShaderSource {
         glShaderSource(handle, src);
         glCompileShader(handle);
         
-        if(glGetShaderi(handle, GL_COMPILE_STATUS) != GL_TRUE) {
-            Logger.log(LogLevel.SEVERE, "Failed to compile GLSL file: \"" + filename + "\" " + glGetShaderInfoLog(handle));
-        }
+        App.checkShaderError(handle, filename);
     }
     
 }

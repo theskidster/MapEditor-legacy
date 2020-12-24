@@ -30,24 +30,6 @@ public class TrueTypeFont {
     private float scale;
     private float descent;
     
-    /*
-    private static final NkAllocator ALLOCATOR;
-    private static final NkDrawVertexLayoutElement.Buffer VERTEX_LAYOUT;
-    
-    static {
-        ALLOCATOR = NkAllocator.create()
-                .alloc((handle, old, size) -> nmemAllocChecked(size))
-                .mfree((handle, ptr) -> nmemFree(ptr));
-        
-        VERTEX_LAYOUT = NkDrawVertexLayoutElement.create(4)
-                .position(0).attribute(NK_VERTEX_POSITION).format(NK_FORMAT_FLOAT).offset(0)
-                .position(1).attribute(NK_VERTEX_TEXCOORD).format(NK_FORMAT_FLOAT).offset(8)
-                .position(2).attribute(NK_VERTEX_COLOR).format(NK_FORMAT_R8G8B8A8).offset(16)
-                .position(3).attribute(NK_VERTEX_ATTRIBUTE_COUNT).format(NK_FORMAT_COUNT).offset(0)
-                .flip();
-    }
-    */
-    
     public TrueTypeFont(String filename) {
         try(InputStream file = TrueTypeFont.class.getResourceAsStream("/dev/theskidster/mapeditor/assets/" + filename)) {
             loadFont(file);
