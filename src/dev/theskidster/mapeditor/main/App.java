@@ -95,8 +95,8 @@ public final class App {
                 camera.update();
                 scene.update();
                 
-                //window.useProgram();
-                //window.textTest();
+                window.useProgram();
+                window.textTest();
                 glUseProgram(program.handle);
                 
                 try(MemoryStack stack = MemoryStack.stackPush()) {

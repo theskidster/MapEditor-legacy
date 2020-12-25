@@ -1,9 +1,11 @@
 package dev.theskidster.mapeditor.main;
 
+import dev.theskidster.mapeditor.ui.TrueTypeFont;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
+import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import org.joml.Vector2i;
 import static org.lwjgl.glfw.GLFW.*;
@@ -15,10 +17,13 @@ import org.lwjgl.nuklear.NkDrawNullTexture;
 import org.lwjgl.nuklear.NkMouse;
 import org.lwjgl.nuklear.NkRect;
 import org.lwjgl.nuklear.NkUserFont;
+import org.lwjgl.nuklear.NkUserFontGlyph;
 import org.lwjgl.nuklear.NkVec2;
 import static org.lwjgl.nuklear.Nuklear.*;
 import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.stb.STBImage.*;
+import org.lwjgl.stb.STBTTAlignedQuad;
+import static org.lwjgl.stb.STBTruetype.*;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 import static org.lwjgl.system.MemoryUtil.*;
@@ -50,6 +55,8 @@ final class Window {
     String title;
     Vector2i position;
     
+    private TrueTypeFont font;
+    
     private NkContext nkContext;
     private static final NkAllocator NK_ALLOC;
     private NkBuffer commandBuf;
@@ -66,6 +73,8 @@ final class Window {
         //TODO: pull these values in from prefrences file
         width  = 1480;
         height = 960;
+        
+        this.title = title;
         
         try(MemoryStack stack = MemoryStack.stackPush()) {
             IntBuffer xStartBuf = stack.mallocInt(1);
@@ -348,6 +357,62 @@ final class Window {
         
         nkContext = NkContext.create();
         nkContext = setCallbacks();
+        
+        font   = new TrueTypeFont("fnt_karlaregular.ttf");
+        nkFont = NkUserFont.create();
+        
+        nkFont
+                .width((hdl, h, text, len) -> {
+                    float textWidth = 0;
+                    
+                    try(MemoryStack stack = MemoryStack.stackPush()) {
+                        IntBuffer unicodeBuf = stack.mallocInt(1);
+                        
+                        int glyphLength = nnk_utf_decode(text, MemoryUtil.memAddress(unicodeBuf), len);
+                        int textLength  = glyphLength;
+                        
+                        if(glyphLength == 0) return 0;
+                        
+                        IntBuffer advanceBuf = stack.mallocInt(1);
+                        
+                        while(textLength <= len && glyphLength != 0) {
+                            if(unicodeBuf.get(0) == NK_UTF_INVALID) break;
+                            
+                            stbtt_GetCodepointHMetrics(font.getFontInfo(), unicodeBuf.get(0), advanceBuf, null);
+                            textWidth += advanceBuf.get(0) * font.getScale();
+                            
+                            glyphLength = nnk_utf_decode(text + textLength, MemoryUtil.memAddress(unicodeBuf), len - textLength);
+                            textLength += glyphLength;
+                        }
+                    }
+                    
+                    return textWidth;
+                })
+                .height(font.FONT_HEIGHT)
+                .query((hdl, fontHeight, glyph, codepoint, nextCodepoint) -> {
+                    try(MemoryStack stack = MemoryStack.stackPush()) {
+                        FloatBuffer xBuf = stack.floats(0.0f);
+                        FloatBuffer yBuf = stack.floats(0.0f);
+                        
+                        STBTTAlignedQuad quad = STBTTAlignedQuad.mallocStack(stack);
+                        IntBuffer advanceBuf  = stack.mallocInt(1);
+                        
+                        stbtt_GetPackedQuad(font.getCharBuffer(), font.BITMAP_WIDTH, font.BITMAP_HEIGHT, codepoint - 32, xBuf, yBuf, quad, false);
+                        stbtt_GetCodepointHMetrics(font.getFontInfo(), codepoint, advanceBuf, null);
+                        
+                        NkUserFontGlyph ufg = NkUserFontGlyph.create(glyph);
+                        
+                        ufg.width(quad.x1() - quad.x0());
+                        ufg.height(quad.y1() - quad.y0());
+                        ufg.offset().set(quad.x0(), quad.y0() + (font.FONT_HEIGHT + font.getDescent()));
+                        ufg.xadvance(advanceBuf.get(0) * font.getScale());
+                        ufg.uv(0).set(quad.s0(), quad.t0());
+                        ufg.uv(1).set(quad.s1(), quad.t1());
+                    }
+                })
+                .texture(it -> it.id(font.FONT_TEX_HANDLE));
+        
+        nk_style_set_font(nkContext, nkFont);
     }
     
     void pollInput() {
@@ -392,8 +457,7 @@ final class Window {
         try(MemoryStack stack = MemoryStack.stackPush()) {
             NkRect rect = NkRect.mallocStack(stack);
             
-            //TODO: investigate nullpointer
-            if(nk_begin(nkContext, title, nk_rect(50, 50, 300, 200, rect), NK_WINDOW_TITLE | NK_WINDOW_BORDER | NK_WINDOW_MINIMIZABLE)) {
+            if(nk_begin(nkContext, title, nk_rect(50, 50, 300, 200, rect), NK_WINDOW_BORDER)) {
                 float rowHeight = 50;
                 int itemsPerRow = 1;
                 
