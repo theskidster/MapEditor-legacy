@@ -7,13 +7,17 @@ import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.Objects;
 import org.joml.Vector2i;
 import static org.lwjgl.glfw.GLFW.*;
 import org.lwjgl.glfw.GLFWImage;
 import org.lwjgl.nuklear.NkAllocator;
 import org.lwjgl.nuklear.NkBuffer;
 import org.lwjgl.nuklear.NkContext;
+import org.lwjgl.nuklear.NkConvertConfig;
+import org.lwjgl.nuklear.NkDrawCommand;
 import org.lwjgl.nuklear.NkDrawNullTexture;
+import org.lwjgl.nuklear.NkDrawVertexLayoutElement;
 import org.lwjgl.nuklear.NkMouse;
 import org.lwjgl.nuklear.NkRect;
 import org.lwjgl.nuklear.NkUserFont;
@@ -50,6 +54,10 @@ final class Window {
     private int uniformTex;
     private int uniformProj;
     
+    private static final int MAX_VERTEX_BUFFER  = 512 * 1024;
+    private static final int MAX_ELEMENT_BUFFER = 128 * 1024;
+    private static final NkDrawVertexLayoutElement.Buffer VERTEX_LAYOUT;
+    
     final long handle;
     
     String title;
@@ -67,6 +75,13 @@ final class Window {
         NK_ALLOC = NkAllocator.create()
                 .alloc((hdl, old, size) -> nmemAllocChecked(size))
                 .mfree((hdl, ptr) -> nmemFree(ptr));
+        
+        VERTEX_LAYOUT = NkDrawVertexLayoutElement.create(4)
+                .position(0).attribute(NK_VERTEX_POSITION).format(NK_FORMAT_FLOAT).offset(0)
+                .position(1).attribute(NK_VERTEX_TEXCOORD).format(NK_FORMAT_FLOAT).offset(8)
+                .position(2).attribute(NK_VERTEX_COLOR).format(NK_FORMAT_R8G8B8A8).offset(16)
+                .position(3).attribute(NK_VERTEX_ATTRIBUTE_COUNT).format(NK_FORMAT_COUNT).offset(0)
+                .flip();
     }
     
     Window(String title, Monitor monitor) {
@@ -453,23 +468,109 @@ final class Window {
         nk_input_end(nkContext);
     }
     
+    public void useProgram() {
+        glUseProgram(program);
+    }
+    
     public void textTest() {
         try(MemoryStack stack = MemoryStack.stackPush()) {
             NkRect rect = NkRect.mallocStack(stack);
             
-            if(nk_begin(nkContext, title, nk_rect(50, 50, 300, 200, rect), NK_WINDOW_BORDER)) {
-                float rowHeight = 50;
-                int itemsPerRow = 1;
-                
-                nk_layout_row_dynamic(nkContext, rowHeight, itemsPerRow);
+            if(nk_begin(nkContext, title, nk_rect(400, 400, 300, 200, rect), NK_WINDOW_BORDER)) {
+                nk_layout_row_dynamic(nkContext, 20, 1);
+                nk_label(nkContext, "asdfasdfasdf", NK_TEXT_ALIGN_LEFT | NK_TEXT_ALIGN_BOTTOM);
             }
             
             nk_end(nkContext);
         }
     }
     
-    public void useProgram() {
-        glUseProgram(program);
+    public void renderText() {
+        try(MemoryStack stack = MemoryStack.stackPush()) {
+            glEnable(GL_BLEND);
+            glBlendEquation(GL_FUNC_ADD);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            glDisable(GL_CULL_FACE);
+            glDisable(GL_DEPTH_TEST);
+            glEnable(GL_SCISSOR_TEST);
+            glActiveTexture(GL_TEXTURE0);
+            
+            glUseProgram(program);
+            glUniform1i(uniformTex, 0);
+            glUniformMatrix4fv(uniformProj, false, stack.floats(
+                2.0f / width, 0.0f, 0.0f, 0.0f,
+                0.0f, -2.0f / height, 0.0f, 0.0f,
+                0.0f, 0.0f, -1.0f, 0.0f,
+                -1.0f, 1.0f, 0.0f, 1.0f
+            ));
+            glViewport(0, 0, viewWidth, viewHeight);
+        }
+        
+        glBindVertexArray(vao);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+        
+        glBufferData(GL_ARRAY_BUFFER, MAX_VERTEX_BUFFER, GL_STREAM_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, MAX_ELEMENT_BUFFER, GL_STREAM_DRAW);
+        
+        ByteBuffer vertices = Objects.requireNonNull(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY, MAX_VERTEX_BUFFER, null));
+        ByteBuffer elements = Objects.requireNonNull(glMapBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_WRITE_ONLY, MAX_ELEMENT_BUFFER, null));
+        
+        {
+            try (MemoryStack stack = MemoryStack.stackPush()) {
+                // fill convert configuration
+                NkConvertConfig config = NkConvertConfig.callocStack(stack)
+                    .vertex_layout(VERTEX_LAYOUT)
+                    .vertex_size(20)
+                    .vertex_alignment(4)
+                    .null_texture(nkNullTex)
+                    .circle_segment_count(22)
+                    .curve_segment_count(22)
+                    .arc_segment_count(22)
+                    .global_alpha(1.0f)
+                    .shape_AA(NK_ANTI_ALIASING_ON)
+                    .line_AA(NK_ANTI_ALIASING_ON);
+
+                // setup buffers to load vertices and elements
+                NkBuffer vbuf = NkBuffer.mallocStack(stack);
+                NkBuffer ebuf = NkBuffer.mallocStack(stack);
+
+                nk_buffer_init_fixed(vbuf, vertices/*, max_vertex_buffer*/);
+                nk_buffer_init_fixed(ebuf, elements/*, max_element_buffer*/);
+                nk_convert(nkContext, commandBuf, vbuf, ebuf, config);
+            }
+            glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
+            glUnmapBuffer(GL_ARRAY_BUFFER);
+            
+            // iterate over and execute each draw command
+            float fb_scale_x = (float) viewWidth / (float)width;
+            float fb_scale_y = (float) viewHeight / (float)height;
+
+            long offset = NULL;
+            for (NkDrawCommand cmd = nk__draw_begin(nkContext, commandBuf); cmd != null; cmd = nk__draw_next(cmd, commandBuf, nkContext)) {
+                if (cmd.elem_count() == 0) {
+                    continue;
+                }
+                glBindTexture(GL_TEXTURE_2D, cmd.texture().id());
+                glScissor(
+                    (int)(cmd.clip_rect().x() * fb_scale_x),
+                    (int)((height - (int)(cmd.clip_rect().y() + cmd.clip_rect().h())) * fb_scale_y),
+                    (int)(cmd.clip_rect().w() * fb_scale_x),
+                    (int)(cmd.clip_rect().h() * fb_scale_y)
+                );
+                glDrawElements(GL_TRIANGLES, cmd.elem_count(), GL_UNSIGNED_SHORT, offset);
+                offset += cmd.elem_count() * 2;
+            }
+            nk_clear(nkContext);
+        }
+
+        // default OpenGL state
+        glUseProgram(0);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        glBindVertexArray(0);
+        glDisable(GL_BLEND);
+        glDisable(GL_SCISSOR_TEST);
     }
     
 }

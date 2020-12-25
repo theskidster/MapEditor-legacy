@@ -95,9 +95,7 @@ public final class App {
                 camera.update();
                 scene.update();
                 
-                window.useProgram();
                 window.textTest();
-                glUseProgram(program.handle);
                 
                 try(MemoryStack stack = MemoryStack.stackPush()) {
                     IntBuffer widthBuf  = stack.mallocInt(1);
@@ -106,14 +104,17 @@ public final class App {
                     glfwGetWindowSize(window.handle, widthBuf, heightBuf);
                     
                     glViewport(0, 0, widthBuf.get(0), heightBuf.get(0));
-                    glClearColor(1, 1, 1, 0);
+                    glClearColor(0.5f, 0.5f, 0.5f, 0);
                 }
             }
             
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             
+            glUseProgram(program.handle);
             camera.render();
             scene.render();
+            
+            window.renderText();
             
             glfwSwapBuffers(window.handle);
             
