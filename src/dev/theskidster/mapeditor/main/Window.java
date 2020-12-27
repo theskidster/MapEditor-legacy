@@ -11,7 +11,6 @@ import org.lwjgl.glfw.GLFWImage;
 import org.lwjgl.nuklear.NkContext;
 import org.lwjgl.nuklear.NkVec2;
 import static org.lwjgl.nuklear.Nuklear.*;
-import static org.lwjgl.opengl.GL11.glViewport;
 import static org.lwjgl.stb.STBImage.*;
 import org.lwjgl.system.MemoryStack;
 import static org.lwjgl.system.MemoryUtil.*;
@@ -25,9 +24,6 @@ final class Window {
 
     int width;
     int height;
-    
-    int viewWidth;
-    int viewHeight;
     
     final long handle;
     
@@ -94,12 +90,8 @@ final class Window {
     
     void setCallbacks(NkContext nkContext) {
         glfwSetWindowSizeCallback(handle, (window, w, h) -> {
-            width      = w;
-            height     = h;
-            viewWidth  = w;
-            viewHeight = h;
-            
-            //TODO: fix world viewport stretching, might require framebuffer
+            width  = w;
+            height = h;
         });
         
         glfwSetScrollCallback(handle, (window, xOffset, yOffset) -> {

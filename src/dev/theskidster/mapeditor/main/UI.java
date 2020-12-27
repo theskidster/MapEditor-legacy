@@ -110,12 +110,6 @@ final class UI {
             
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-            
-            //Reset OpenGL state
-            glBindTexture(GL_TEXTURE_2D, 0);
-            glBindBuffer(GL_ARRAY_BUFFER, 0);
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-            glBindVertexArray(0);
         }
         
         TrueTypeFont font = new TrueTypeFont("fnt_karlaregular.ttf");
@@ -250,13 +244,12 @@ final class UI {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glDisable(GL_CULL_FACE);
         glDisable(GL_DEPTH_TEST);
-        glEnable(GL_SCISSOR_TEST);
         glActiveTexture(GL_TEXTURE0);
         
         program.setUniform("uTexture", 0);
         program.setUniform("uProjection", false, projMatrix);
 
-        glViewport(0, 0, window.viewWidth, window.viewHeight);
+        glViewport(0, 0, window.width, window.height);
         
         glBindVertexArray(vao);
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -295,9 +288,6 @@ final class UI {
             glUnmapBuffer(GL_ARRAY_BUFFER);
             glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
             
-            framebufferScale.x = (float) window.viewWidth / (float) window.width;
-            framebufferScale.y = (float) window.viewHeight / (float) window.height;
-            
             long offset = NULL;
             
             for(NkDrawCommand nkCommand = nk__draw_begin(nkContext, nkCommandBuf); 
@@ -307,13 +297,6 @@ final class UI {
                 if(nkCommand.elem_count() == 0) continue;
                 
                 glBindTexture(GL_TEXTURE_2D, nkCommand.texture().id());
-                
-                glScissor(
-                        (int) (nkCommand.clip_rect().x() * framebufferScale.x),
-                        (int) ((window.height - (int) (nkCommand.clip_rect().y() + nkCommand.clip_rect().h())) * framebufferScale.y),
-                        (int) (nkCommand.clip_rect().w() * framebufferScale.x),
-                        (int) (nkCommand.clip_rect().h() * framebufferScale.y));
-                
                 glDrawElements(GL_TRIANGLES, nkCommand.elem_count(), GL_UNSIGNED_SHORT, offset);
                 
                 offset += nkCommand.elem_count() * 2;
@@ -324,13 +307,7 @@ final class UI {
         
         App.checkGLError();
         
-        //Reset OpenGL state
-        glUseProgram(0);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-        glBindVertexArray(0);
         glDisable(GL_BLEND);
-        glDisable(GL_SCISSOR_TEST);
     }
     
 }

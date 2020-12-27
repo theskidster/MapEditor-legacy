@@ -34,13 +34,17 @@ final class Camera {
         App.setUniform("uProjection", false, proj);
     }
     
-    void update() {
+    void update(int width, int height) {
         //TODO: add camera control via keyboard
+        
+        proj.setPerspective((float) Math.toRadians(45), (float) width / height, 0.1f, Float.POSITIVE_INFINITY);
     }
     
     void render() {
         view.setLookAt(position, position.add(direction, tempFront), up);
+        
         App.setUniform("uView", false, view);
+        App.setUniform("uProjection", false, proj);
     }
     
 }

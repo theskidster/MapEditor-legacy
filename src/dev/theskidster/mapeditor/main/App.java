@@ -112,7 +112,7 @@ public final class App {
                 delta   -= TARGET_DELTA;
                 ticked  = true;
                 
-                camera.update();
+                camera.update(window.width, window.height);
                 scene.update();
                 
                 ui.update(window);
