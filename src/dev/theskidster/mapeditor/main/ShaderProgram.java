@@ -5,6 +5,10 @@ import java.nio.Buffer;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
+import org.joml.Vector2f;
+import org.joml.Vector3f;
 import static org.lwjgl.opengl.GL20.*;
 import org.lwjgl.system.MemoryStack;
 
@@ -43,8 +47,6 @@ final class ShaderProgram {
             put(MAT4, 4);
         }};
     }
-    
-    ShaderUniform getUniform(String name) { return uniforms.get(name); }
     
     /**
      * Generates a new shader uniform object using the supplied parameters. Added to increase code readability in the 
@@ -93,6 +95,44 @@ final class ShaderProgram {
                     break;
             }
         }
+    }
+    
+    void use() {
+        glUseProgram(handle);
+    }
+    
+    void setUniform(String name, int value) {
+        glUniform1i(uniforms.get(name).location, value);
+    }
+    
+    void setUniform(String name, float value) {
+        glUniform1f(uniforms.get(name).location, value);
+    }
+    
+    void setUniform(String name, Vector2f value) {
+        glUniform2fv(
+                uniforms.get(name).location,
+                value.get(uniforms.get(name).asFloatBuffer()));
+    }
+    
+    void setUniform(String name, Vector3f value) {
+        glUniform3fv(
+                uniforms.get(name).location,
+                value.get(uniforms.get(name).asFloatBuffer()));
+    }
+    
+    void setUniform(String name, boolean transpose, Matrix3f value) {
+        glUniformMatrix3fv(
+                uniforms.get(name).location,
+                transpose,
+                value.get(uniforms.get(name).asFloatBuffer()));
+    }
+    
+    void setUniform(String name, boolean transpose, Matrix4f value) {
+        glUniformMatrix4fv(
+                uniforms.get(name).location,
+                transpose,
+                value.get(uniforms.get(name).asFloatBuffer()));
     }
     
 }

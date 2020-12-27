@@ -1,35 +1,19 @@
 package dev.theskidster.mapeditor.main;
 
-import dev.theskidster.mapeditor.ui.TrueTypeFont;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
-import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.Objects;
 import org.joml.Vector2i;
 import static org.lwjgl.glfw.GLFW.*;
 import org.lwjgl.glfw.GLFWImage;
-import org.lwjgl.nuklear.NkAllocator;
-import org.lwjgl.nuklear.NkBuffer;
 import org.lwjgl.nuklear.NkContext;
-import org.lwjgl.nuklear.NkConvertConfig;
-import org.lwjgl.nuklear.NkDrawCommand;
-import org.lwjgl.nuklear.NkDrawNullTexture;
-import org.lwjgl.nuklear.NkDrawVertexLayoutElement;
-import org.lwjgl.nuklear.NkMouse;
-import org.lwjgl.nuklear.NkRect;
-import org.lwjgl.nuklear.NkUserFont;
-import org.lwjgl.nuklear.NkUserFontGlyph;
 import org.lwjgl.nuklear.NkVec2;
 import static org.lwjgl.nuklear.Nuklear.*;
-import static org.lwjgl.opengl.GL30.*;
+import static org.lwjgl.opengl.GL11.glViewport;
 import static org.lwjgl.stb.STBImage.*;
-import org.lwjgl.stb.STBTTAlignedQuad;
-import static org.lwjgl.stb.STBTruetype.*;
 import org.lwjgl.system.MemoryStack;
-import org.lwjgl.system.MemoryUtil;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
@@ -45,51 +29,17 @@ final class Window {
     int viewWidth;
     int viewHeight;
     
-    private int vao;
-    private int vbo;
-    private int ibo;
-    private int program;
-    private int vertHandle;
-    private int fragHandle;
-    private int uniformTex;
-    private int uniformProj;
-    
-    private static final int MAX_VERTEX_BUFFER  = 512 * 1024;
-    private static final int MAX_ELEMENT_BUFFER = 128 * 1024;
-    private static final NkDrawVertexLayoutElement.Buffer VERTEX_LAYOUT;
-    
     final long handle;
     
     String title;
     Vector2i position;
     
-    private TrueTypeFont font;
-    
-    private NkContext nkContext;
-    private static final NkAllocator NK_ALLOC;
-    private NkBuffer commandBuf;
-    private NkUserFont nkFont;
-    private NkDrawNullTexture nkNullTex;
-    
-    static {
-        NK_ALLOC = NkAllocator.create()
-                .alloc((hdl, old, size) -> nmemAllocChecked(size))
-                .mfree((hdl, ptr) -> nmemFree(ptr));
-        
-        VERTEX_LAYOUT = NkDrawVertexLayoutElement.create(4)
-                .position(0).attribute(NK_VERTEX_POSITION).format(NK_FORMAT_FLOAT).offset(0)
-                .position(1).attribute(NK_VERTEX_TEXCOORD).format(NK_FORMAT_FLOAT).offset(8)
-                .position(2).attribute(NK_VERTEX_COLOR).format(NK_FORMAT_R8G8B8A8).offset(16)
-                .position(3).attribute(NK_VERTEX_ATTRIBUTE_COUNT).format(NK_FORMAT_COUNT).offset(0)
-                .flip();
-    }
-    
     Window(String title, Monitor monitor) {
-        //TODO: pull these values in from prefrences file
-        width  = 1480;
-        height = 960;
-        
         this.title = title;
+        
+        //TODO: pull these values in from prefrences file
+        this.width  = 1480;
+        this.height = 960;
         
         try(MemoryStack stack = MemoryStack.stackPush()) {
             IntBuffer xStartBuf = stack.mallocInt(1);
@@ -142,9 +92,14 @@ final class Window {
         }
     }
     
-    private NkContext setCallbacks() {
+    void setCallbacks(NkContext nkContext) {
         glfwSetWindowSizeCallback(handle, (window, w, h) -> {
-            System.out.println(w + " " + h);
+            width      = w;
+            height     = h;
+            viewWidth  = w;
+            viewHeight = h;
+            
+            //TODO: fix world viewport stretching, might require framebuffer
         });
         
         glfwSetScrollCallback(handle, (window, xOffset, yOffset) -> {
@@ -236,124 +191,6 @@ final class Window {
                 nk_input_button(nkContext, nkButton, (int) xPosBuf.get(0), (int) yPosBuf.get(0), action == GLFW_PRESS);
             }
         });
-        
-        nk_init(nkContext, NK_ALLOC, null);
-        
-        nkContext.clip()
-                .copy((hdl, text, len) -> {
-                    if(len == 0) return;
-                    
-                    try(MemoryStack stack = MemoryStack.stackPush()) {
-                        ByteBuffer stringBuf = stack.malloc(len + 1);
-                        MemoryUtil.memCopy(text, MemoryUtil.memAddress(stringBuf), len);;
-                        stringBuf.put(len, (byte) 0);
-                        
-                        glfwSetClipboardString(handle, stringBuf);
-                    }
-                })
-                .paste((hdl, edit) -> {
-                    long text = nglfwGetClipboardString(handle);
-                    if(text != NULL) nnk_textedit_paste(edit, text, nnk_strlen(text));
-                });
-        
-        String NK_SHADER_VERSION = "#version 300 es\n";
-        
-        String vertCode = 
-                NK_SHADER_VERSION + 
-                "uniform mat4 ProjMtx;\n" +
-                "in vec2 Position;\n" +
-                "in vec2 TexCoord;\n" +
-                "in vec4 Color;\n" +
-                "out vec2 Frag_UV;\n" +
-                "out vec4 Frag_Color;\n" +
-                "void main() {\n" +
-                "   Frag_UV = TexCoord;\n" +
-                "   Frag_Color = Color;\n" +
-                "   gl_Position = ProjMtx * vec4(Position.xy, 0, 1);\n" +
-                "}\n";
-        
-        String fragCode = 
-                NK_SHADER_VERSION +
-                "precision mediump float;\n" +
-                "uniform sampler2D Texture;\n" +
-                "in vec2 Frag_UV;\n" +
-                "in vec4 Frag_Color;\n" +
-                "out vec4 Out_Color;\n" +
-                "void main(){\n" +
-                "   Out_Color = Frag_Color * texture(Texture, Frag_UV.st);\n" +
-                "}\n";
-        
-        commandBuf = NkBuffer.create();
-        nk_buffer_init(commandBuf, NK_ALLOC, Float.BYTES * 1024);
-        
-        program    = glCreateProgram();
-        vertHandle = glCreateShader(GL_VERTEX_SHADER);
-        fragHandle = glCreateShader(GL_FRAGMENT_SHADER);
-        
-        glShaderSource(vertHandle, vertCode);
-        glShaderSource(fragHandle, fragCode);
-        glCompileShader(vertHandle);
-        glCompileShader(fragHandle);
-        
-        App.checkShaderError(vertHandle, "internal vertex shader");
-        App.checkShaderError(fragHandle, "internal fragment shader");
-        
-        glAttachShader(program, vertHandle);
-        glAttachShader(program, fragHandle);
-        glLinkProgram(program);
-        
-        if(glGetProgrami(program, GL_LINK_STATUS) != GL_TRUE) {
-            Logger.log(LogLevel.SEVERE, "Failed to link interal shader program");
-        }
-        
-        uniformTex    = glGetUniformLocation(program, "Texture");
-        uniformProj   = glGetUniformLocation(program, "ProjMtx");
-        int attribPos = glGetAttribLocation(program, "Position");
-        int attribUV  = glGetAttribLocation(program, "TexCoord");
-        int attribCol = glGetAttribLocation(program, "Color");
-        
-        {
-            vao = glGenVertexArrays();
-            vbo = glGenBuffers();
-            ibo = glGenBuffers();
-
-            glBindVertexArray(vao);
-            glBindBuffer(GL_ARRAY_BUFFER, vbo);
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-
-            glEnableVertexAttribArray(attribPos);
-            glEnableVertexAttribArray(attribUV);
-            glEnableVertexAttribArray(attribCol);
-
-            glVertexAttribPointer(attribPos, 2, GL_FLOAT, false, 20, 0);
-            glVertexAttribPointer(attribUV, 2, GL_FLOAT, false, 20, 8);
-            glVertexAttribPointer(attribCol, 4, GL_UNSIGNED_BYTE, true, 20, 16);
-        }
-        
-        {
-            int nullTexID = glGenTextures();
-
-            nkNullTex = NkDrawNullTexture.create();
-            
-            nkNullTex.texture().id(nullTexID);
-            nkNullTex.uv().set(0.5f, 0.5f);
-
-            glBindTexture(GL_TEXTURE_2D, nullTexID);
-            
-            try(MemoryStack stack = MemoryStack.stackPush()) {
-                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 1, 1, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8_REV, stack.ints(0xFFFFFFFF));
-            }
-            
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        }
-        
-        glBindTexture(GL_TEXTURE_2D, 0);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-        glBindVertexArray(0);
-        
-        return nkContext;
     }
     
     /**
@@ -369,208 +206,12 @@ final class Window {
         glfwSwapInterval(1);
         glfwSetInputMode(handle, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
         glfwShowWindow(handle);
-        
-        nkContext = NkContext.create();
-        nkContext = setCallbacks();
-        
-        font   = new TrueTypeFont("fnt_karlaregular.ttf");
-        nkFont = NkUserFont.create();
-        
-        nkFont
-                .width((hdl, h, text, len) -> {
-                    float textWidth = 0;
-                    
-                    try(MemoryStack stack = MemoryStack.stackPush()) {
-                        IntBuffer unicodeBuf = stack.mallocInt(1);
-                        
-                        int glyphLength = nnk_utf_decode(text, MemoryUtil.memAddress(unicodeBuf), len);
-                        int textLength  = glyphLength;
-                        
-                        if(glyphLength == 0) return 0;
-                        
-                        IntBuffer advanceBuf = stack.mallocInt(1);
-                        
-                        while(textLength <= len && glyphLength != 0) {
-                            if(unicodeBuf.get(0) == NK_UTF_INVALID) break;
-                            
-                            stbtt_GetCodepointHMetrics(font.getFontInfo(), unicodeBuf.get(0), advanceBuf, null);
-                            textWidth += advanceBuf.get(0) * font.getScale();
-                            
-                            glyphLength = nnk_utf_decode(text + textLength, MemoryUtil.memAddress(unicodeBuf), len - textLength);
-                            textLength += glyphLength;
-                        }
-                    }
-                    
-                    return textWidth;
-                })
-                .height(font.FONT_HEIGHT)
-                .query((hdl, fontHeight, glyph, codepoint, nextCodepoint) -> {
-                    try(MemoryStack stack = MemoryStack.stackPush()) {
-                        FloatBuffer xBuf = stack.floats(0.0f);
-                        FloatBuffer yBuf = stack.floats(0.0f);
-                        
-                        STBTTAlignedQuad quad = STBTTAlignedQuad.mallocStack(stack);
-                        IntBuffer advanceBuf  = stack.mallocInt(1);
-                        
-                        stbtt_GetPackedQuad(font.getCharBuffer(), font.BITMAP_WIDTH, font.BITMAP_HEIGHT, codepoint - 32, xBuf, yBuf, quad, false);
-                        stbtt_GetCodepointHMetrics(font.getFontInfo(), codepoint, advanceBuf, null);
-                        
-                        NkUserFontGlyph ufg = NkUserFontGlyph.create(glyph);
-                        
-                        ufg.width(quad.x1() - quad.x0());
-                        ufg.height(quad.y1() - quad.y0());
-                        ufg.offset().set(quad.x0(), quad.y0() + (font.FONT_HEIGHT + font.getDescent()));
-                        ufg.xadvance(advanceBuf.get(0) * font.getScale());
-                        ufg.uv(0).set(quad.s0(), quad.t0());
-                        ufg.uv(1).set(quad.s1(), quad.t1());
-                    }
-                })
-                .texture(it -> it.id(font.FONT_TEX_HANDLE));
-        
-        nk_style_set_font(nkContext, nkFont);
     }
     
-    void pollInput() {
-        try(MemoryStack stack = MemoryStack.stackPush()) {
-            IntBuffer widthBuf  = stack.mallocInt(1);
-            IntBuffer heightBuf = stack.mallocInt(1);
-            
-            glfwGetWindowSize(handle, widthBuf, heightBuf);
-            
-            width  = widthBuf.get(0);
-            height = heightBuf.get(0);
-            
-            glfwGetFramebufferSize(handle, widthBuf, heightBuf);
-            
-            viewWidth  = widthBuf.get(0);
-            viewHeight = heightBuf.get(0);
-        }
-        
-        nk_input_begin(nkContext);
+    void pollInput(UI ui) {        
+        ui.beginInput();
         glfwPollEvents();
-        
-        NkMouse mouse = nkContext.input().mouse();
-        
-        if(mouse.grab()) {
-            glfwSetInputMode(handle, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-        } else if(mouse.grabbed()) {
-            float prevX = mouse.prev().x();
-            float prevY = mouse.prev().y();
-            
-            glfwSetCursorPos(handle, prevX, prevY);
-            
-            mouse.pos().x(prevX);
-            mouse.pos().y(prevY);
-        } else if(mouse.ungrab()) {
-            glfwSetInputMode(handle, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-        }
-        
-        nk_input_end(nkContext);
-    }
-    
-    public void useProgram() {
-        glUseProgram(program);
-    }
-    
-    public void textTest() {
-        try(MemoryStack stack = MemoryStack.stackPush()) {
-            NkRect rect = NkRect.mallocStack(stack);
-            
-            if(nk_begin(nkContext, title, nk_rect(400, 400, 300, 200, rect), NK_WINDOW_BORDER)) {
-                nk_layout_row_dynamic(nkContext, 20, 1);
-                nk_label(nkContext, "asdfasdfasdf", NK_TEXT_ALIGN_LEFT | NK_TEXT_ALIGN_BOTTOM);
-            }
-            
-            nk_end(nkContext);
-        }
-    }
-    
-    public void renderText() {
-        try(MemoryStack stack = MemoryStack.stackPush()) {
-            glEnable(GL_BLEND);
-            glBlendEquation(GL_FUNC_ADD);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            glDisable(GL_CULL_FACE);
-            glDisable(GL_DEPTH_TEST);
-            glEnable(GL_SCISSOR_TEST);
-            glActiveTexture(GL_TEXTURE0);
-            
-            glUseProgram(program);
-            glUniform1i(uniformTex, 0);
-            glUniformMatrix4fv(uniformProj, false, stack.floats(
-                2.0f / width, 0.0f, 0.0f, 0.0f,
-                0.0f, -2.0f / height, 0.0f, 0.0f,
-                0.0f, 0.0f, -1.0f, 0.0f,
-                -1.0f, 1.0f, 0.0f, 1.0f
-            ));
-            glViewport(0, 0, viewWidth, viewHeight);
-        }
-        
-        glBindVertexArray(vao);
-        glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-        
-        glBufferData(GL_ARRAY_BUFFER, MAX_VERTEX_BUFFER, GL_STREAM_DRAW);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, MAX_ELEMENT_BUFFER, GL_STREAM_DRAW);
-        
-        ByteBuffer vertices = Objects.requireNonNull(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY, MAX_VERTEX_BUFFER, null));
-        ByteBuffer elements = Objects.requireNonNull(glMapBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_WRITE_ONLY, MAX_ELEMENT_BUFFER, null));
-        
-        {
-            try (MemoryStack stack = MemoryStack.stackPush()) {
-                // fill convert configuration
-                NkConvertConfig config = NkConvertConfig.callocStack(stack)
-                    .vertex_layout(VERTEX_LAYOUT)
-                    .vertex_size(20)
-                    .vertex_alignment(4)
-                    .null_texture(nkNullTex)
-                    .circle_segment_count(22)
-                    .curve_segment_count(22)
-                    .arc_segment_count(22)
-                    .global_alpha(1.0f)
-                    .shape_AA(NK_ANTI_ALIASING_ON)
-                    .line_AA(NK_ANTI_ALIASING_ON);
-
-                // setup buffers to load vertices and elements
-                NkBuffer vbuf = NkBuffer.mallocStack(stack);
-                NkBuffer ebuf = NkBuffer.mallocStack(stack);
-
-                nk_buffer_init_fixed(vbuf, vertices/*, max_vertex_buffer*/);
-                nk_buffer_init_fixed(ebuf, elements/*, max_element_buffer*/);
-                nk_convert(nkContext, commandBuf, vbuf, ebuf, config);
-            }
-            glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
-            glUnmapBuffer(GL_ARRAY_BUFFER);
-            
-            // iterate over and execute each draw command
-            float fb_scale_x = (float) viewWidth / (float)width;
-            float fb_scale_y = (float) viewHeight / (float)height;
-
-            long offset = NULL;
-            for (NkDrawCommand cmd = nk__draw_begin(nkContext, commandBuf); cmd != null; cmd = nk__draw_next(cmd, commandBuf, nkContext)) {
-                if (cmd.elem_count() == 0) {
-                    continue;
-                }
-                glBindTexture(GL_TEXTURE_2D, cmd.texture().id());
-                glScissor(
-                    (int)(cmd.clip_rect().x() * fb_scale_x),
-                    (int)((height - (int)(cmd.clip_rect().y() + cmd.clip_rect().h())) * fb_scale_y),
-                    (int)(cmd.clip_rect().w() * fb_scale_x),
-                    (int)(cmd.clip_rect().h() * fb_scale_y)
-                );
-                glDrawElements(GL_TRIANGLES, cmd.elem_count(), GL_UNSIGNED_SHORT, offset);
-                offset += cmd.elem_count() * 2;
-            }
-            nk_clear(nkContext);
-        }
-
-        // default OpenGL state
-        glUseProgram(0);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-        glBindVertexArray(0);
-        glDisable(GL_BLEND);
-        glDisable(GL_SCISSOR_TEST);
+        ui.endInput(handle);
     }
     
 }

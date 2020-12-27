@@ -1,7 +1,5 @@
-package dev.theskidster.mapeditor.ui;
+package dev.theskidster.mapeditor.main;
 
-import dev.theskidster.mapeditor.main.LogLevel;
-import dev.theskidster.mapeditor.main.Logger;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -22,15 +20,16 @@ import static org.lwjgl.system.MemoryUtil.*;
 
 public class TrueTypeFont {
     
-    public final int BITMAP_WIDTH    = 1024;
-    public final int BITMAP_HEIGHT   = 1024;
-    public final int FONT_HEIGHT     = 18;
-    public final int FONT_TEX_HANDLE = glGenTextures();
+    public static final int BITMAP_WIDTH  = 1024;
+    public static final int BITMAP_HEIGHT = 1024;
+    public static final int FONT_HEIGHT   = 18;
     
-    private float scale;
-    private float descent;
+    final int texHandle = glGenTextures();
     
-    STBTTFontinfo fontInfo         = STBTTFontinfo.create();
+    float scale;
+    float descent;
+    
+    STBTTFontinfo info             = STBTTFontinfo.create();
     STBTTPackedchar.Buffer charBuf = STBTTPackedchar.create(95);
     
     public TrueTypeFont(String filename) {
@@ -49,10 +48,10 @@ public class TrueTypeFont {
             ByteBuffer fontBuf   = MemoryUtil.memAlloc(data.length).put(data).flip();
             IntBuffer descentBuf = stack.mallocInt(1);
             
-            stbtt_InitFont(fontInfo, fontBuf);
-            stbtt_GetFontVMetrics(fontInfo, null, descentBuf, null);
+            stbtt_InitFont(info, fontBuf);
+            stbtt_GetFontVMetrics(info, null, descentBuf, null);
             
-            scale   = stbtt_ScaleForPixelHeight(fontInfo, FONT_HEIGHT);
+            scale   = stbtt_ScaleForPixelHeight(info, FONT_HEIGHT);
             descent = descentBuf.get(0) * scale;
             
             ByteBuffer bitmapBuf = MemoryUtil.memAlloc(BITMAP_WIDTH * BITMAP_HEIGHT);
@@ -70,7 +69,7 @@ public class TrueTypeFont {
             }
             textureBuf.flip();
             
-            glBindTexture(GL_TEXTURE_2D, FONT_TEX_HANDLE);
+            glBindTexture(GL_TEXTURE_2D, texHandle);
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, BITMAP_WIDTH, BITMAP_HEIGHT, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8_REV, textureBuf);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -85,7 +84,7 @@ public class TrueTypeFont {
     
     public float getScale()            { return scale; }
     public float getDescent()          { return descent; }
-    public STBTTFontinfo getFontInfo() { return fontInfo; }
+    public STBTTFontinfo getFontInfo() { return info; }
     public STBTTPackedchar.Buffer getCharBuffer() { return charBuf; }
     
 }

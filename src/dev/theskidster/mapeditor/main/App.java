@@ -29,9 +29,11 @@ public final class App {
     
     private Monitor monitor;
     private Window window;
-    private static ShaderProgram program;
+    private static ShaderProgram worldProgram;
+    private ShaderProgram uiProgram;
     private Camera camera;
     private Scene scene;
+    private UI ui;
     
     /**
      * Initializes the graphics API and establishes the graphics pipeline using a custom {@linkplain ShaderProgram shader program}.
@@ -40,18 +42,35 @@ public final class App {
         glfwMakeContextCurrent(window.handle);
         GL.createCapabilities();
         
-        List<ShaderSource> shaderSourceFiles = new ArrayList<>() {{
-            add(new ShaderSource("vertex.glsl", GL_VERTEX_SHADER));
-            add(new ShaderSource("fragment.glsl", GL_FRAGMENT_SHADER));
-        }};
+        //Initialize UI shader
+        {
+            var shaderSourceFiles = new ArrayList<ShaderSource>() {{
+                add(new ShaderSource("uiVertex.glsl", GL_VERTEX_SHADER));
+                add(new ShaderSource("uiFragment.glsl", GL_FRAGMENT_SHADER));
+            }};
+            
+            uiProgram = new ShaderProgram(shaderSourceFiles);
+            uiProgram.use();
+            
+            uiProgram.addUniform(ShaderBufferType.INT, "uTexture");
+            uiProgram.addUniform(ShaderBufferType.MAT4, "uProjection");
+        }
         
-        program = new ShaderProgram(shaderSourceFiles);
-        glUseProgram(program.handle);
+        //Initialize world shader
+        {
+            var shaderSourceFiles = new ArrayList<ShaderSource>() {{
+                add(new ShaderSource("worldVertex.glsl", GL_VERTEX_SHADER));
+                add(new ShaderSource("worldFragment.glsl", GL_FRAGMENT_SHADER));
+            }};
         
-        program.addUniform(ShaderBufferType.MAT4, "uModel");
-        program.addUniform(ShaderBufferType.MAT4, "uView");
-        program.addUniform(ShaderBufferType.MAT4, "uProjection");
-        program.addUniform(ShaderBufferType.INT, "uType");
+            worldProgram = new ShaderProgram(shaderSourceFiles);
+            worldProgram.use();
+            
+            worldProgram.addUniform(ShaderBufferType.MAT4, "uModel");
+            worldProgram.addUniform(ShaderBufferType.MAT4, "uView");
+            worldProgram.addUniform(ShaderBufferType.MAT4, "uProjection");
+            worldProgram.addUniform(ShaderBufferType.INT, "uType");
+        }
         
         camera = new Camera(window.width, window.height);
         scene  = new Scene();
@@ -68,17 +87,18 @@ public final class App {
         
         glInit();
         
+        ui = new UI(window);
         window.show(monitor);
         Logger.printSystemInfo();
         
-        final double TARGET_DELTA = 1/ 60.0;
+        final double TARGET_DELTA = 1 / 60.0;
         double currTime;
         double prevTime = glfwGetTime();
         double delta = 0;
         boolean ticked;
         
         while(!glfwWindowShouldClose(window.handle)) {
-            window.pollInput();
+            window.pollInput(ui);
             
             currTime = glfwGetTime();
             
@@ -95,7 +115,8 @@ public final class App {
                 camera.update();
                 scene.update();
                 
-                window.textTest();
+                ui.update(window);
+                //window.textTest();
                 
                 try(MemoryStack stack = MemoryStack.stackPush()) {
                     IntBuffer widthBuf  = stack.mallocInt(1);
@@ -110,11 +131,13 @@ public final class App {
             
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             
-            glUseProgram(program.handle);
+            worldProgram.use();
             camera.render();
             scene.render();
             
-            window.renderText();
+            uiProgram.use();
+            ui.render(window, uiProgram);
+            //window.renderText();
             
             glfwSwapBuffers(window.handle);
             
@@ -127,7 +150,7 @@ public final class App {
             }
         }
         
-        glDeleteProgram(program.handle);
+        glDeleteProgram(worldProgram.handle);
         GL.destroy();
         Logger.close();
         glfwTerminate();
@@ -140,9 +163,7 @@ public final class App {
      * @param value 
      */
     public static void setUniform(String name, int value) {
-        glUniform1i(
-                program.getUniform(name).location, 
-                value);
+        worldProgram.setUniform(name, value);
     }
     
     /**
@@ -151,9 +172,7 @@ public final class App {
      * @param value 
      */
     public static void setUniform(String name, float value) {
-        glUniform1f(
-                program.getUniform(name).location, 
-                value);
+        worldProgram.setUniform(name, value);
     }
     
     /**
@@ -162,9 +181,7 @@ public final class App {
      * @param value 
      */
     public static void setUniform(String name, Vector2f value) {
-        glUniform2fv(
-                program.getUniform(name).location,
-                value.get(program.getUniform(name).asFloatBuffer()));
+        worldProgram.setUniform(name, value);
     }
     
     /**
@@ -173,9 +190,7 @@ public final class App {
      * @param value 
      */
     public static void setUniform(String name, Vector3f value) {
-        glUniform3fv(
-                program.getUniform(name).location,
-                value.get(program.getUniform(name).asFloatBuffer()));
+        worldProgram.setUniform(name, value);
     }
     
     /**
@@ -185,10 +200,7 @@ public final class App {
      * @param value 
      */
     public static void setUniform(String name, boolean transpose, Matrix3f value) {
-        glUniformMatrix3fv(
-                program.getUniform(name).location,
-                transpose,
-                value.get(program.getUniform(name).asFloatBuffer()));
+        worldProgram.setUniform(name, transpose, value);
     }
     
     /**
@@ -198,10 +210,7 @@ public final class App {
      * @param value 
      */
     public static void setUniform(String name, boolean transpose, Matrix4f value) {
-        glUniformMatrix4fv(
-                program.getUniform(name).location,
-                transpose,
-                value.get(program.getUniform(name).asFloatBuffer()));
+        worldProgram.setUniform(name, transpose, value);
     }
     
     /**
@@ -226,6 +235,7 @@ public final class App {
         }
     }
     
+    //TODO: delet this
     public static void checkShaderError(int handle, String filename) {
         if(glGetShaderi(handle, GL_COMPILE_STATUS) != GL_TRUE) {
             Logger.log(LogLevel.SEVERE, "Failed to compile GLSL file: \"" + filename + "\" " + glGetShaderInfoLog(handle));
