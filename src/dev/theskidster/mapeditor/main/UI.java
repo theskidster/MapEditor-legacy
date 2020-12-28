@@ -4,9 +4,10 @@ import static dev.theskidster.mapeditor.main.TrueTypeFont.*;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import org.joml.Matrix4f;
-import org.joml.Vector2f;
 import static org.lwjgl.glfw.GLFW.*;
 import org.lwjgl.nuklear.NkAllocator;
 import org.lwjgl.nuklear.NkBuffer;
@@ -16,7 +17,6 @@ import org.lwjgl.nuklear.NkDrawCommand;
 import org.lwjgl.nuklear.NkDrawNullTexture;
 import org.lwjgl.nuklear.NkDrawVertexLayoutElement;
 import org.lwjgl.nuklear.NkMouse;
-import org.lwjgl.nuklear.NkRect;
 import org.lwjgl.nuklear.NkUserFont;
 import org.lwjgl.nuklear.NkUserFontGlyph;
 import static org.lwjgl.nuklear.Nuklear.*;
@@ -41,8 +41,7 @@ final class UI {
     private final int MAX_VBUFFER_SIZE = 512 * 1024;
     private final int MAX_IBUFFER_SIZE = 128 * 1024;
     
-    private Vector2f framebufferScale = new Vector2f();
-    private Matrix4f projMatrix       = new Matrix4f();
+    private Matrix4f projMatrix = new Matrix4f();
     
     private NkContext nkContext         = NkContext.create();
     private NkAllocator nkAlloc         = NkAllocator.create();
@@ -51,6 +50,8 @@ final class UI {
     private NkUserFont nkFont           = NkUserFont.create();
     
     private NkDrawVertexLayoutElement.Buffer nkVertexLayout = NkDrawVertexLayoutElement.create(4);
+    
+    private List<Widget> widgets;
     
     UI(Window window) {
         nkAlloc.alloc((handle, old, size) -> MemoryUtil.nmemAllocChecked(size));
@@ -167,6 +168,13 @@ final class UI {
         nkFont.texture(it -> it.id(font.texHandle));
         
         nk_style_set_font(nkContext, nkFont);
+        
+        widgets = new ArrayList<Widget>() {{
+            add(new WidgetMenuBar());
+            add(new WidgetLayers());
+            add(new WidgetProperties());
+            add(new WidgetBlocks());
+        }};
     }
     
     private NkContext nkInit(long winHandle) {
@@ -226,16 +234,7 @@ final class UI {
                 0, 0, -1f, 0, 
                 -1f, 1f, 0, 1f);
         
-        try(MemoryStack stack = MemoryStack.stackPush()) {
-            NkRect rect = NkRect.mallocStack(stack);
-            
-            if(nk_begin(nkContext, window.title, nk_rect(400, 400, 300, 200, rect), NK_WINDOW_BORDER)) {
-                nk_layout_row_dynamic(nkContext, 20, 1);
-                nk_label(nkContext, "test text", NK_TEXT_ALIGN_LEFT | NK_TEXT_ALIGN_BOTTOM);
-            }
-            
-            nk_end(nkContext);
-        }
+        widgets.forEach(widget -> widget.update(nkContext, window));
     }
     
     void render(Window window, ShaderProgram program) {

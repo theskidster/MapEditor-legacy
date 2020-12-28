@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blockset texture="spr_blocks.png">
+    
+    <!--
+    Block attributes:
+    -->
+    
+    <block id="0" type=""/>
+    <block id="1" type=""/>
+</blockset>

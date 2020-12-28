@@ -29,14 +29,10 @@ final class Camera {
         
         view = new Matrix4f();
         proj = new Matrix4f();
-        
-        proj.setPerspective((float) Math.toRadians(45), (float) width / height, 0.1f, Float.POSITIVE_INFINITY);
-        App.setUniform("uProjection", false, proj);
     }
     
     void update(int width, int height) {
         //TODO: add camera control via keyboard
-        
         proj.setPerspective((float) Math.toRadians(45), (float) width / height, 0.1f, Float.POSITIVE_INFINITY);
     }
     

@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file. The format 
 
 
 
-## [0.6.0] - UNRELEASED
+## [0.7.0] - UNRELEASED
 
 ### Added
 
@@ -13,4 +13,5 @@ All notable changes to this project will be documented in this file. The format 
 * Established graphics pipeline using custom shader objects.
 * Graphics and Camera utility classes.
 * Fixed timestep for improved performance.
+* Support for Nuklear GUI.
 

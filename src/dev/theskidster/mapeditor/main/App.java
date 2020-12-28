@@ -3,7 +3,6 @@ package dev.theskidster.mapeditor.main;
 import dev.theskidster.mapeditor.scene.Scene;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
-import java.util.List;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
@@ -25,7 +24,7 @@ public final class App {
     
     private static boolean vSync = true; //TODO: pull these values in from prefrences file
     
-    public static final String VERSION = "0.6.0";
+    public static final String VERSION = "0.7.0";
     
     private Monitor monitor;
     private Window window;
@@ -83,7 +82,7 @@ public final class App {
         glfwInit();
         
         monitor = new Monitor();
-        window  = new Window("RGM Editor", monitor);
+        window  = new Window("RGM Editor v" + VERSION, monitor);
         
         glInit();
         
