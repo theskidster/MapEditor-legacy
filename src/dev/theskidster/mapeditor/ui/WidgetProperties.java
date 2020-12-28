@@ -1,8 +1,9 @@
-package dev.theskidster.mapeditor.main;
+package dev.theskidster.mapeditor.ui;
 
-import static dev.theskidster.mapeditor.main.Widget.CONTENT_X;
-import static dev.theskidster.mapeditor.main.Widget.MB_HEIGHT;
-import static dev.theskidster.mapeditor.main.Widget.PADDING;
+import dev.theskidster.mapeditor.main.Window;
+import static dev.theskidster.mapeditor.ui.Widget.CONTENT_X;
+import static dev.theskidster.mapeditor.ui.Widget.MB_HEIGHT;
+import static dev.theskidster.mapeditor.ui.Widget.PADDING;
 import org.lwjgl.nuklear.NkContext;
 import org.lwjgl.nuklear.NkRect;
 import static org.lwjgl.nuklear.Nuklear.NK_TEXT_ALIGN_BOTTOM;

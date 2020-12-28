@@ -1,5 +1,6 @@
 package dev.theskidster.mapeditor.main;
 
+import dev.theskidster.mapeditor.ui.UI;
 import dev.theskidster.mapeditor.scene.Scene;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
@@ -113,9 +114,7 @@ public final class App {
                 
                 camera.update(window.width, window.height);
                 scene.update();
-                
                 ui.update(window);
-                //window.textTest();
                 
                 try(MemoryStack stack = MemoryStack.stackPush()) {
                     IntBuffer widthBuf  = stack.mallocInt(1);
@@ -136,7 +135,6 @@ public final class App {
             
             uiProgram.use();
             ui.render(window, uiProgram);
-            //window.renderText();
             
             glfwSwapBuffers(window.handle);
             

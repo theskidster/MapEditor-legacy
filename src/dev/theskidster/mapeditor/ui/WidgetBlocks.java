@@ -1,5 +1,6 @@
-package dev.theskidster.mapeditor.main;
+package dev.theskidster.mapeditor.ui;
 
+import dev.theskidster.mapeditor.main.Window;
 import org.lwjgl.nuklear.NkContext;
 import org.lwjgl.nuklear.NkRect;
 import static org.lwjgl.nuklear.Nuklear.*;

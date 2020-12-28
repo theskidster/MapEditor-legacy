@@ -1,5 +1,7 @@
-package dev.theskidster.mapeditor.main;
+package dev.theskidster.mapeditor.ui;
 
+import dev.theskidster.mapeditor.main.LogLevel;
+import dev.theskidster.mapeditor.main.Logger;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -22,7 +24,7 @@ public class TrueTypeFont {
     
     public static final int BITMAP_WIDTH  = 1024;
     public static final int BITMAP_HEIGHT = 1024;
-    public static final int FONT_HEIGHT   = 18;
+    public static final int FONT_HEIGHT   = 19;
     
     final int texHandle = glGenTextures();
     
@@ -81,10 +83,5 @@ public class TrueTypeFont {
             Logger.log(LogLevel.SEVERE, "Failed to parse data from ttf file.");
         }
     }
-    
-    public float getScale()            { return scale; }
-    public float getDescent()          { return descent; }
-    public STBTTFontinfo getFontInfo() { return info; }
-    public STBTTPackedchar.Buffer getCharBuffer() { return charBuf; }
     
 }

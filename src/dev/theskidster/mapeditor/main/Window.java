@@ -1,5 +1,6 @@
 package dev.theskidster.mapeditor.main;
 
+import dev.theskidster.mapeditor.ui.UI;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -20,12 +21,12 @@ import static org.lwjgl.system.MemoryUtil.*;
  * Created: Dec 15, 2020
  */
 
-final class Window {
+public final class Window {
 
-    int width;
-    int height;
+    public int width;
+    public int height;
     
-    final long handle;
+    public final long handle;
     
     String title;
     Vector2i position;
@@ -88,7 +89,7 @@ final class Window {
         }
     }
     
-    void setCallbacks(NkContext nkContext) {
+    public void setCallbacks(NkContext nkContext) {
         glfwSetWindowSizeCallback(handle, (window, w, h) -> {
             width  = w;
             height = h;

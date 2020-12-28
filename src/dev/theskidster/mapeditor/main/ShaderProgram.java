@@ -20,7 +20,7 @@ import org.lwjgl.system.MemoryStack;
 /**
  * Represents a completed shader program that defines how the graphics pipeline should process rendering information sent to the GPU.
  */
-final class ShaderProgram {
+public final class ShaderProgram {
     
     final int handle;
     
@@ -101,34 +101,34 @@ final class ShaderProgram {
         glUseProgram(handle);
     }
     
-    void setUniform(String name, int value) {
+    public void setUniform(String name, int value) {
         glUniform1i(uniforms.get(name).location, value);
     }
     
-    void setUniform(String name, float value) {
+    public void setUniform(String name, float value) {
         glUniform1f(uniforms.get(name).location, value);
     }
     
-    void setUniform(String name, Vector2f value) {
+    public void setUniform(String name, Vector2f value) {
         glUniform2fv(
                 uniforms.get(name).location,
                 value.get(uniforms.get(name).asFloatBuffer()));
     }
     
-    void setUniform(String name, Vector3f value) {
+    public void setUniform(String name, Vector3f value) {
         glUniform3fv(
                 uniforms.get(name).location,
                 value.get(uniforms.get(name).asFloatBuffer()));
     }
     
-    void setUniform(String name, boolean transpose, Matrix3f value) {
+    public void setUniform(String name, boolean transpose, Matrix3f value) {
         glUniformMatrix3fv(
                 uniforms.get(name).location,
                 transpose,
                 value.get(uniforms.get(name).asFloatBuffer()));
     }
     
-    void setUniform(String name, boolean transpose, Matrix4f value) {
+    public void setUniform(String name, boolean transpose, Matrix4f value) {
         glUniformMatrix4fv(
                 uniforms.get(name).location,
                 transpose,

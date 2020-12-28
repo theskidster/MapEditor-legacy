@@ -1,16 +1,20 @@
-package dev.theskidster.mapeditor.main;
+package dev.theskidster.mapeditor.ui;
 
-import static dev.theskidster.mapeditor.main.TrueTypeFont.*;
+import dev.theskidster.mapeditor.main.App;
+import dev.theskidster.mapeditor.main.ShaderProgram;
+import dev.theskidster.mapeditor.main.Window;
+import static dev.theskidster.mapeditor.ui.TrueTypeFont.*;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import org.joml.Matrix4f;
 import static org.lwjgl.glfw.GLFW.*;
 import org.lwjgl.nuklear.NkAllocator;
 import org.lwjgl.nuklear.NkBuffer;
+import org.lwjgl.nuklear.NkColor;
 import org.lwjgl.nuklear.NkContext;
 import org.lwjgl.nuklear.NkConvertConfig;
 import org.lwjgl.nuklear.NkDrawCommand;
@@ -32,7 +36,7 @@ import static org.lwjgl.system.MemoryUtil.NULL;
  * Created: Dec 26, 2020
  */
 
-final class UI {
+public final class UI {
     
     private int vao;
     private int vbo;
@@ -51,9 +55,9 @@ final class UI {
     
     private NkDrawVertexLayoutElement.Buffer nkVertexLayout = NkDrawVertexLayoutElement.create(4);
     
-    private List<Widget> widgets;
+    private Map<String, Widget> widgets;
     
-    UI(Window window) {
+    public UI(Window window) {
         nkAlloc.alloc((handle, old, size) -> MemoryUtil.nmemAllocChecked(size));
         nkAlloc.mfree((handle, pointer) -> MemoryUtil.nmemFree(pointer));
         
@@ -169,11 +173,53 @@ final class UI {
         
         nk_style_set_font(nkContext, nkFont);
         
-        widgets = new ArrayList<Widget>() {{
-            add(new WidgetMenuBar());
-            add(new WidgetLayers());
-            add(new WidgetProperties());
-            add(new WidgetBlocks());
+        try(MemoryStack stack = MemoryStack.stackPush()) {
+            ByteBuffer colorBuf     = stack.calloc(NkColor.SIZEOF * NK_COLOR_COUNT);
+            NkColor.Buffer nkColBuf = new NkColor.Buffer(colorBuf);
+            
+            NkColor nkWhite = createColor(stack, 192, 192, 192, 255);
+            NkColor nkGray1 = createColor(stack, 30, 30, 30, 255);
+            NkColor nkGray2 = createColor(stack, 52, 52, 52, 255);
+            NkColor nkGray3 = createColor(stack, 70, 70, 70, 255);
+            NkColor nkBlue  = createColor(stack, 24, 88, 184, 255);
+            
+            nkColBuf.put(NK_COLOR_TEXT,                    nkWhite);
+            nkColBuf.put(NK_COLOR_WINDOW,                  nkGray2);
+            nkColBuf.put(NK_COLOR_HEADER,                  nkGray1);
+            nkColBuf.put(NK_COLOR_BORDER,                  nkGray3);
+            nkColBuf.put(NK_COLOR_BUTTON,                  nkGray2);
+            nkColBuf.put(NK_COLOR_BUTTON_HOVER,            nkGray3);
+            nkColBuf.put(NK_COLOR_BUTTON_ACTIVE,           nkBlue);
+            nkColBuf.put(NK_COLOR_TOGGLE,                  nkWhite);
+            nkColBuf.put(NK_COLOR_TOGGLE_HOVER,            nkWhite);
+            nkColBuf.put(NK_COLOR_TOGGLE_CURSOR,           nkWhite);
+            nkColBuf.put(NK_COLOR_SELECT,                  nkWhite);
+            nkColBuf.put(NK_COLOR_SELECT_ACTIVE,           nkWhite);
+            nkColBuf.put(NK_COLOR_SLIDER,                  nkWhite);
+            nkColBuf.put(NK_COLOR_SLIDER_CURSOR,           nkWhite);
+            nkColBuf.put(NK_COLOR_SLIDER_CURSOR_HOVER,     nkWhite);
+            nkColBuf.put(NK_COLOR_SLIDER_CURSOR_ACTIVE,    nkWhite);
+            nkColBuf.put(NK_COLOR_PROPERTY,                nkWhite);
+            nkColBuf.put(NK_COLOR_EDIT,                    nkWhite);
+            nkColBuf.put(NK_COLOR_EDIT_CURSOR,             nkWhite);
+            nkColBuf.put(NK_COLOR_COMBO,                   nkWhite);
+            nkColBuf.put(NK_COLOR_CHART,                   nkWhite);
+            nkColBuf.put(NK_COLOR_CHART_COLOR,             nkWhite);
+            nkColBuf.put(NK_COLOR_CHART_COLOR_HIGHLIGHT,   nkWhite);
+            nkColBuf.put(NK_COLOR_SCROLLBAR,               nkWhite);
+            nkColBuf.put(NK_COLOR_SCROLLBAR_CURSOR,        nkWhite);
+            nkColBuf.put(NK_COLOR_SCROLLBAR_CURSOR_HOVER,  nkWhite);
+            nkColBuf.put(NK_COLOR_SCROLLBAR_CURSOR_ACTIVE, nkWhite);
+            nkColBuf.put(NK_COLOR_TAB_HEADER,              nkWhite);
+            
+            nk_style_from_table(nkContext, nkColBuf);
+            
+            nkContext.style().button().rounding(0);
+            nkContext.style().button().border(0);
+        }
+        
+        widgets = new HashMap<String, Widget>() {{
+            put("Menu Bar", new WidgetMenuBar());
         }};
     }
     
@@ -203,11 +249,17 @@ final class UI {
         return nkContext;
     }
     
-    void beginInput() {
+    private NkColor createColor(MemoryStack stack, int r, int g, int b, int a) {
+        NkColor nkColor = NkColor.mallocStack(stack);
+        nkColor.set((byte) r, (byte) g, (byte) b, (byte) a);
+        return nkColor;
+    }
+    
+    public void beginInput() {
         nk_input_begin(nkContext);
     }
     
-    void endInput(long handle) {
+    public void endInput(long handle) {
         NkMouse mouse = nkContext.input().mouse();
         
         if(mouse.grab()) {
@@ -227,17 +279,26 @@ final class UI {
         nk_input_end(nkContext);
     }
     
-    void update(Window window) {
+    void addWidget(String name, Widget widget) {
+        widgets.put(name, widget);
+    }
+    
+    void removeWidget(String name) {
+        widgets.get(name).removeRequest = true;
+    }
+    
+    public void update(Window window) {
         projMatrix.set(
                 2f / window.width, 0, 0, 0, 
                 0, -2f / window.height, 0, 0, 
                 0, 0, -1f, 0, 
                 -1f, 1f, 0, 1f);
         
-        widgets.forEach(widget -> widget.update(nkContext, window));
+        widgets.forEach((name, widget) -> widget.update(nkContext, window));
+        widgets.entrySet().removeIf(entry -> entry.getValue().removeRequest);
     }
     
-    void render(Window window, ShaderProgram program) {
+    public void render(Window window, ShaderProgram program) {
         glEnable(GL_BLEND);
         glBlendEquation(GL_FUNC_ADD);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
