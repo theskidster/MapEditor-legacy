@@ -1,6 +1,5 @@
 package dev.theskidster.mapeditor.main;
 
-import dev.theskidster.mapeditor.main.App;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -32,6 +31,29 @@ public final class Logger {
     }
     
     /**
+     * Closes the file stream used by the static class and releases any resources it may have allocated.
+     */
+    static void close() {
+        writer.close();
+    }
+    
+    /**
+     * Outputs information about the system that the application is currently running on.
+     */
+    static void printSystemInfo() {
+        log(LogLevel.INFO, "--------------------------------------------------------------------------------");
+        log(LogLevel.INFO, "OS NAME:\t\t" + System.getProperty("os.name"));
+        log(LogLevel.INFO, "JAVA VERSION:\t" + System.getProperty("java.version"));
+        log(LogLevel.INFO, "GLFW VERSION:\t" + glfwGetVersionString());
+        log(LogLevel.INFO, "OPENGL VERSION:\t" + glGetString(GL_VERSION));
+        log(LogLevel.INFO, "APP VERSION:\t" + App.VERSION);
+        log(LogLevel.INFO, "--------------------------------------------------------------------------------");
+        
+        System.out.println();
+        writer.println();
+    }
+    
+    /**
      * Supplies the logger with a stack trace that can be used by subsequent calls to the {@linkplain log(LogLevel, String) log()} method provided its 
      * {@linkplain LogLevel level} is either {@link LogLevel#WARNING WARNING} or {@link LogLevel#SEVERE SEVERE}. Ideally this should be used in conjunction 
      * with a try-catch statement.
@@ -40,13 +62,6 @@ public final class Logger {
      */
     public static void setStackTrace(Exception e) {
         ex = e;
-    }
-    
-    /**
-     * Closes the file stream used by the static class and releases any resources it may have allocated.
-     */
-    static void close() {
-        writer.close();
     }
     
     /**
@@ -104,22 +119,6 @@ public final class Logger {
                 writer.close();
                 throw new RuntimeException();
         }
-    }
-    
-    /**
-     * Outputs information about the system that the application is currently running on.
-     */
-    static void printSystemInfo() {
-        log(LogLevel.INFO, "--------------------------------------------------------------------------------");
-        log(LogLevel.INFO, "OS NAME:\t\t" + System.getProperty("os.name"));
-        log(LogLevel.INFO, "JAVA VERSION:\t" + System.getProperty("java.version"));
-        log(LogLevel.INFO, "GLFW VERSION:\t" + glfwGetVersionString());
-        log(LogLevel.INFO, "OPENGL VERSION:\t" + glGetString(GL_VERSION));
-        log(LogLevel.INFO, "APP VERSION:\t" + App.VERSION);
-        log(LogLevel.INFO, "--------------------------------------------------------------------------------");
-        
-        System.out.println();
-        writer.println();
     }
     
 }

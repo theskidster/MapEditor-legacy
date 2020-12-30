@@ -1,6 +1,7 @@
 package dev.theskidster.mapeditor.ui;
 
 import dev.theskidster.mapeditor.main.Window;
+import java.util.Map;
 import org.lwjgl.nuklear.NkContext;
 import org.lwjgl.nuklear.NkRect;
 import static org.lwjgl.nuklear.Nuklear.*;
@@ -18,7 +19,7 @@ class WidgetBlocks extends Widget {
     }
     
     @Override
-    public void update(NkContext nkContext, Window window) {
+    public void update(NkContext nkContext, Window window, Map<String, Widget> widgets) {
         try(MemoryStack stack = MemoryStack.stackPush()) {
             NkRect rect = NkRect.mallocStack(stack);
             rect.x(window.width - (CONTENT_X + PADDING));

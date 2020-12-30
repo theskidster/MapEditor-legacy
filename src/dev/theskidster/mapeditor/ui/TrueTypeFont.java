@@ -20,11 +20,11 @@ import static org.lwjgl.system.MemoryUtil.*;
  * Created: Dec 22, 2020
  */
 
-public class TrueTypeFont {
+class TrueTypeFont {
     
-    public static final int BITMAP_WIDTH  = 1024;
-    public static final int BITMAP_HEIGHT = 1024;
-    public static final int FONT_HEIGHT   = 19;
+    static final int BITMAP_WIDTH  = 1024;
+    static final int BITMAP_HEIGHT = 1024;
+    static final int FONT_HEIGHT   = 19;
     
     final int texHandle = glGenTextures();
     
@@ -34,7 +34,7 @@ public class TrueTypeFont {
     STBTTFontinfo info             = STBTTFontinfo.create();
     STBTTPackedchar.Buffer charBuf = STBTTPackedchar.create(95);
     
-    public TrueTypeFont(String filename) {
+    TrueTypeFont(String filename) {
         try(InputStream file = TrueTypeFont.class.getResourceAsStream("/dev/theskidster/mapeditor/assets/" + filename)) {
             loadFont(file);
         } catch(Exception e) {

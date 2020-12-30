@@ -4,6 +4,7 @@ import dev.theskidster.mapeditor.main.Window;
 import static dev.theskidster.mapeditor.ui.Widget.CONTENT_X;
 import static dev.theskidster.mapeditor.ui.Widget.MB_HEIGHT;
 import static dev.theskidster.mapeditor.ui.Widget.PADDING;
+import java.util.Map;
 import org.lwjgl.nuklear.NkContext;
 import org.lwjgl.nuklear.NkRect;
 import static org.lwjgl.nuklear.Nuklear.NK_TEXT_ALIGN_BOTTOM;
@@ -28,7 +29,7 @@ public class WidgetProperties extends Widget {
     }
     
     @Override
-    void update(NkContext nkContext, Window window) {
+    void update(NkContext nkContext, Window window, Map<String, Widget> widgets) {
         try(MemoryStack stack = MemoryStack.stackPush()) {
             NkRect rect = NkRect.mallocStack(stack);
             rect.x(window.width - (CONTENT_X + PADDING));

@@ -12,6 +12,7 @@ import org.lwjgl.glfw.GLFWImage;
 import org.lwjgl.nuklear.NkContext;
 import org.lwjgl.nuklear.NkVec2;
 import static org.lwjgl.nuklear.Nuklear.*;
+import static org.lwjgl.opengl.GL11.glViewport;
 import static org.lwjgl.stb.STBImage.*;
 import org.lwjgl.system.MemoryStack;
 import static org.lwjgl.system.MemoryUtil.*;
@@ -89,10 +90,33 @@ public final class Window {
         }
     }
     
+    /**
+     * Displays the window and establishes its input callback events.
+     * 
+     * @param monitor the monitor to display this window on
+     */
+    void show(Monitor monitor) {
+        setWindowIcon("img_logo.png");
+        
+        glfwSetWindowMonitor(handle, NULL, position.x, position.y, width, height, monitor.refreshRate);
+        glfwSetWindowPos(handle, position.x, position.y);
+        glfwSwapInterval(1);
+        glfwSetInputMode(handle, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        glfwShowWindow(handle);
+    }
+    
+    void pollInput(UI ui) {        
+        ui.beginInput();
+        glfwPollEvents();
+        ui.endInput(handle);
+    }
+    
     public void setCallbacks(NkContext nkContext) {
         glfwSetWindowSizeCallback(handle, (window, w, h) -> {
             width  = w;
             height = h;
+            
+            if(App.glReady) glViewport(0, 0, width, height);
         });
         
         glfwSetScrollCallback(handle, (window, xOffset, yOffset) -> {
@@ -182,29 +206,10 @@ public final class Window {
                 }
                 
                 nk_input_button(nkContext, nkButton, (int) xPosBuf.get(0), (int) yPosBuf.get(0), action == GLFW_PRESS);
+                
+                if(App.getMenuBarActive()) App.resetMenuBar();
             }
         });
-    }
-    
-    /**
-     * Displays the window and establishes its input callback events.
-     * 
-     * @param monitor the monitor to display this window on
-     */
-    void show(Monitor monitor) {
-        setWindowIcon("img_logo.png");
-        
-        glfwSetWindowMonitor(handle, NULL, position.x, position.y, width, height, monitor.refreshRate);
-        glfwSetWindowPos(handle, position.x, position.y);
-        glfwSwapInterval(1);
-        glfwSetInputMode(handle, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-        glfwShowWindow(handle);
-    }
-    
-    void pollInput(UI ui) {        
-        ui.beginInput();
-        glfwPollEvents();
-        ui.endInput(handle);
     }
     
 }

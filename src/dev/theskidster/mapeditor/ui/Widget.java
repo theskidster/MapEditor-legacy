@@ -1,6 +1,7 @@
 package dev.theskidster.mapeditor.ui;
 
 import dev.theskidster.mapeditor.main.Window;
+import java.util.Map;
 import org.lwjgl.nuklear.NkContext;
 
 /**
@@ -8,7 +9,7 @@ import org.lwjgl.nuklear.NkContext;
  * Created: Dec 27, 2020
  */
 
-abstract class Widget {
+public abstract class Widget {
     
     static final int MB_HEIGHT = 28;
     static final int PADDING   = 20;
@@ -16,12 +17,13 @@ abstract class Widget {
     
     protected String title;
     
+    boolean hovered;
     boolean removeRequest;
     
-    Widget(String title) {
+    public Widget(String title) {
         this.title = title;
     }
     
-    abstract void update(NkContext nkContext, Window window);
+    abstract void update(NkContext nkContext, Window window, Map<String, Widget> widgets);
     
 }

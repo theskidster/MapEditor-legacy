@@ -53,9 +53,15 @@ public final class UI {
     private NkDrawNullTexture nkNullTex = NkDrawNullTexture.create();
     private NkUserFont nkFont           = NkUserFont.create();
     
+    static NkColor nkWhite;
+    static NkColor nkGray1;
+    static NkColor nkGray2;
+    static NkColor nkGray3;
+    static NkColor nkBlue;
+    
     private NkDrawVertexLayoutElement.Buffer nkVertexLayout = NkDrawVertexLayoutElement.create(4);
     
-    private Map<String, Widget> widgets;
+    private final Map<String, Widget> widgets;
     
     public UI(Window window) {
         nkAlloc.alloc((handle, old, size) -> MemoryUtil.nmemAllocChecked(size));
@@ -177,11 +183,11 @@ public final class UI {
             ByteBuffer colorBuf     = stack.calloc(NkColor.SIZEOF * NK_COLOR_COUNT);
             NkColor.Buffer nkColBuf = new NkColor.Buffer(colorBuf);
             
-            NkColor nkWhite = createColor(stack, 192, 192, 192, 255);
-            NkColor nkGray1 = createColor(stack, 30, 30, 30, 255);
-            NkColor nkGray2 = createColor(stack, 52, 52, 52, 255);
-            NkColor nkGray3 = createColor(stack, 70, 70, 70, 255);
-            NkColor nkBlue  = createColor(stack, 24, 88, 184, 255);
+            nkWhite = createColor(stack, 200, 200, 200, 255);
+            nkGray1 = createColor(stack, 30, 30, 30, 255);
+            nkGray2 = createColor(stack, 52, 52, 52, 255);
+            nkGray3 = createColor(stack, 70, 70, 70, 255);
+            nkBlue  = createColor(stack, 24, 88, 184, 255);
             
             nkColBuf.put(NK_COLOR_TEXT,                    nkWhite);
             nkColBuf.put(NK_COLOR_WINDOW,                  nkGray2);
@@ -249,7 +255,7 @@ public final class UI {
         return nkContext;
     }
     
-    private NkColor createColor(MemoryStack stack, int r, int g, int b, int a) {
+    static NkColor createColor(MemoryStack stack, int r, int g, int b, int a) {
         NkColor nkColor = NkColor.mallocStack(stack);
         nkColor.set((byte) r, (byte) g, (byte) b, (byte) a);
         return nkColor;
@@ -279,12 +285,26 @@ public final class UI {
         nk_input_end(nkContext);
     }
     
-    void addWidget(String name, Widget widget) {
+    public void addWidget(String name, Widget widget) {
         widgets.put(name, widget);
     }
     
-    void removeWidget(String name) {
+    public void removeWidget(String name) {
         widgets.get(name).removeRequest = true;
+    }
+    
+    public void setWidgetActive(String name) {
+        nk_window_set_focus(nkContext, name);
+        
+    }
+    
+    public void resetMenuBar() {
+        ((WidgetMenuBar) widgets.get("Menu Bar")).resetState();
+    }
+    
+    public boolean getMenuBarActive() {
+        return ((WidgetMenuBar) widgets.get("Menu Bar")).getAnyActiveMenu() && 
+              !((WidgetMenuBar) widgets.get("Menu Bar")).blockWindowReset;
     }
     
     public void update(Window window) {
@@ -294,7 +314,7 @@ public final class UI {
                 0, 0, -1f, 0, 
                 -1f, 1f, 0, 1f);
         
-        widgets.forEach((name, widget) -> widget.update(nkContext, window));
+        widgets.forEach((name, widget) -> widget.update(nkContext, window, widgets));
         widgets.entrySet().removeIf(entry -> entry.getValue().removeRequest);
     }
     

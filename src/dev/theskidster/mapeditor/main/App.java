@@ -2,8 +2,16 @@ package dev.theskidster.mapeditor.main;
 
 import dev.theskidster.mapeditor.ui.UI;
 import dev.theskidster.mapeditor.scene.Scene;
-import java.nio.IntBuffer;
+import dev.theskidster.mapeditor.ui.WidgetMBEdit;
+import dev.theskidster.mapeditor.ui.WidgetMBFile;
+import dev.theskidster.mapeditor.ui.WidgetMBLayer;
+import dev.theskidster.mapeditor.ui.WidgetMBMap;
+import dev.theskidster.mapeditor.ui.WidgetMBView;
+import dev.theskidster.mapeditor.util.Event;
+import static dev.theskidster.mapeditor.util.Event.*;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
@@ -11,7 +19,6 @@ import org.joml.Vector3f;
 import static org.lwjgl.glfw.GLFW.*;
 import org.lwjgl.opengl.GL;
 import static org.lwjgl.opengl.GL20.*;
-import org.lwjgl.system.MemoryStack;
 
 /**
  * @author J Hoffman
@@ -24,6 +31,7 @@ import org.lwjgl.system.MemoryStack;
 public final class App {
     
     private static boolean vSync = true; //TODO: pull these values in from prefrences file
+    static boolean glReady;
     
     public static final String VERSION = "0.7.0";
     
@@ -33,12 +41,86 @@ public final class App {
     private ShaderProgram uiProgram;
     private Camera camera;
     private Scene scene;
-    private UI ui;
+    private static UI ui;
+    
+    private Event currEvent;
+    private static Queue<Event> events = new LinkedList<>();
+    
+    /**
+     * Initializes application dependencies and enters a loop that will terminate once the user decides to exit.
+     */
+    void start() {
+        glfwInit();
+        
+        monitor = new Monitor();
+        window  = new Window("RGM Editor v" + VERSION, monitor);
+        
+        glReady = glInit();
+        
+        glClearColor(0.5f, 0.5f, 0.5f, 0);
+        
+        ui = new UI(window);
+        window.show(monitor);
+        Logger.printSystemInfo();
+        
+        final double TARGET_DELTA = 1 / 60.0;
+        double currTime;
+        double prevTime = glfwGetTime();
+        double delta = 0;
+        boolean ticked;
+        
+        while(!glfwWindowShouldClose(window.handle)) {
+            currTime = glfwGetTime();
+            
+            delta += currTime - prevTime;
+            if(delta < TARGET_DELTA && vSync) delta = TARGET_DELTA;
+            
+            prevTime = currTime;
+            ticked   = false;
+            
+            while(delta >= TARGET_DELTA) {
+                delta   -= TARGET_DELTA;
+                ticked  = true;
+                
+                window.pollInput(ui);
+                
+                camera.update(window.width, window.height);
+                scene.update();
+                ui.update(window);
+                
+                pollEvents();
+            }
+            
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            
+            worldProgram.use();
+            camera.render();
+            scene.render();
+            
+            uiProgram.use();
+            ui.render(window, uiProgram);
+            
+            glfwSwapBuffers(window.handle);
+            
+            if(!ticked) {
+                try {
+                    Thread.sleep(1);
+                } catch(InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        
+        glDeleteProgram(worldProgram.handle);
+        GL.destroy();
+        Logger.close();
+        glfwTerminate();
+    }
     
     /**
      * Initializes the graphics API and establishes the graphics pipeline using a custom {@linkplain ShaderProgram shader program}.
      */
-    private void glInit() {
+    private boolean glInit() {
         glfwMakeContextCurrent(window.handle);
         GL.createCapabilities();
         
@@ -74,83 +156,53 @@ public final class App {
         
         camera = new Camera(window.width, window.height);
         scene  = new Scene();
+        
+        return true;
     }
     
-    /**
-     * Initializes application dependencies and enters a loop that will terminate once the user decides to exit.
-     */
-    void start() {
-        glfwInit();
-        
-        monitor = new Monitor();
-        window  = new Window("RGM Editor v" + VERSION, monitor);
-        
-        glInit();
-        
-        ui = new UI(window);
-        window.show(monitor);
-        Logger.printSystemInfo();
-        
-        final double TARGET_DELTA = 1 / 60.0;
-        double currTime;
-        double prevTime = glfwGetTime();
-        double delta = 0;
-        boolean ticked;
-        
-        while(!glfwWindowShouldClose(window.handle)) {
-            window.pollInput(ui);
+    private void pollEvents() {
+        if(events.size() > 0) {
+            currEvent = events.peek();
             
-            currTime = glfwGetTime();
-            
-            delta += currTime - prevTime;
-            if(delta < TARGET_DELTA && vSync) delta = TARGET_DELTA;
-            
-            prevTime = currTime;
-            ticked   = false;
-            
-            while(delta >= TARGET_DELTA) {
-                delta   -= TARGET_DELTA;
-                ticked  = true;
-                
-                camera.update(window.width, window.height);
-                scene.update();
-                ui.update(window);
-                
-                try(MemoryStack stack = MemoryStack.stackPush()) {
-                    IntBuffer widthBuf  = stack.mallocInt(1);
-                    IntBuffer heightBuf = stack.mallocInt(1);
-                    
-                    glfwGetWindowSize(window.handle, widthBuf, heightBuf);
-                    
-                    glViewport(0, 0, widthBuf.get(0), heightBuf.get(0));
-                    glClearColor(0.5f, 0.5f, 0.5f, 0);
+            if(!currEvent.resolved) {
+                switch(currEvent.type) {
+                    case WIDGET_FILE:
+                        ui.addWidget("File", new WidgetMBFile());
+                        currEvent.resolved = true;
+                        break;
+                        
+                    case WIDGET_EDIT:
+                        ui.addWidget("Edit", new WidgetMBEdit());
+                        currEvent.resolved = true;
+                        break;
+                        
+                    case WIDGET_VIEW:
+                        ui.addWidget("View", new WidgetMBView());
+                        currEvent.resolved = true;
+                        break;
+                        
+                    case WIDGET_MAP:
+                        ui.addWidget("Map", new WidgetMBMap());
+                        currEvent.resolved = true;
+                        break;
+                        
+                    case WIDGET_LAYER:
+                        ui.addWidget("Layer", new WidgetMBLayer());
+                        currEvent.resolved = true;
+                        break;
                 }
-            }
-            
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            
-            worldProgram.use();
-            camera.render();
-            scene.render();
-            
-            uiProgram.use();
-            ui.render(window, uiProgram);
-            
-            glfwSwapBuffers(window.handle);
-            
-            if(!ticked) {
-                try {
-                    Thread.sleep(1);
-                } catch(InterruptedException e) {
-                    e.printStackTrace();
-                }
+            } else {
+                events.poll();
             }
         }
-        
-        glDeleteProgram(worldProgram.handle);
-        GL.destroy();
-        Logger.close();
-        glfwTerminate();
+    }
+    
+    static void resetMenuBar() {
+        ui.resetMenuBar();
+    }
+    
+    static boolean getMenuBarActive() {
+        return ui.getMenuBarActive();
     }
     
     /**
@@ -208,6 +260,10 @@ public final class App {
      */
     public static void setUniform(String name, boolean transpose, Matrix4f value) {
         worldProgram.setUniform(name, transpose, value);
+    }
+    
+    public static void addEvent(Event event) {
+        events.add(event);
     }
     
     /**
