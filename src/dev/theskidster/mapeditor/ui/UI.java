@@ -225,7 +225,9 @@ public final class UI {
         }
         
         widgets = new HashMap<String, Widget>() {{
-            put("Menu Bar", new WidgetMenuBar());
+            //put("Menu Bar", new WidgetMenuBar());
+            put("Test 1", new WidgetTest1());
+            put("Test 2", new WidgetTest2());
         }};
     }
     
