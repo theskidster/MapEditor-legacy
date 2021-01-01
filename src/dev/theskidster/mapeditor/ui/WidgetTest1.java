@@ -17,10 +17,10 @@ class WidgetTest1 extends Widget {
     private final NkRect nkRectangle = NkRect.create();
     
     WidgetTest1() {
-        super("Test 1");
+        super("File");
         
-        nkRectangle.x(200);
-        nkRectangle.y(200);
+        nkRectangle.x(0);
+        nkRectangle.y(MB_HEIGHT);
         nkRectangle.w(300);
         nkRectangle.h(250);
         
@@ -35,8 +35,10 @@ class WidgetTest1 extends Widget {
     @Override
     void update(NkContext nkContext, Window window, Map<String, Widget> widgets) {
         try(MemoryStack stack = MemoryStack.stackPush()) {
-            if(nk_begin(nkContext, title, nkRectangle, NK_WINDOW_TITLE | NK_WINDOW_NO_SCROLLBAR)) {
-                
+            if(nk_begin(nkContext, title, nkRectangle, NK_WINDOW_NO_SCROLLBAR)) {
+                if(nk_window_is_hovered(nkContext)) {
+                    System.out.println("cursor over file options");
+                }
             }
             
             nk_end(nkContext);

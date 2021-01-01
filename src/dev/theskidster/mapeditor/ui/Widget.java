@@ -18,7 +18,7 @@ public abstract class Widget {
     protected String title;
     
     boolean hovered;
-    boolean removeRequest;
+    boolean active;
     
     public Widget(String title) {
         this.title = title;

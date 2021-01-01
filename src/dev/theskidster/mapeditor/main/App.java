@@ -2,16 +2,7 @@ package dev.theskidster.mapeditor.main;
 
 import dev.theskidster.mapeditor.ui.UI;
 import dev.theskidster.mapeditor.scene.Scene;
-import dev.theskidster.mapeditor.ui.WidgetMBEdit;
-import dev.theskidster.mapeditor.ui.WidgetMBFile;
-import dev.theskidster.mapeditor.ui.WidgetMBLayer;
-import dev.theskidster.mapeditor.ui.WidgetMBMap;
-import dev.theskidster.mapeditor.ui.WidgetMBView;
-import dev.theskidster.mapeditor.util.Event;
-import static dev.theskidster.mapeditor.util.Event.*;
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
@@ -42,9 +33,6 @@ public final class App {
     private Camera camera;
     private Scene scene;
     private static UI ui;
-    
-    private Event currEvent;
-    private static Queue<Event> events = new LinkedList<>();
     
     /**
      * Initializes application dependencies and enters a loop that will terminate once the user decides to exit.
@@ -87,8 +75,6 @@ public final class App {
                 camera.update(window.width, window.height);
                 scene.update();
                 ui.update(window);
-                
-                pollEvents();
             }
             
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -160,51 +146,6 @@ public final class App {
         return true;
     }
     
-    private void pollEvents() {
-        if(events.size() > 0) {
-            currEvent = events.peek();
-            
-            if(!currEvent.resolved) {
-                switch(currEvent.type) {
-                    case WIDGET_FILE:
-                        ui.addWidget("File", new WidgetMBFile());
-                        currEvent.resolved = true;
-                        break;
-                        
-                    case WIDGET_EDIT:
-                        ui.addWidget("Edit", new WidgetMBEdit());
-                        currEvent.resolved = true;
-                        break;
-                        
-                    case WIDGET_VIEW:
-                        ui.addWidget("View", new WidgetMBView());
-                        currEvent.resolved = true;
-                        break;
-                        
-                    case WIDGET_MAP:
-                        ui.addWidget("Map", new WidgetMBMap());
-                        currEvent.resolved = true;
-                        break;
-                        
-                    case WIDGET_LAYER:
-                        ui.addWidget("Layer", new WidgetMBLayer());
-                        currEvent.resolved = true;
-                        break;
-                }
-            } else {
-                events.poll();
-            }
-        }
-    }
-    
-    static void resetMenuBar() {
-        ui.resetMenuBar();
-    }
-    
-    static boolean getMenuBarActive() {
-        return ui.getMenuBarActive();
-    }
-    
     /**
      * 
      * 
@@ -260,10 +201,6 @@ public final class App {
      */
     public static void setUniform(String name, boolean transpose, Matrix4f value) {
         worldProgram.setUniform(name, transpose, value);
-    }
-    
-    public static void addEvent(Event event) {
-        events.add(event);
     }
     
     /**

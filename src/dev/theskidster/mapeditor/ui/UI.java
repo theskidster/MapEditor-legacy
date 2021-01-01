@@ -61,7 +61,7 @@ public final class UI {
     
     private NkDrawVertexLayoutElement.Buffer nkVertexLayout = NkDrawVertexLayoutElement.create(4);
     
-    private final Map<String, Widget> widgets;
+    private static Map<String, Widget> widgets;
     
     public UI(Window window) {
         nkAlloc.alloc((handle, old, size) -> MemoryUtil.nmemAllocChecked(size));
@@ -225,9 +225,9 @@ public final class UI {
         }
         
         widgets = new HashMap<String, Widget>() {{
-            //put("Menu Bar", new WidgetMenuBar());
-            put("Test 1", new WidgetTest1());
-            put("Test 2", new WidgetTest2());
+            put("Menu Bar", new WidgetMenuBar());
+            put("File", new WidgetTest1());
+            put("Edit", new WidgetTest2());
         }};
     }
     
@@ -255,6 +255,10 @@ public final class UI {
         });
         
         return nkContext;
+    }
+    
+    private boolean getActiveMenu(int index) {
+        return ((WidgetMenuBar) widgets.get("Menu Bar")).getMenuActive(index);
     }
     
     static NkColor createColor(MemoryStack stack, int r, int g, int b, int a) {
@@ -287,28 +291,6 @@ public final class UI {
         nk_input_end(nkContext);
     }
     
-    public void addWidget(String name, Widget widget) {
-        widgets.put(name, widget);
-    }
-    
-    public void removeWidget(String name) {
-        widgets.get(name).removeRequest = true;
-    }
-    
-    public void setWidgetActive(String name) {
-        nk_window_set_focus(nkContext, name);
-        
-    }
-    
-    public void resetMenuBar() {
-        ((WidgetMenuBar) widgets.get("Menu Bar")).resetState();
-    }
-    
-    public boolean getMenuBarActive() {
-        return ((WidgetMenuBar) widgets.get("Menu Bar")).getAnyActiveMenu() && 
-              !((WidgetMenuBar) widgets.get("Menu Bar")).blockWindowReset;
-    }
-    
     public void update(Window window) {
         projMatrix.set(
                 2f / window.width, 0, 0, 0, 
@@ -316,8 +298,9 @@ public final class UI {
                 0, 0, -1f, 0, 
                 -1f, 1f, 0, 1f);
         
-        widgets.forEach((name, widget) -> widget.update(nkContext, window, widgets));
-        widgets.entrySet().removeIf(entry -> entry.getValue().removeRequest);
+        widgets.forEach((name, widget) -> {
+            if(widget.active) widget.update(nkContext, window, widgets);
+        });
     }
     
     public void render(Window window, ShaderProgram program) {
