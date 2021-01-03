@@ -38,9 +38,10 @@ class WidgetTest1 extends Widget {
             if(nk_begin(nkContext, title, nkRectangle, NK_WINDOW_NO_SCROLLBAR)) {
                 nk_layout_row_begin(nkContext, NK_STATIC, MB_HEIGHT, 1);
                 nk_layout_row_push(nkContext, 300);
+                /*
                 if(nk_widget_is_hovered(nkContext)) {
                     System.out.println("new hovered");
-                }
+                }*/
                 if(nk_button_label(nkContext, "New")) {
                     System.out.println("new pressed");
                 }

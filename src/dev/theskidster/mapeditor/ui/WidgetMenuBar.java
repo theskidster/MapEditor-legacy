@@ -154,7 +154,7 @@ class WidgetMenuBar extends Widget {
             hoveredItems[i] = false;
         }
         
-        //Causes a visible flash on the menu bar, required to make it function
+        //Causes visible flash, required to enable menu bar reset.
         nk_window_close(nkContext, title);
     }
 
