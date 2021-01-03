@@ -36,9 +36,24 @@ class WidgetTest1 extends Widget {
     void update(NkContext nkContext, Window window, Map<String, Widget> widgets) {
         try(MemoryStack stack = MemoryStack.stackPush()) {
             if(nk_begin(nkContext, title, nkRectangle, NK_WINDOW_NO_SCROLLBAR)) {
-                if(nk_window_is_hovered(nkContext)) {
-                    System.out.println("cursor over file options");
+                nk_layout_row_begin(nkContext, NK_STATIC, MB_HEIGHT, 1);
+                nk_layout_row_push(nkContext, 300);
+                if(nk_widget_is_hovered(nkContext)) {
+                    System.out.println("new hovered");
                 }
+                if(nk_button_label(nkContext, "New")) {
+                    System.out.println("new pressed");
+                }
+                nk_layout_row_end(nkContext);
+
+                nk_layout_row_begin(nkContext, NK_STATIC, MB_HEIGHT, 1);
+                nk_layout_row_push(nkContext, 300);
+                if(nk_button_label(nkContext, "Open")) {
+                    System.out.println("open pressed");
+                }
+                nk_layout_row_end(nkContext);
+                
+                hovered = nk_window_is_hovered(nkContext);
             }
             
             nk_end(nkContext);

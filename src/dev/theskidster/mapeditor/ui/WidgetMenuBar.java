@@ -1,9 +1,11 @@
 package dev.theskidster.mapeditor.ui;
 
 import dev.theskidster.mapeditor.main.Window;
+import static dev.theskidster.mapeditor.ui.UI.createColor;
 import static dev.theskidster.mapeditor.ui.Widget.MB_HEIGHT;
 import java.util.HashMap;
 import java.util.Map;
+import org.lwjgl.nuklear.NkColor;
 import org.lwjgl.nuklear.NkContext;
 import org.lwjgl.nuklear.NkRect;
 import org.lwjgl.nuklear.NkVec2;
@@ -19,10 +21,10 @@ class WidgetMenuBar extends Widget {
     
     private final NkRect nkRectangle = NkRect.create();
     
-    private boolean clicked;
     private final boolean activeMenus[];
+    private final boolean hoveredItems[];
     
-    private class Item {
+    class Item {
         final String name;
         final int width;
         
@@ -32,7 +34,7 @@ class WidgetMenuBar extends Widget {
         }
     }
     
-    private final Map<Integer, Item> items;
+    final Map<Integer, Item> items;
     
     WidgetMenuBar() {
         super("Test 2");
@@ -43,7 +45,8 @@ class WidgetMenuBar extends Widget {
         nkRectangle.y(0);
         nkRectangle.h(MB_HEIGHT);
         
-        activeMenus = new boolean[5];
+        activeMenus  = new boolean[5];
+        hoveredItems = new boolean[5];
         
         items = new HashMap<Integer, Item>() {{
             put(0, new Item("File", 42));
@@ -76,16 +79,41 @@ class WidgetMenuBar extends Widget {
                     
                     nk_layout_row_push(nkContext, item.width);
                     
-                    if(clicked && nk_widget_is_hovered(nkContext)) {
-                        setActiveMenu(i, widgets);
-                        nk_window_show(nkContext, item.name, NK_SHOWN);
+                    if(activeMenus[i] && clicked) {
+                        NkColor nkBlue = UI.createColor(stack, 24, 88, 184, 255);
+                        nk_style_push_color(nkContext, nkContext.style().button().normal().data().color(), nkBlue);
+                        nk_style_push_color(nkContext, nkContext.style().button().hover().data().color(), nkBlue);
                     } else {
+                        NkColor nkGray2 = UI.createColor(stack, 52, 52, 52, 255);
+                        nk_style_push_color(nkContext, nkContext.style().button().normal().data().color(), nkGray2);
+                        nk_style_push_color(nkContext, nkContext.style().button().hover().data().color(), nkGray2);
+                    }
+                    
+                    if(!widgets.get("File").hovered && 
+                       !widgets.get("Edit").hovered) {
+                        nk_window_set_focus(nkContext, title);
+                    }
+                    
+                    if(!clicked) {
                         nk_window_show(nkContext, item.name, NK_HIDDEN);
+                    } else {
+                        if(nk_widget_is_hovered(nkContext)) {
+                            setActiveMenu(i, widgets);
+                            nk_window_show(nkContext, item.name, NK_SHOWN);
+                            
+                            hoveredItems[i] = true;
+                        } else {
+                            if(!widgets.get(item.name).active) {
+                                nk_window_show(nkContext, item.name, NK_HIDDEN);
+                            }
+                            
+                            hoveredItems[i] = false;
+                        }
                     }
-
-                    if(nk_button_label(nkContext, item.name)) {
-                        clicked = true;
-                    }
+                    
+                    if(nk_button_label(nkContext, item.name)) clicked = !clicked;
+                    
+                    nk_style_pop_color(nkContext);
                 }
             }
             
@@ -94,6 +122,14 @@ class WidgetMenuBar extends Widget {
             nk_style_pop_vec2(nkContext);
             nk_style_pop_vec2(nkContext);
         }
+    }
+    
+    private boolean getAnyItemHovered() {
+        for(int m = 0; m < hoveredItems.length; m++) {
+            if(hoveredItems[m]) return true;
+        }
+        
+        return false;
     }
     
     private void setActiveMenu(int index, Map<String, Widget> widgets) {
@@ -110,8 +146,16 @@ class WidgetMenuBar extends Widget {
         }
     }
     
-    boolean getMenuActive(int index) {
-        return activeMenus[index];
+    public void resetState(NkContext nkContext) {
+        clicked = getAnyItemHovered();
+        
+        for(int i = 0; i < items.size(); i++) {
+            activeMenus[i]  = false;
+            hoveredItems[i] = false;
+        }
+        
+        //Causes a visible flash on the menu bar, required to make it function
+        nk_window_close(nkContext, title);
     }
 
 }

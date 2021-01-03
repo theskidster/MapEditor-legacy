@@ -5,9 +5,9 @@
         <group>
             <file>file:/C:/Users/thesk/Documents/Projects/RG/tools/MapEditor/src/dev/theskidster/mapeditor/ui/WidgetMenuBar.java</file>
             <file>file:/C:/Users/thesk/Documents/Projects/RG/tools/MapEditor/src/dev/theskidster/mapeditor/ui/UI.java</file>
-            <file>file:/C:/Users/thesk/Documents/Projects/RG/tools/MapEditor/src/dev/theskidster/mapeditor/ui/WidgetTest2.java</file>
             <file>jar:file:/C:/Users/thesk/Documents/Projects/RG/tools/MapEditor/lib/lwjgl-nuklear-sources.jar!/org/lwjgl/nuklear/Nuklear.java</file>
             <file>file:/C:/Users/thesk/Documents/Projects/RG/tools/MapEditor/src/dev/theskidster/mapeditor/ui/WidgetTest1.java</file>
+            <file>file:/C:/Users/thesk/Documents/Projects/RG/tools/MapEditor/src/dev/theskidster/mapeditor/ui/Widget.java</file>
         </group>
     </open-files>
 </project-private>

@@ -47,7 +47,7 @@ public final class UI {
     
     private Matrix4f projMatrix = new Matrix4f();
     
-    private NkContext nkContext         = NkContext.create();
+    private static NkContext nkContext  = NkContext.create();
     private NkAllocator nkAlloc         = NkAllocator.create();
     private NkBuffer nkCommandBuf       = NkBuffer.create();
     private NkDrawNullTexture nkNullTex = NkDrawNullTexture.create();
@@ -257,14 +257,29 @@ public final class UI {
         return nkContext;
     }
     
-    private boolean getActiveMenu(int index) {
-        return ((WidgetMenuBar) widgets.get("Menu Bar")).getMenuActive(index);
+    private static boolean getSubMenuHovered(WidgetMenuBar menuBar) {
+        for(int i = 0; i < menuBar.items.size(); i++) {
+            if(widgets.get(menuBar.items.get(i).name).hovered) {
+                return true;
+            }
+        }
+        
+        return false;
     }
     
     static NkColor createColor(MemoryStack stack, int r, int g, int b, int a) {
         NkColor nkColor = NkColor.mallocStack(stack);
         nkColor.set((byte) r, (byte) g, (byte) b, (byte) a);
         return nkColor;
+    }
+    
+    public static boolean getMenuBarClicked() {
+        WidgetMenuBar menuBar  = ((WidgetMenuBar) widgets.get("Menu Bar"));
+        return menuBar.clicked && !getSubMenuHovered(menuBar);
+    }
+    
+    public static void resetMenuBarState() {
+        ((WidgetMenuBar) widgets.get("Menu Bar")).resetState(nkContext);
     }
     
     public void beginInput() {

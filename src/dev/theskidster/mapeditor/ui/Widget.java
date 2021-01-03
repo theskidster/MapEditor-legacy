@@ -15,10 +15,13 @@ public abstract class Widget {
     static final int PADDING   = 20;
     static final int CONTENT_X = 300;
     
+    float yPos;
+    
     protected String title;
     
-    boolean hovered;
     boolean active;
+    boolean hovered;
+    boolean clicked;
     
     public Widget(String title) {
         this.title = title;

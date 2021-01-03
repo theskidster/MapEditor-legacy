@@ -206,6 +206,10 @@ public final class Window {
                 }
                 
                 nk_input_button(nkContext, nkButton, (int) xPosBuf.get(0), (int) yPosBuf.get(0), action == GLFW_PRESS);
+                
+                if(nkButton != -1 && action == GLFW_PRESS && UI.getMenuBarClicked()) {
+                    UI.resetMenuBarState();
+                }
             }
         });
     }
