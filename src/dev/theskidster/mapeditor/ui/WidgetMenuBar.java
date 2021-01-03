@@ -79,14 +79,16 @@ class WidgetMenuBar extends Widget {
                     
                     nk_layout_row_push(nkContext, item.width);
                     
-                    if(activeMenus[i] && clicked) {
+                    
+                    if(clicked && activeMenus[i]) {
                         NkColor nkBlue = UI.createColor(stack, 24, 88, 184, 255);
                         nk_style_push_color(nkContext, nkContext.style().button().normal().data().color(), nkBlue);
                         nk_style_push_color(nkContext, nkContext.style().button().hover().data().color(), nkBlue);
                     } else {
                         NkColor nkGray2 = UI.createColor(stack, 52, 52, 52, 255);
+                        NkColor nkGray3 = UI.createColor(stack, 70, 70, 70, 255);
                         nk_style_push_color(nkContext, nkContext.style().button().normal().data().color(), nkGray2);
-                        nk_style_push_color(nkContext, nkContext.style().button().hover().data().color(), nkGray2);
+                        nk_style_push_color(nkContext, nkContext.style().button().hover().data().color(), nkGray3);
                     }
                     
                     if(!widgets.get("File").hovered && 
@@ -113,6 +115,7 @@ class WidgetMenuBar extends Widget {
                     
                     if(nk_button_label(nkContext, item.name)) clicked = !clicked;
                     
+                    nk_style_pop_color(nkContext);
                     nk_style_pop_color(nkContext);
                 }
             }
