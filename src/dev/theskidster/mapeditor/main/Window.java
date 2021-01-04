@@ -4,14 +4,10 @@ import dev.theskidster.mapeditor.ui.UI;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.nio.DoubleBuffer;
 import java.nio.IntBuffer;
 import org.joml.Vector2i;
 import static org.lwjgl.glfw.GLFW.*;
 import org.lwjgl.glfw.GLFWImage;
-import org.lwjgl.nuklear.NkContext;
-import org.lwjgl.nuklear.NkVec2;
-import static org.lwjgl.nuklear.Nuklear.*;
 import static org.lwjgl.opengl.GL11.glViewport;
 import static org.lwjgl.stb.STBImage.*;
 import org.lwjgl.system.MemoryStack;
@@ -95,7 +91,7 @@ public final class Window {
      * 
      * @param monitor the monitor to display this window on
      */
-    void show(Monitor monitor) {
+    void show(Monitor monitor, UI ui) {
         setWindowIcon("img_logo.png");
         
         glfwSetWindowMonitor(handle, NULL, position.x, position.y, width, height, monitor.refreshRate);
@@ -103,15 +99,7 @@ public final class Window {
         glfwSwapInterval(1);
         glfwSetInputMode(handle, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
         glfwShowWindow(handle);
-    }
-    
-    void pollInput(UI ui) {        
-        ui.beginInput();
-        glfwPollEvents();
-        ui.endInput(handle);
-    }
-    
-    public void setCallbacks(NkContext nkContext) {
+        
         glfwSetWindowSizeCallback(handle, (window, w, h) -> {
             width  = w;
             height = h;
@@ -120,97 +108,23 @@ public final class Window {
         });
         
         glfwSetScrollCallback(handle, (window, xOffset, yOffset) -> {
-            try(MemoryStack stack = MemoryStack.stackPush()) {
-                NkVec2 scroll = NkVec2.mallocStack(stack)
-                        .x((float) xOffset)
-                        .y((float) yOffset);
-                
-                nk_input_scroll(nkContext, scroll);
-            }
+            
         });
         
-        glfwSetCharCallback(handle, (window, codepoint) -> nk_input_unicode(nkContext, codepoint));
+        glfwSetCharCallback(handle, (window, codepoint) -> {
+            
+        });
         
         glfwSetKeyCallback(handle, (window, key, scancode, action, mods) -> {
-            boolean press = action == GLFW_PRESS;
             
-            switch(key) {                    
-                case GLFW_KEY_DELETE:
-                    nk_input_key(nkContext, NK_KEY_DEL, press);
-                    break;
-                    
-                case GLFW_KEY_ENTER:
-                    nk_input_key(nkContext, NK_KEY_ENTER, press);
-                    break;
-                    
-                case GLFW_KEY_TAB:
-                    nk_input_key(nkContext, NK_KEY_TAB, press);
-                    break;
-                    
-                case GLFW_KEY_BACKSPACE:
-                    nk_input_key(nkContext, NK_KEY_BACKSPACE, press);
-                    break;
-                    
-                case GLFW_KEY_UP:
-                    nk_input_key(nkContext, NK_KEY_UP, press);
-                    break;
-                    
-                case GLFW_KEY_DOWN:
-                    nk_input_key(nkContext, NK_KEY_DOWN, press);
-                    break;
-                    
-                case GLFW_KEY_LEFT_SHIFT:
-                case GLFW_KEY_RIGHT_SHIFT:
-                    nk_input_key(nkContext, NK_KEY_SHIFT, press);
-                    break;
-                    
-                case GLFW_KEY_LEFT_CONTROL:
-                case GLFW_KEY_RIGHT_CONTROL:
-                    if(press) {
-                        nk_input_key(nkContext, NK_KEY_COPY, glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS);
-                        nk_input_key(nkContext, NK_KEY_PASTE, glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS);
-                        nk_input_key(nkContext, NK_KEY_CUT, glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS);
-                        nk_input_key(nkContext, NK_KEY_TEXT_UNDO, glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS);
-                        nk_input_key(nkContext, NK_KEY_TEXT_REDO, glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS);
-                        nk_input_key(nkContext, NK_KEY_TEXT_WORD_LEFT, glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS);
-                        nk_input_key(nkContext, NK_KEY_TEXT_WORD_RIGHT, glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS);
-                        nk_input_key(nkContext, NK_KEY_TEXT_LINE_START, glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS);
-                        nk_input_key(nkContext, NK_KEY_TEXT_LINE_END, glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS);
-                    } else {
-                        nk_input_key(nkContext, NK_KEY_LEFT, glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS);
-                        nk_input_key(nkContext, NK_KEY_RIGHT, glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS);
-                        nk_input_key(nkContext, NK_KEY_COPY, false);
-                        nk_input_key(nkContext, NK_KEY_PASTE, false);
-                        nk_input_key(nkContext, NK_KEY_CUT, false);
-                        nk_input_key(nkContext, NK_KEY_SHIFT, false);
-                    }
-                    break;
-            }
         });
         
-        glfwSetCursorPosCallback(handle, (window, xPos, yPos) -> nk_input_motion(nkContext, (int) xPos, (int) yPos));
+        glfwSetCursorPosCallback(handle, (window, xPos, yPos) -> {
+            
+        });
         
         glfwSetMouseButtonCallback(handle, (window, button, action, mods) -> {
-            try(MemoryStack stack = MemoryStack.stackPush()) {
-                DoubleBuffer xPosBuf = stack.mallocDouble(1);
-                DoubleBuffer yPosBuf = stack.mallocDouble(1);
-                
-                glfwGetCursorPos(window, xPosBuf, yPosBuf);
-                
-                int nkButton;
-                
-                switch(button) {
-                    case GLFW_MOUSE_BUTTON_RIGHT:  nkButton = NK_BUTTON_RIGHT;  break;
-                    case GLFW_MOUSE_BUTTON_MIDDLE: nkButton = NK_BUTTON_MIDDLE; break;
-                    default:                       nkButton = NK_BUTTON_LEFT;
-                }
-                
-                nk_input_button(nkContext, nkButton, (int) xPosBuf.get(0), (int) yPosBuf.get(0), action == GLFW_PRESS);
-                
-                if(nkButton != -1 && action == GLFW_PRESS && UI.getMenuBarClicked()) {
-                    UI.resetMenuBarState();
-                }
-            }
+            
         });
     }
     

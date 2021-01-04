@@ -1,7 +1,7 @@
 package dev.theskidster.mapeditor.main;
 
-import dev.theskidster.mapeditor.ui.UI;
 import dev.theskidster.mapeditor.scene.Scene;
+import dev.theskidster.mapeditor.ui.UI;
 import java.util.ArrayList;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
@@ -32,7 +32,7 @@ public final class App {
     private ShaderProgram uiProgram;
     private Camera camera;
     private Scene scene;
-    private static UI ui;
+    private UI ui;
     
     /**
      * Initializes application dependencies and enters a loop that will terminate once the user decides to exit.
@@ -47,8 +47,7 @@ public final class App {
         
         glClearColor(0.5f, 0.5f, 0.5f, 0);
         
-        ui = new UI(window);
-        window.show(monitor);
+        window.show(monitor, ui);
         Logger.printSystemInfo();
         
         final double TARGET_DELTA = 1 / 60.0;
@@ -70,11 +69,10 @@ public final class App {
                 delta   -= TARGET_DELTA;
                 ticked  = true;
                 
-                window.pollInput(ui);
+                glfwPollEvents();
                 
                 camera.update(window.width, window.height);
                 scene.update();
-                ui.update(window);
             }
             
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -82,9 +80,6 @@ public final class App {
             worldProgram.use();
             camera.render();
             scene.render();
-            
-            uiProgram.use();
-            ui.render(window, uiProgram);
             
             glfwSwapBuffers(window.handle);
             

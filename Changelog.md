@@ -13,5 +13,5 @@ All notable changes to this project will be documented in this file. The format 
 * Established graphics pipeline using custom shader objects.
 * Graphics and Camera utility classes.
 * Fixed timestep for improved performance.
-* Support for Nuklear GUI.
+* ~~Support for Nuklear GUI.~~
 
