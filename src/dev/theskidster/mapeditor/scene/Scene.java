@@ -1,5 +1,6 @@
 package dev.theskidster.mapeditor.scene;
 
+import dev.theskidster.mapeditor.main.ShaderProgram;
 import org.joml.Vector3f;
 
 /**
@@ -25,8 +26,8 @@ public class Scene {
         test.update();
     }
     
-    public void render() {
-        test.render();
+    public void render(ShaderProgram program) {
+        test.render(program);
     }
     
 }

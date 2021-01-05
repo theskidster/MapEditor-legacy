@@ -2,6 +2,7 @@ package dev.theskidster.mapeditor.scene;
 
 import dev.theskidster.mapeditor.graphics.Graphics;
 import dev.theskidster.mapeditor.main.App;
+import dev.theskidster.mapeditor.main.ShaderProgram;
 import org.joml.Vector3f;
 import static org.lwjgl.opengl.GL30.*;
 import org.lwjgl.system.MemoryStack;
@@ -45,11 +46,11 @@ class TestObject {
         g.modelMatrix.translation(position);
     }
     
-    void render() {
+    void render(ShaderProgram program) {
         glBindVertexArray(g.vao);
         
-        App.setUniform("uType", 0);
-        App.setUniform("uModel", false, g.modelMatrix);
+        program.setUniform("uType", 0);
+        program.setUniform("uModel", false, g.modelMatrix);
         
         glDrawArrays(GL_TRIANGLES, 0, 3);
         

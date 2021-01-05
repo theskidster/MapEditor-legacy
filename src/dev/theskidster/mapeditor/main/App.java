@@ -30,6 +30,7 @@ public final class App {
     private Window window;
     private static ShaderProgram worldProgram;
     private ShaderProgram uiProgram;
+    private ShaderProgram currProgram;
     private Camera camera;
     private Scene scene;
     private UI ui;
@@ -79,8 +80,8 @@ public final class App {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             
             worldProgram.use();
-            camera.render();
-            scene.render();
+            camera.render(worldProgram);
+            scene.render(worldProgram);
             
             uiProgram.use();
             ui.render(uiProgram);
@@ -119,7 +120,8 @@ public final class App {
             uiProgram = new ShaderProgram(shaderSourceFiles);
             uiProgram.use();
             
-            //uiProgram.addUniform(ShaderBufferType.INT, "uTexture");
+            uiProgram.addUniform(ShaderBufferType.INT,  "uType");
+            uiProgram.addUniform(ShaderBufferType.VEC3, "uFontColor");
             uiProgram.addUniform(ShaderBufferType.MAT4, "uProjection");
         }
         
@@ -144,63 +146,6 @@ public final class App {
         ui     = new UI();
         
         return true;
-    }
-    
-    /**
-     * 
-     * 
-     * @param name
-     * @param value 
-     */
-    public static void setUniform(String name, int value) {
-        worldProgram.setUniform(name, value);
-    }
-    
-    /**
-     * 
-     * @param name
-     * @param value 
-     */
-    public static void setUniform(String name, float value) {
-        worldProgram.setUniform(name, value);
-    }
-    
-    /**
-     * 
-     * @param name
-     * @param value 
-     */
-    public static void setUniform(String name, Vector2f value) {
-        worldProgram.setUniform(name, value);
-    }
-    
-    /**
-     * 
-     * @param name
-     * @param value 
-     */
-    public static void setUniform(String name, Vector3f value) {
-        worldProgram.setUniform(name, value);
-    }
-    
-    /**
-     * 
-     * @param name
-     * @param transpose
-     * @param value 
-     */
-    public static void setUniform(String name, boolean transpose, Matrix3f value) {
-        worldProgram.setUniform(name, transpose, value);
-    }
-    
-    /**
-     * 
-     * @param name
-     * @param transpose
-     * @param value 
-     */
-    public static void setUniform(String name, boolean transpose, Matrix4f value) {
-        worldProgram.setUniform(name, transpose, value);
     }
     
     /**

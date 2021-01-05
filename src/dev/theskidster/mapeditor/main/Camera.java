@@ -36,11 +36,11 @@ final class Camera {
         proj.setPerspective((float) Math.toRadians(45), (float) width / height, 0.1f, Float.POSITIVE_INFINITY);
     }
     
-    void render() {
+    void render(ShaderProgram program) {
         view.setLookAt(position, position.add(direction, tempFront), up);
         
-        App.setUniform("uView", false, view);
-        App.setUniform("uProjection", false, proj);
+        program.setUniform("uView", false, view);
+        program.setUniform("uProjection", false, proj);
     }
     
 }

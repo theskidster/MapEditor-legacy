@@ -3,13 +3,21 @@
 in vec2 ioTexCoords;
 in vec3 ioColor;
 
-precision mediump float;
-
-//uniform sampler2D uTexture;
+uniform int uType;
+uniform vec3 uFontColor;
+uniform sampler2D uTexture;
 
 out vec4 ioResult;
 
 void main() {
-    //ioResult = texture(uTexture, ioTexCoords.st) * vec4(ioColor, 0);
-    ioResult = vec4(ioColor, 0);
+    switch(uType) {
+        case 0:
+            ioResult = vec4(ioColor, 0);
+            break;
+
+        case 1:
+            vec4 sampled = vec4(1, 1, 1, texture(uTexture, ioTexCoords).r);
+            ioResult     = vec4(uFontColor, 1) * sampled;
+            break;
+    }
 }

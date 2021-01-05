@@ -20,4 +20,9 @@ class Rectangle {
         this.height   = height;
     }
     
+    boolean intersects(Vector2i point) {
+        return (point.x > position.x && point.x < position.x + width) && 
+               (point.y > position.y && point.y < position.y + height);
+    }
+    
 }

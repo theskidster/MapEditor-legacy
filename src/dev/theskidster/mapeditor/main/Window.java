@@ -125,13 +125,9 @@ public final class Window {
             
         });
         
-        glfwSetCursorPosCallback(handle, (window, xPos, yPos) -> {
-            ui.setMousePosition(xPos, yPos);
-        });
+        glfwSetCursorPosCallback(handle, (window, xPos, yPos) -> ui.setMousePosition(xPos, yPos));
         
-        glfwSetMouseButtonCallback(handle, (window, button, action, mods) -> {
-            
-        });
+        glfwSetMouseButtonCallback(handle, (window, button, action, mods) -> ui.setMouseAction(button, action));
     }
     
 }

@@ -2,6 +2,7 @@ package dev.theskidster.mapeditor.ui;
 
 import dev.theskidster.mapeditor.graphics.Graphics;
 import dev.theskidster.mapeditor.main.App;
+import dev.theskidster.mapeditor.main.ShaderProgram;
 import static org.lwjgl.opengl.GL30.*;
 import org.lwjgl.system.MemoryUtil;
 
@@ -35,7 +36,7 @@ final class Background {
         glEnableVertexAttribArray(2);
     }
     
-    private void render() {
+    private void render(ShaderProgram program) {
         glBindVertexArray(g.vao);
         
         glBindBuffer(GL_ARRAY_BUFFER, g.vbo);
@@ -43,6 +44,8 @@ final class Background {
         
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, g.ibo);
         glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, g.indices);
+        
+        program.setUniform("uType", 0);
         
         glDrawElements(GL_TRIANGLES, g.indices.limit() * (numVertices / 20), GL_UNSIGNED_INT, 0);
         
@@ -53,12 +56,12 @@ final class Background {
         numVertices = 0;
     }
     
-    void batchEnd() {
+    void batchEnd(ShaderProgram program) {
         if(numVertices > 0) {
             g.vertices.flip();
             g.indices.flip();
             
-            render();
+            render(program);
             
             g.vertices.clear();
             g.indices.clear();
