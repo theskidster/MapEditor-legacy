@@ -73,6 +73,7 @@ public final class App {
                 
                 camera.update(window.width, window.height);
                 scene.update();
+                ui.update();
             }
             
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -80,6 +81,9 @@ public final class App {
             worldProgram.use();
             camera.render();
             scene.render();
+            
+            uiProgram.use();
+            ui.render(uiProgram);
             
             glfwSwapBuffers(window.handle);
             
@@ -115,7 +119,7 @@ public final class App {
             uiProgram = new ShaderProgram(shaderSourceFiles);
             uiProgram.use();
             
-            uiProgram.addUniform(ShaderBufferType.INT, "uTexture");
+            //uiProgram.addUniform(ShaderBufferType.INT, "uTexture");
             uiProgram.addUniform(ShaderBufferType.MAT4, "uProjection");
         }
         
@@ -137,6 +141,7 @@ public final class App {
         
         camera = new Camera(window.width, window.height);
         scene  = new Scene();
+        ui     = new UI();
         
         return true;
     }

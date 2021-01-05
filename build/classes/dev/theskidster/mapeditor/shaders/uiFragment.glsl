@@ -1,14 +1,15 @@
 #version 330 core
 
 in vec2 ioTexCoords;
-in vec4 ioColor;
+in vec3 ioColor;
 
 precision mediump float;
 
-uniform sampler2D uTexture;
+//uniform sampler2D uTexture;
 
 out vec4 ioResult;
 
 void main() {
-    ioResult = ioColor * texture(uTexture, ioTexCoords.st);
+    //ioResult = texture(uTexture, ioTexCoords.st) * vec4(ioColor, 0);
+    ioResult = vec4(ioColor, 0);
 }

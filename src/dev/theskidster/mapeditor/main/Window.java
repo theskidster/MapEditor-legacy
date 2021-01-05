@@ -100,11 +100,17 @@ public final class Window {
         glfwSetInputMode(handle, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
         glfwShowWindow(handle);
         
+        //Set initial UI viewport resolution.
+        ui.setViewport(width, height);
+        
         glfwSetWindowSizeCallback(handle, (window, w, h) -> {
             width  = w;
             height = h;
             
-            if(App.glReady) glViewport(0, 0, width, height);
+            if(App.glReady) {
+                glViewport(0, 0, width, height);
+                ui.setViewport(width, height);
+            }
         });
         
         glfwSetScrollCallback(handle, (window, xOffset, yOffset) -> {
@@ -120,7 +126,7 @@ public final class Window {
         });
         
         glfwSetCursorPosCallback(handle, (window, xPos, yPos) -> {
-            
+            ui.setMousePosition(xPos, yPos);
         });
         
         glfwSetMouseButtonCallback(handle, (window, button, action, mods) -> {

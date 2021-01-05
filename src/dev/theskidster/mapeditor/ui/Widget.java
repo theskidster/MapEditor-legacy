@@ -7,4 +7,9 @@ package dev.theskidster.mapeditor.ui;
 
 public abstract class Widget {
     
+    boolean hovered;
+    
+    abstract void update(int width, int height);
+    abstract void render();
+    
 }
