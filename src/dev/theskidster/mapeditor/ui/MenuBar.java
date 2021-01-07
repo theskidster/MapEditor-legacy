@@ -2,6 +2,7 @@ package dev.theskidster.mapeditor.ui;
 
 import dev.theskidster.mapeditor.main.ShaderProgram;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.joml.Vector2i;
 
@@ -14,7 +15,9 @@ public class MenuBar extends Widget {
 
     private final int MB_HEIGHT = 28;
     
-    private boolean clicked;
+    boolean openSubMenus;
+    private final boolean[] activeMenu;
+    private final boolean[] hoveredMenu;
     
     private final Rectangle rectangle;
     private final Background background;
@@ -22,8 +25,10 @@ public class MenuBar extends Widget {
     private List<LabelButton> buttons;
     
     public MenuBar() {
-        rectangle  = new Rectangle(new Vector2i(0, 0), 0, MB_HEIGHT);
-        background = new Background(6);
+        rectangle   = new Rectangle(new Vector2i(0, 0), 0, MB_HEIGHT);
+        background  = new Background(6);
+        activeMenu  = new boolean[5];
+        hoveredMenu = new boolean[5];
         
         Rectangle[] rectangles = {
             new Rectangle(new Vector2i(0, 0),   46, MB_HEIGHT),
@@ -49,7 +54,14 @@ public class MenuBar extends Widget {
         hovered = rectangle.intersects(mouse.cursorPos);
         rectangle.width = width;
         
-        buttons.forEach(button -> button.update(width, height, mouse));
+        for(int m = 0; m < buttons.size(); m++) {
+            buttons.get(m).update(mouse, openSubMenus, activeMenu[m]);
+            
+            hoveredMenu[m] = buttons.get(m).hovered;
+            if(openSubMenus && buttons.get(m).hovered) setActiveMenu(m);
+            
+            if(buttons.get(m).pressed) openSubMenus = true;
+        }
     }
 
     @Override
@@ -62,4 +74,25 @@ public class MenuBar extends Widget {
         buttons.forEach(button -> button.render(program, font));
     }
 
+    private void setActiveMenu(int index) {
+        for(int m = 0; m < buttons.size(); m++) activeMenu[m] = (m == index);
+    }
+    
+    private boolean getAnyMenuHovered() {
+        for(int m = 0; m < buttons.size(); m++) {
+            if(hoveredMenu[m]) return true;
+        }
+        
+        return false;
+    }
+    
+    boolean getMenuBarActive() {
+        return openSubMenus && getAnyMenuHovered();
+    }
+    
+    void resetState() {
+        openSubMenus = false;
+        Arrays.fill(activeMenu, false);
+    }
+    
 }

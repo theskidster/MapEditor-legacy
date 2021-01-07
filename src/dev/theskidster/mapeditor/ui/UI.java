@@ -5,9 +5,7 @@ import dev.theskidster.mapeditor.main.ShaderProgram;
 import java.util.HashMap;
 import java.util.Map;
 import org.joml.Matrix4f;
-import org.joml.Vector3f;
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL30.*;
 
 /**
  * @author J Hoffman
@@ -71,6 +69,15 @@ public class UI {
         this.height = height;
         
         projMatrix.setPerspective((float) Math.toRadians(45), (float) width / height, 0.1f, Float.POSITIVE_INFINITY);
+    }
+    
+    
+    public boolean getMenuBarActive() {
+        return ((MenuBar) widgets.get("Menu Bar")).getMenuBarActive();
+    }
+    
+    public void resetMenuBar() {
+        ((MenuBar) widgets.get("Menu Bar")).resetState();
     }
     
 }

@@ -26,10 +26,12 @@ public class LabelButton extends Widget {
     @Override
     void update(int width, int height, Mouse mouse) {
         if(rectangle.intersects(mouse.cursorPos)) {
+            hovered = true;
             pressed = mouse.clicked;
             color   = (pressed) ? Color.BLUE : Color.SILVER;
         } else {
-            color = Color.GRAY;
+            hovered = false;
+            color   = Color.GRAY;
         }
     }
 
@@ -41,9 +43,19 @@ public class LabelButton extends Widget {
         font.drawString(program, text, xOffset, yOffset, 1, Color.WHITE);
     }
     
+    void update(Mouse mouse, boolean openSubMenus, boolean isActive) {
+        if(rectangle.intersects(mouse.cursorPos)) {
+            hovered = true;
+            pressed = mouse.clicked;
+            color   = (pressed | openSubMenus) ? Color.BLUE : Color.SILVER;
+        } else {
+            hovered = false;
+            color   = (isActive) ? Color.BLUE : Color.GRAY;
+        }
+    }
+    
     void drawRectangle(Background background) {
         background.drawRectangle(rectangle, color);
-        
     }
     
 }
