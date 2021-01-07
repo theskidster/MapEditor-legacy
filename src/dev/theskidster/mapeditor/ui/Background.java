@@ -2,7 +2,10 @@ package dev.theskidster.mapeditor.ui;
 
 import dev.theskidster.mapeditor.graphics.Graphics;
 import dev.theskidster.mapeditor.main.App;
+import dev.theskidster.mapeditor.main.LogLevel;
+import dev.theskidster.mapeditor.main.Logger;
 import dev.theskidster.mapeditor.main.ShaderProgram;
+import java.nio.BufferOverflowException;
 import static org.lwjgl.opengl.GL30.*;
 import org.lwjgl.system.MemoryUtil;
 
@@ -71,17 +74,24 @@ final class Background {
     }
     
     void drawRectangle(float x, float y, float width, float height, Color color) {
-        int startIndex = (numVertices / 20) * Float.BYTES;
-        
-        g.vertices.put(x)        .put(y + height).put(color.r).put(color.g).put(color.b);
-        g.vertices.put(x + width).put(y + height).put(color.r).put(color.g).put(color.b);
-        g.vertices.put(x + width).put(y)         .put(color.r).put(color.g).put(color.b);
-        g.vertices.put(x)        .put(y)         .put(color.r).put(color.g).put(color.b);
-        
-        g.indices.put(startIndex)    .put(startIndex + 1).put(startIndex + 2);
-        g.indices.put(startIndex + 3).put(startIndex + 2).put(startIndex);
-        
-        numVertices += 20;
+        try {
+            int startIndex = (numVertices / 20) * Float.BYTES;
+
+            g.vertices.put(x)        .put(y + height).put(color.r).put(color.g).put(color.b);
+            g.vertices.put(x + width).put(y + height).put(color.r).put(color.g).put(color.b);
+            g.vertices.put(x + width).put(y)         .put(color.r).put(color.g).put(color.b);
+            g.vertices.put(x)        .put(y)         .put(color.r).put(color.g).put(color.b);
+
+            g.indices.put(startIndex)    .put(startIndex + 1).put(startIndex + 2);
+            g.indices.put(startIndex + 3).put(startIndex + 2).put(startIndex);
+
+            numVertices += 20;
+        } catch(BufferOverflowException e) {
+            Logger.setStackTrace(e);
+            Logger.log(LogLevel.SEVERE, 
+                       "Background buffer experienced overflow, " + 
+                       "check max number of allowed rectangles in constructor.");
+        }
     }
     
     void drawRectangle(Rectangle rectangle, Color color) {

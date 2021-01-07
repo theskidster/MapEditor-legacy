@@ -120,9 +120,9 @@ public final class App {
             uiProgram = new ShaderProgram(shaderSourceFiles);
             uiProgram.use();
             
+            uiProgram.addUniform(ShaderBufferType.MAT4, "uProjection");
             uiProgram.addUniform(ShaderBufferType.INT,  "uType");
             uiProgram.addUniform(ShaderBufferType.VEC3, "uFontColor");
-            uiProgram.addUniform(ShaderBufferType.MAT4, "uProjection");
         }
         
         //Initialize world shader
@@ -138,7 +138,7 @@ public final class App {
             worldProgram.addUniform(ShaderBufferType.MAT4, "uModel");
             worldProgram.addUniform(ShaderBufferType.MAT4, "uView");
             worldProgram.addUniform(ShaderBufferType.MAT4, "uProjection");
-            worldProgram.addUniform(ShaderBufferType.INT, "uType");
+            worldProgram.addUniform(ShaderBufferType.INT,  "uType");
         }
         
         camera = new Camera(window.width, window.height);

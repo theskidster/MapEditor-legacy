@@ -22,6 +22,8 @@ import static org.lwjgl.opengl.GL30.*;
 
 class TrueTypeFont {
     
+    public static final int FONT_HEIGHT = 18;
+    
     private Vector3f color = new Vector3f();
     
     private final int vao = glGenVertexArrays();
@@ -54,7 +56,7 @@ class TrueTypeFont {
         try {
             Face face = freeType.newFace(file.readAllBytes(), 0);
             
-            face.setPixelSizes(0, 18);
+            face.setPixelSizes(0, FONT_HEIGHT);
             
             glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
             

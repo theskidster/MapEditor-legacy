@@ -7,7 +7,7 @@ package dev.theskidster.mapeditor.ui;
 
 final class Color {
 
-    static final Color WHITE  = new Color(255);
+    static final Color WHITE  = new Color(200);
     static final Color SILVER = new Color(70);
     static final Color GRAY   = new Color(52);
     static final Color BLUE   = new Color(24, 88, 184);
