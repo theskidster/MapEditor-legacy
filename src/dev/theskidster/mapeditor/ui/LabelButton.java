@@ -10,7 +10,9 @@ import org.joml.Vector2i;
 
 public class LabelButton extends Widget {
 
-    boolean pressed;
+    private boolean prevPressed;
+    private boolean currPressed;
+    boolean toggle;
     
     private String text;
     private Rectangle rectangle;
@@ -24,16 +26,7 @@ public class LabelButton extends Widget {
     }
     
     @Override
-    void update(int width, int height, Mouse mouse) {
-        if(rectangle.intersects(mouse.cursorPos)) {
-            hovered = true;
-            pressed = mouse.clicked;
-            color   = (pressed) ? Color.BLUE : Color.SILVER;
-        } else {
-            hovered = false;
-            color   = Color.GRAY;
-        }
-    }
+    void update(int width, int height, Mouse mouse) {}
 
     @Override
     void render(ShaderProgram program, TrueTypeFont font) {
@@ -43,11 +36,18 @@ public class LabelButton extends Widget {
         font.drawString(program, text, xOffset, yOffset, 1, Color.WHITE);
     }
     
-    void update(Mouse mouse, boolean openSubMenus, boolean isActive) {
+    void update(Mouse mouse, MenuBar menuBar, boolean isActive) {
         if(rectangle.intersects(mouse.cursorPos)) {
-            hovered = true;
-            pressed = mouse.clicked;
-            color   = (pressed | openSubMenus) ? Color.BLUE : Color.SILVER;
+            hovered     = true;
+            prevPressed = currPressed;
+            currPressed = mouse.clicked;
+            
+            if(prevPressed != currPressed && !prevPressed) {
+                menuBar.openSubMenus = !menuBar.openSubMenus;
+                if(!menuBar.openSubMenus) menuBar.resetState();
+            }
+            
+            color = (currPressed || menuBar.openSubMenus) ? Color.BLUE : Color.SILVER;
         } else {
             hovered = false;
             color   = (isActive) ? Color.BLUE : Color.GRAY;

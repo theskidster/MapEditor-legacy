@@ -55,12 +55,10 @@ public class MenuBar extends Widget {
         rectangle.width = width;
         
         for(int m = 0; m < buttons.size(); m++) {
-            buttons.get(m).update(mouse, openSubMenus, activeMenu[m]);
+            buttons.get(m).update(mouse, this, activeMenu[m]);
             
             hoveredMenu[m] = buttons.get(m).hovered;
             if(openSubMenus && buttons.get(m).hovered) setActiveMenu(m);
-            
-            if(buttons.get(m).pressed) openSubMenus = true;
         }
     }
 
