@@ -30,7 +30,6 @@ public final class App {
     private Window window;
     private static ShaderProgram worldProgram;
     private ShaderProgram uiProgram;
-    private ShaderProgram currProgram;
     private Camera camera;
     private Scene scene;
     private UI ui;
@@ -167,13 +166,6 @@ public final class App {
             }
             
             Logger.log(LogLevel.SEVERE, "OpenGL Error: (" + glError + ") " + desc);
-        }
-    }
-    
-    //TODO: delet this
-    public static void checkShaderError(int handle, String filename) {
-        if(glGetShaderi(handle, GL_COMPILE_STATUS) != GL_TRUE) {
-            Logger.log(LogLevel.SEVERE, "Failed to compile GLSL file: \"" + filename + "\" " + glGetShaderInfoLog(handle));
         }
     }
     

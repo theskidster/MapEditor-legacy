@@ -15,92 +15,6 @@ import org.joml.Vector2i;
 
 public class MenuBar extends Widget {
     
-    private class LabelButton {
-        
-        private boolean prevPressed;
-        private boolean currPressed;
-        boolean hovered;
-        
-        private final String text;
-        private final Rectangle rectangle;
-        private final Vector2i padding;
-        private Color color;
-        
-        LabelButton(String text, Rectangle rectangle, Vector2i padding) {
-            this.text      = text;
-            this.rectangle = rectangle;
-            this.padding   = padding;
-        }
-        
-        void update(Mouse mouse, MenuBar menubar, boolean active) {
-            if(rectangle.intersects(mouse.cursorPos)) {
-                hovered     = true;
-                prevPressed = currPressed;
-                currPressed = mouse.clicked;
-                
-                if(prevPressed != currPressed && !prevPressed) {
-                    menubar.openSubMenus = !menubar.openSubMenus;
-                    if(!menubar.openSubMenus) menubar.resetState();
-                }
-                
-                color = (currPressed || menubar.openSubMenus) ? Color.BLUE : Color.MEDIUM_GRAY;
-            } else {
-                hovered = false;
-                color   = (active) ? Color.BLUE : Color.DARK_GRAY;
-            }
-        }
-        
-        void update(Mouse mouse) {
-            hovered = rectangle.intersects(mouse.cursorPos);
-            color   = (hovered) ? Color.BLUE : Color.DARK_GRAY;
-        }
-        
-        void renderBackground(Background background) {
-            background.drawRectangle(rectangle, color);
-        }
-        
-        void renderText(ShaderProgram program, TrueTypeFont font) {
-            int xOffset = rectangle.xPos + padding.x;
-            int yOffset = rectangle.yPos + padding.y + TrueTypeFont.FONT_HEIGHT;
-            
-            font.drawString(program, text, xOffset, yOffset, 1, Color.WHITE);
-        }
-        
-    }
-    
-    private class SubMenu {
-        
-        boolean hovered;
-        
-        private final Background background;
-        
-        private final List<LabelButton> buttons;
-        private final List<Rectangle> rectangles;
-        
-        SubMenu(List<LabelButton> buttons, List<Rectangle> rectangles) {
-            this.buttons    = buttons;
-            this.rectangles = rectangles;
-            
-            background = new Background(buttons.size() + rectangles.size());
-        }
-        
-        void update(Mouse mouse) {
-            hovered = rectangle.intersects(mouse.cursorPos);
-            
-            buttons.forEach(button -> button.update(mouse));
-        }
-        
-        void render(ShaderProgram program, TrueTypeFont text) {
-            background.batchStart();
-                rectangles.forEach(rect -> background.drawRectangle(rect, Color.LIGHT_GRAY));
-                buttons.forEach(button -> button.renderBackground(background));
-            background.batchEnd(program);
-            
-            buttons.forEach(button -> button.renderText(program, text));
-        }
-        
-    }
-    
     private final int MB_HEIGHT = 28;
     private int currMenuIndex;
     
@@ -120,8 +34,6 @@ public class MenuBar extends Widget {
         activeMenu  = new boolean[5];
         hoveredMenu = new boolean[5];
         
-        Vector2i padding;
-        
         //Initialize menubar buttons
         {
             Rectangle[] rectangles = {
@@ -132,7 +44,7 @@ public class MenuBar extends Widget {
                 new Rectangle(198, 0, 59, MB_HEIGHT)
             };
 
-            padding = new Vector2i(8, 2);
+            Vector2i padding = new Vector2i(8, 2);
 
             buttons = new ArrayList<>() {{
                 add(new LabelButton("File",  rectangles[0], padding));
@@ -148,20 +60,26 @@ public class MenuBar extends Widget {
             List<Rectangle> rectangles = new ArrayList<>() {{
                 add(new Rectangle(1, MB_HEIGHT + 1,       298, MB_HEIGHT));
                 add(new Rectangle(1, MB_HEIGHT * 2,       298, MB_HEIGHT));
-                add(new Rectangle(1, (MB_HEIGHT * 3) + 1, 298, MB_HEIGHT));
+                add(new Rectangle(1, (MB_HEIGHT * 3) - 1, 298, MB_HEIGHT));
                 add(new Rectangle(1, MB_HEIGHT * 4,       298, MB_HEIGHT));
+                add(new Rectangle(1, (MB_HEIGHT * 5) - 1, 298, MB_HEIGHT));
+                add(new Rectangle(1, MB_HEIGHT * 6,       298, MB_HEIGHT));
             }};
+            
+            Vector2i padding = new Vector2i(32, 2);
             
             List<LabelButton> subMenuButtons = new ArrayList<>() {{
                 add(new LabelButton("New Map...",       rectangles.get(0), padding));
                 add(new LabelButton("New Blockset...",  rectangles.get(1), padding));
-                add(new LabelButton("Open Map...",      rectangles.get(2), padding));
-                add(new LabelButton("Open Blockset...", rectangles.get(3), padding));
+                add(new LabelButton("Open...",          rectangles.get(2), padding));
+                add(new LabelButton("Save",             rectangles.get(3), padding));
+                add(new LabelButton("Save As...",       rectangles.get(4), padding));
+                add(new LabelButton("Quit",             rectangles.get(5), padding));
             }};
             
             rectangles.clear();
             
-            rectangles.add(new Rectangle(0, MB_HEIGHT, 300, 300));
+            rectangles.add(new Rectangle(0, MB_HEIGHT, 300, (MB_HEIGHT * 6) + 1));
             
             subMenus.put(0, new SubMenu(subMenuButtons, rectangles));
         }

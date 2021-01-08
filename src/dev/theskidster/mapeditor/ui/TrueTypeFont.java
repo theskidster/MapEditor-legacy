@@ -22,7 +22,7 @@ import static org.lwjgl.opengl.GL30.*;
 
 class TrueTypeFont {
     
-    public static final int FONT_HEIGHT = 18;
+    public static final int FONT_HEIGHT = 17;
     
     private Vector3f color = new Vector3f();
     
