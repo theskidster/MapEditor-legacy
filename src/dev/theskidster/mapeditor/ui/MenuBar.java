@@ -43,16 +43,16 @@ public class MenuBar extends Widget {
                     if(!menubar.openSubMenus) menubar.resetState();
                 }
                 
-                color = (currPressed || menubar.openSubMenus) ? Color.BLUE : Color.SILVER;
+                color = (currPressed || menubar.openSubMenus) ? Color.BLUE : Color.MEDIUM_GRAY;
             } else {
                 hovered = false;
-                color   = (active) ? Color.BLUE : Color.GRAY;
+                color   = (active) ? Color.BLUE : Color.DARK_GRAY;
             }
         }
         
         void update(Mouse mouse) {
             hovered = rectangle.intersects(mouse.cursorPos);
-            color   = (hovered) ? Color.BLUE : Color.GRAY;
+            color   = (hovered) ? Color.BLUE : Color.DARK_GRAY;
         }
         
         void renderBackground(Background background) {
@@ -92,7 +92,7 @@ public class MenuBar extends Widget {
         
         void render(ShaderProgram program, TrueTypeFont text) {
             background.batchStart();
-                rectangles.forEach(rect -> background.drawRectangle(rect, Color.SILVER));
+                rectangles.forEach(rect -> background.drawRectangle(rect, Color.LIGHT_GRAY));
                 buttons.forEach(button -> button.renderBackground(background));
             background.batchEnd(program);
             
@@ -122,7 +122,7 @@ public class MenuBar extends Widget {
         
         Vector2i padding;
         
-        //Initialize buttons that will appear on the menubar
+        //Initialize menubar buttons
         {
             Rectangle[] rectangles = {
                 new Rectangle(0,   0, 46, MB_HEIGHT),
@@ -146,13 +146,17 @@ public class MenuBar extends Widget {
         //Initialize File submenu options
         {
             List<Rectangle> rectangles = new ArrayList<>() {{
-                add(new Rectangle(0, MB_HEIGHT,     300, MB_HEIGHT));
-                add(new Rectangle(0, MB_HEIGHT * 2, 300, MB_HEIGHT));
+                add(new Rectangle(1, MB_HEIGHT + 1,       298, MB_HEIGHT));
+                add(new Rectangle(1, MB_HEIGHT * 2,       298, MB_HEIGHT));
+                add(new Rectangle(1, (MB_HEIGHT * 3) + 1, 298, MB_HEIGHT));
+                add(new Rectangle(1, MB_HEIGHT * 4,       298, MB_HEIGHT));
             }};
             
             List<LabelButton> subMenuButtons = new ArrayList<>() {{
                 add(new LabelButton("New Map...",       rectangles.get(0), padding));
                 add(new LabelButton("New Blockset...",  rectangles.get(1), padding));
+                add(new LabelButton("Open Map...",      rectangles.get(2), padding));
+                add(new LabelButton("Open Blockset...", rectangles.get(3), padding));
             }};
             
             rectangles.clear();
@@ -162,6 +166,41 @@ public class MenuBar extends Widget {
             subMenus.put(0, new SubMenu(subMenuButtons, rectangles));
         }
         
+        //TODO: add Edit submenu options
+        {
+            List<Rectangle> rectangles = new ArrayList<>() {{
+                add(new Rectangle(45, MB_HEIGHT, 280, 200));
+            }};
+            
+            subMenus.put(1, new SubMenu(new ArrayList<>(), rectangles));
+        }
+        
+        //TODO: add View submenu options
+        {
+            List<Rectangle> rectangles = new ArrayList<>() {{
+                add(new Rectangle(94, MB_HEIGHT, 315, 213));
+            }};
+            
+            subMenus.put(2, new SubMenu(new ArrayList<>(), rectangles));
+        }
+        
+        //TODO: add Map submenu options
+        {
+            List<Rectangle> rectangles = new ArrayList<>() {{
+                add(new Rectangle(147, MB_HEIGHT, 300, 312));
+            }};
+            
+            subMenus.put(3, new SubMenu(new ArrayList<>(), rectangles));
+        }
+        
+        //TODO: add Layer submenu options
+        {
+            List<Rectangle> rectangles = new ArrayList<>() {{
+                add(new Rectangle(198, MB_HEIGHT, 280, 350));
+            }};
+            
+            subMenus.put(4, new SubMenu(new ArrayList<>(), rectangles));
+        }
     }
     
     @Override
@@ -182,7 +221,7 @@ public class MenuBar extends Widget {
     @Override
     void render(ShaderProgram program, TrueTypeFont font) {        
         background.batchStart();
-            background.drawRectangle(rectangle, Color.GRAY);
+            background.drawRectangle(rectangle, Color.DARK_GRAY);
             buttons.forEach(button -> button.renderBackground(background));
         background.batchEnd(program);
         
