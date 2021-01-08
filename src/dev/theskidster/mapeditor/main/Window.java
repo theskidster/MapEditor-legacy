@@ -129,10 +129,7 @@ public final class Window {
         
         glfwSetMouseButtonCallback(handle, (window, button, action, mods) -> {
             ui.setMouseAction(button, action);
-            
-            if(action == GLFW_PRESS && !ui.getMenuBarActive()) {
-                ui.resetMenuBar();
-            }
+            if(action == GLFW_PRESS && !ui.getMenuBarActive()) ui.resetMenuBar();
         });
     }
     
