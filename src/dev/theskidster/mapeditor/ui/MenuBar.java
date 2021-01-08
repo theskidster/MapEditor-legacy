@@ -30,7 +30,7 @@ public class MenuBar extends Widget {
     
     public MenuBar() {
         rectangle   = new Rectangle(0, 0, 0, MB_HEIGHT);
-        background  = new Background(6);
+        background  = new Background(7); //Setting this to 6 causes the Quit option to flash for whatever reason
         activeMenu  = new boolean[5];
         hoveredMenu = new boolean[5];
         
@@ -77,47 +77,27 @@ public class MenuBar extends Widget {
                 add(new LabelButton("Quit",             rectangles.get(5), padding));
             }};
             
-            rectangles.clear();
-            
-            rectangles.add(new Rectangle(0, MB_HEIGHT, 300, (MB_HEIGHT * 6) + 1));
-            
-            subMenus.put(0, new SubMenu(subMenuButtons, rectangles));
+            subMenus.put(0, new SubMenu(subMenuButtons, new Rectangle(0, MB_HEIGHT, 300, (MB_HEIGHT * 6) + 1)));
         }
         
         //TODO: add Edit submenu options
         {
-            List<Rectangle> rectangles = new ArrayList<>() {{
-                add(new Rectangle(45, MB_HEIGHT, 280, 200));
-            }};
-            
-            subMenus.put(1, new SubMenu(new ArrayList<>(), rectangles));
+            subMenus.put(1, new SubMenu(new ArrayList<>(), new Rectangle(45, MB_HEIGHT, 280, 200)));
         }
         
         //TODO: add View submenu options
         {
-            List<Rectangle> rectangles = new ArrayList<>() {{
-                add(new Rectangle(94, MB_HEIGHT, 315, 213));
-            }};
-            
-            subMenus.put(2, new SubMenu(new ArrayList<>(), rectangles));
+            subMenus.put(2, new SubMenu(new ArrayList<>(), new Rectangle(94, MB_HEIGHT, 315, 213)));
         }
         
         //TODO: add Map submenu options
         {
-            List<Rectangle> rectangles = new ArrayList<>() {{
-                add(new Rectangle(147, MB_HEIGHT, 300, 312));
-            }};
-            
-            subMenus.put(3, new SubMenu(new ArrayList<>(), rectangles));
+            subMenus.put(3, new SubMenu(new ArrayList<>(), new Rectangle(147, MB_HEIGHT, 300, 312)));
         }
         
         //TODO: add Layer submenu options
         {
-            List<Rectangle> rectangles = new ArrayList<>() {{
-                add(new Rectangle(198, MB_HEIGHT, 280, 350));
-            }};
-            
-            subMenus.put(4, new SubMenu(new ArrayList<>(), rectangles));
+            subMenus.put(4, new SubMenu(new ArrayList<>(), new Rectangle(198, MB_HEIGHT, 280, 350)));
         }
     }
     

@@ -81,7 +81,7 @@ final class Background {
             g.vertices.put(x + width).put(y + height).put(color.r).put(color.g).put(color.b);
             g.vertices.put(x + width).put(y)         .put(color.r).put(color.g).put(color.b);
             g.vertices.put(x)        .put(y)         .put(color.r).put(color.g).put(color.b);
-
+            
             g.indices.put(startIndex)    .put(startIndex + 1).put(startIndex + 2);
             g.indices.put(startIndex + 3).put(startIndex + 2).put(startIndex);
 
