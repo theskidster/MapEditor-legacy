@@ -96,8 +96,8 @@ final class Background {
     
     void drawRectangle(Rectangle rectangle, Color color) {
         drawRectangle(
-                rectangle.position.x,
-                rectangle.position.y,
+                rectangle.xPos,
+                rectangle.yPos,
                 rectangle.width,
                 rectangle.height,
                 color);

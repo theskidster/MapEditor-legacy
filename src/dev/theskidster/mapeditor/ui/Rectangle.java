@@ -9,20 +9,22 @@ import org.joml.Vector2i;
 
 class Rectangle {
     
+    int xPos;
+    int yPos;
+    
     float width;
     float height;
     
-    Vector2i position;
-    
-    Rectangle(Vector2i position, float width, float height) {
-        this.position = position;
-        this.width    = width;
-        this.height   = height;
+    Rectangle(int xPos, int yPos, float width, float height) {
+        this.xPos   = xPos;
+        this.yPos   = yPos;
+        this.width  = width;
+        this.height = height;
     }
     
     boolean intersects(Vector2i point) {
-        return (point.x > position.x && point.x < position.x + width) && 
-               (point.y > position.y && point.y < position.y + height);
+        return (point.x > xPos && point.x < xPos + width) && 
+               (point.y > yPos && point.y < yPos + height);
     }
     
 }
