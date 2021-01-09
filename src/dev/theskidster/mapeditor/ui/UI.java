@@ -14,6 +14,8 @@ import static org.lwjgl.glfw.GLFW.*;
 
 public class UI {
     
+    public static int TITLE_HEIGHT = 40;
+    
     private int width;
     private int height;
     
@@ -22,7 +24,7 @@ public class UI {
     private final Mouse mouse         = new Mouse();
     private final Matrix4f projMatrix = new Matrix4f();
     
-    Map<String, Widget> widgets;
+    private Map<String, Widget> widgets;
     
     public UI() {
         font = new TrueTypeFont(FreeType.newLibrary(), "fnt_karla_regular.ttf");
@@ -42,6 +44,7 @@ public class UI {
                       -1f, 1f,   0, 1f);
         
         widgets.forEach((name, widget) -> widget.update(width, height, mouse));
+        widgets.entrySet().removeIf(widget -> widget.getValue().removeRequest);
     }
     
     public void render(ShaderProgram program) {
@@ -71,13 +74,16 @@ public class UI {
         projMatrix.setPerspective((float) Math.toRadians(45), (float) width / height, 0.1f, Float.POSITIVE_INFINITY);
     }
     
-    
     public boolean getMenuBarActive() {
         return ((MenuBar) widgets.get("Menu Bar")).getMenuBarActive();
     }
     
     public void resetMenuBar() {
         ((MenuBar) widgets.get("Menu Bar")).resetState();
+    }
+    
+    public void addWidget(String name, Widget widget) {
+        widgets.put(name, widget);
     }
     
 }

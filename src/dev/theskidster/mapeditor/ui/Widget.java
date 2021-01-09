@@ -10,6 +10,7 @@ import dev.theskidster.mapeditor.main.ShaderProgram;
 public abstract class Widget {
     
     boolean hovered;
+    boolean removeRequest;
     
     abstract void update(int width, int height, Mouse mouse);
     abstract void render(ShaderProgram program, TrueTypeFont font);

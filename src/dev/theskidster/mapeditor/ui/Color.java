@@ -11,6 +11,7 @@ final class Color {
     static final Color LIGHT_GRAY  = new Color(90);
     static final Color MEDIUM_GRAY = new Color(70);
     static final Color DARK_GRAY   = new Color(52);
+    static final Color BLACK       = new Color(34);
     static final Color BLUE        = new Color(24, 88, 184);
     
     final float r;

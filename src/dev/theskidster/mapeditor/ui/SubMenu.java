@@ -15,7 +15,7 @@ class SubMenu {
     private final Background background;
     private final Rectangle rectangle;
 
-    private final List<LabelButton> buttons;
+    final List<LabelButton> buttons;
 
     SubMenu(List<LabelButton> buttons, Rectangle rectangle) {
         this.buttons   = buttons;

@@ -1,12 +1,12 @@
 package dev.theskidster.mapeditor.main;
 
 import dev.theskidster.mapeditor.scene.Scene;
+import dev.theskidster.mapeditor.ui.NewMap;
 import dev.theskidster.mapeditor.ui.UI;
+import dev.theskidster.mapeditor.util.Event;
 import java.util.ArrayList;
-import org.joml.Matrix3f;
-import org.joml.Matrix4f;
-import org.joml.Vector2f;
-import org.joml.Vector3f;
+import java.util.LinkedList;
+import java.util.Queue;
 import static org.lwjgl.glfw.GLFW.*;
 import org.lwjgl.opengl.GL;
 import static org.lwjgl.opengl.GL20.*;
@@ -27,12 +27,14 @@ public final class App {
     public static final String VERSION = "0.7.0";
     
     private Monitor monitor;
-    private Window window;
+    private static Window window;
     private static ShaderProgram worldProgram;
     private ShaderProgram uiProgram;
     private Camera camera;
     private Scene scene;
     private UI ui;
+    
+    private static Queue<Event> events = new LinkedList<>();
     
     /**
      * Initializes application dependencies and enters a loop that will terminate once the user decides to exit.
@@ -70,6 +72,7 @@ public final class App {
                 ticked  = true;
                 
                 glfwPollEvents();
+                pollEvents();
                 
                 camera.update(window.width, window.height);
                 scene.update();
@@ -147,6 +150,23 @@ public final class App {
         return true;
     }
     
+    private void pollEvents() {
+        if(events.size() > 0) {
+            Event event = events.peek();
+            
+            if(!event.resolved) {
+                switch(event.type) {
+                    case Event.WIDGET_NEW_MAP:
+                        ui.addWidget("New Map", new NewMap());
+                        event.resolved = true;
+                        break;
+                }
+            } else {
+                events.poll();
+            }
+        }
+    }
+    
     /**
      * 
      */
@@ -167,6 +187,14 @@ public final class App {
             
             Logger.log(LogLevel.SEVERE, "OpenGL Error: (" + glError + ") " + desc);
         }
+    }
+    
+    public static void end() {
+        glfwSetWindowShouldClose(window.handle, true);
+    }
+    
+    public static void addEvent(Event event) {
+        events.add(event);
     }
     
 }

@@ -13,8 +13,9 @@ class LabelButton {
     private boolean prevPressed;
     private boolean currPressed;
     boolean hovered;
+    boolean clicked;
 
-    private final String text;
+    final String text;
     private final Rectangle rectangle;
     private final Vector2i padding;
     private Color color;
@@ -46,6 +47,7 @@ class LabelButton {
     void update(Mouse mouse) {
         hovered = rectangle.intersects(mouse.cursorPos);
         color   = (hovered) ? Color.BLUE : Color.DARK_GRAY;
+        clicked = (hovered && mouse.clicked);
     }
 
     void renderBackground(Background background) {
