@@ -28,12 +28,12 @@ public class MenuBar extends Widget {
     private final Rectangle rectangle;
     private final Background background;
     
-    private final List<LabelButton> buttons;
+    private final List<MenuOption> buttons;
     private final Map<Integer, SubMenu> subMenus = new HashMap<>();
     
     public MenuBar() {
         rectangle   = new Rectangle(0, 0, 0, HEIGHT);
-        background  = new Background(7); //Setting this to 6 causes the Quit option to flash for whatever reason
+        background  = new Background(6);
         activeMenu  = new boolean[5];
         hoveredMenu = new boolean[5];
         
@@ -50,11 +50,11 @@ public class MenuBar extends Widget {
             Vector2i padding = new Vector2i(8, 2);
 
             buttons = new ArrayList<>() {{
-                add(new LabelButton("File",  rectangles[0], padding));
-                add(new LabelButton("Edit",  rectangles[1], padding));
-                add(new LabelButton("View",  rectangles[2], padding));
-                add(new LabelButton("Map",   rectangles[3], padding));
-                add(new LabelButton("Layer", rectangles[4], padding));
+                add(new MenuOption("File",  rectangles[0], padding));
+                add(new MenuOption("Edit",  rectangles[1], padding));
+                add(new MenuOption("View",  rectangles[2], padding));
+                add(new MenuOption("Map",   rectangles[3], padding));
+                add(new MenuOption("Layer", rectangles[4], padding));
             }};
         }
         
@@ -71,13 +71,13 @@ public class MenuBar extends Widget {
             
             Vector2i padding = new Vector2i(32, 2);
             
-            List<LabelButton> subMenuButtons = new ArrayList<>() {{
-                add(new LabelButton("New Map...",       rectangles.get(0), padding));
-                add(new LabelButton("New Blockset...",  rectangles.get(1), padding));
-                add(new LabelButton("Open...",          rectangles.get(2), padding));
-                add(new LabelButton("Save",             rectangles.get(3), padding));
-                add(new LabelButton("Save As...",       rectangles.get(4), padding));
-                add(new LabelButton("Quit",             rectangles.get(5), padding));
+            List<MenuOption> subMenuButtons = new ArrayList<>() {{
+                add(new MenuOption("New Map...",       rectangles.get(0), padding));
+                add(new MenuOption("New Blockset...",  rectangles.get(1), padding));
+                add(new MenuOption("Open...",          rectangles.get(2), padding));
+                add(new MenuOption("Save",             rectangles.get(3), padding));
+                add(new MenuOption("Save As...",       rectangles.get(4), padding));
+                add(new MenuOption("Quit",             rectangles.get(5), padding));
             }};
             
             subMenus.put(0, new SubMenu(subMenuButtons, new Rectangle(0, HEIGHT, 300, (HEIGHT * 6) + 1)));
@@ -131,7 +131,6 @@ public class MenuBar extends Widget {
                             break;
                     }
                     
-                    openSubMenus = false;
                     resetState();
                 }
             }));

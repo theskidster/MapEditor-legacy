@@ -1,14 +1,13 @@
 package dev.theskidster.mapeditor.ui;
 
 import dev.theskidster.mapeditor.main.ShaderProgram;
-import org.joml.Vector2i;
 
 /**
  * @author J Hoffman
  * Created: Jan 8, 2021
  */
 
-public class NewMap extends Widget {
+public class NewMap extends Frame {
     
     private float xOffset;
     private float yOffset;
@@ -34,9 +33,11 @@ public class NewMap extends Widget {
     @Override
     void render(ShaderProgram program, TrueTypeFont font) {
         background.batchStart();
-            background.drawRectangle(xOffset, yOffset - UI.TITLE_HEIGHT, 300, UI.TITLE_HEIGHT, Color.BLACK);
-            background.drawRectangle(xOffset, yOffset, 300, 150 + UI.TITLE_HEIGHT, Color.DARK_GRAY);
+            background.drawRectangle(xOffset, yOffset - TITLE_HEIGHT, 300, TITLE_HEIGHT, Color.BLACK);
+            background.drawRectangle(xOffset, yOffset, 300, 150 + TITLE_HEIGHT, Color.DARK_GRAY);
         background.batchEnd(program);
+        
+        font.drawString(program, "New Map", xOffset + 32, yOffset - (TITLE_HEIGHT / 3), 1, Color.WHITE);
     }
     
 }

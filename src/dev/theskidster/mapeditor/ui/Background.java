@@ -8,6 +8,7 @@ import dev.theskidster.mapeditor.main.ShaderProgram;
 import java.nio.BufferOverflowException;
 import static org.lwjgl.opengl.GL30.*;
 import org.lwjgl.system.MemoryUtil;
+import static org.lwjgl.system.MemoryUtil.NULL;
 
 /**
  * @author J Hoffman
@@ -18,19 +19,19 @@ final class Background {
 
     private int numVertices;
     
-    private Graphics g = new Graphics();
+    private final Graphics g = new Graphics();
     
     Background(int numRectangles) {
-        g.vertices = MemoryUtil.memAllocFloat(20 * numRectangles);
-        g.indices  = MemoryUtil.memAllocInt(6 * numRectangles);
+        g.vertices = MemoryUtil.memAllocFloat(20 * numRectangles * Float.BYTES);
+        g.indices  = MemoryUtil.memAllocInt(6 * numRectangles * Float.BYTES);
         
         glBindVertexArray(g.vao);
         
         glBindBuffer(GL_ARRAY_BUFFER, g.vbo);
-        glBufferData(GL_ARRAY_BUFFER, g.vertices.capacity() * Float.BYTES, GL_DYNAMIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, g.vertices.capacity() + 1, GL_DYNAMIC_DRAW);
         
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, g.ibo);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, g.indices.capacity() * Float.BYTES, GL_DYNAMIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, g.indices.capacity(), GL_DYNAMIC_DRAW);
         
         glVertexAttribPointer(0, 2, GL_FLOAT, false, (5 * Float.BYTES), 0);
         glVertexAttribPointer(2, 3, GL_FLOAT, false, (5 * Float.BYTES), (2 * Float.BYTES));
@@ -50,7 +51,7 @@ final class Background {
         
         program.setUniform("uType", 0);
         
-        glDrawElements(GL_TRIANGLES, g.indices.limit() * (numVertices / 20), GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, g.indices.limit() * (numVertices / 20), GL_UNSIGNED_INT, NULL);
         
         App.checkGLError();
     }
@@ -76,7 +77,7 @@ final class Background {
     void drawRectangle(float x, float y, float width, float height, Color color) {
         try {
             int startIndex = (numVertices / 20) * Float.BYTES;
-
+            
             g.vertices.put(x)        .put(y + height).put(color.r).put(color.g).put(color.b);
             g.vertices.put(x + width).put(y + height).put(color.r).put(color.g).put(color.b);
             g.vertices.put(x + width).put(y)         .put(color.r).put(color.g).put(color.b);

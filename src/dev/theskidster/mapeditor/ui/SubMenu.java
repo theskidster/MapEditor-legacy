@@ -15,9 +15,9 @@ class SubMenu {
     private final Background background;
     private final Rectangle rectangle;
 
-    final List<LabelButton> buttons;
+    final List<MenuOption> buttons;
 
-    SubMenu(List<LabelButton> buttons, Rectangle rectangle) {
+    SubMenu(List<MenuOption> buttons, Rectangle rectangle) {
         this.buttons   = buttons;
         this.rectangle = rectangle;
         
@@ -28,7 +28,7 @@ class SubMenu {
         hovered = rectangle.intersects(mouse.cursorPos);
         buttons.forEach(button -> button.update(mouse));
     }
-
+    
     void render(ShaderProgram program, TrueTypeFont text) {
         background.batchStart();
             background.drawRectangle(rectangle, Color.LIGHT_GRAY);

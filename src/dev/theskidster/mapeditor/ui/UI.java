@@ -14,8 +14,6 @@ import static org.lwjgl.glfw.GLFW.*;
 
 public class UI {
     
-    public static int TITLE_HEIGHT = 40;
-    
     private int width;
     private int height;
     

@@ -8,7 +8,7 @@ import org.joml.Vector2i;
  * Created: Jan 8, 2021
  */
 
-class LabelButton {
+class MenuOption {
     
     private boolean prevPressed;
     private boolean currPressed;
@@ -20,7 +20,7 @@ class LabelButton {
     private final Vector2i padding;
     private Color color;
 
-    LabelButton(String text, Rectangle rectangle, Vector2i padding) {
+    MenuOption(String text, Rectangle rectangle, Vector2i padding) {
         this.text      = text;
         this.rectangle = rectangle;
         this.padding   = padding;
