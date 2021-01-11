@@ -34,7 +34,7 @@ public final class App {
     private Scene scene;
     private UI ui;
     
-    private static Queue<Event> events = new LinkedList<>();
+    private static final Queue<Event> events = new LinkedList<>();
     
     /**
      * Initializes application dependencies and enters a loop that will terminate once the user decides to exit.
@@ -122,9 +122,11 @@ public final class App {
             uiProgram = new ShaderProgram(shaderSourceFiles);
             uiProgram.use();
             
-            uiProgram.addUniform(ShaderBufferType.MAT4, "uProjection");
             uiProgram.addUniform(ShaderBufferType.INT,  "uType");
+            uiProgram.addUniform(ShaderBufferType.VEC2, "uTexCoords");
+            uiProgram.addUniform(ShaderBufferType.VEC2, "uPosition");
             uiProgram.addUniform(ShaderBufferType.VEC3, "uFontColor");
+            uiProgram.addUniform(ShaderBufferType.MAT4, "uProjection");
         }
         
         //Initialize world shader
@@ -137,10 +139,10 @@ public final class App {
             worldProgram = new ShaderProgram(shaderSourceFiles);
             worldProgram.use();
             
+            worldProgram.addUniform(ShaderBufferType.INT,  "uType");
             worldProgram.addUniform(ShaderBufferType.MAT4, "uModel");
             worldProgram.addUniform(ShaderBufferType.MAT4, "uView");
             worldProgram.addUniform(ShaderBufferType.MAT4, "uProjection");
-            worldProgram.addUniform(ShaderBufferType.INT,  "uType");
         }
         
         camera = new Camera(window.width, window.height);

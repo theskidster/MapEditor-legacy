@@ -27,6 +27,7 @@ public class MenuBar extends Widget {
     
     private final Rectangle rectangle;
     private final Background background;
+    private final Icon[] icons = new Icon[5];
     
     private final List<MenuOption> buttons;
     private final Map<Integer, SubMenu> subMenus = new HashMap<>();
@@ -36,6 +37,25 @@ public class MenuBar extends Widget {
         background  = new Background(6);
         activeMenu  = new boolean[5];
         hoveredMenu = new boolean[5];
+        
+        for(int i = 0; i < icons.length; i++) {
+            icons[i] = new Icon("spr_icons.png", 20, 20);
+        }
+        
+        icons[0].setPosition(12, (HEIGHT * 2) - 4);
+        icons[0].setSprite(5, 0);
+        
+        icons[1].setPosition(12, (HEIGHT * 3) - 4);
+        icons[1].setSprite(4, 0);
+        
+        icons[2].setPosition(12, (HEIGHT * 4) - 5);
+        icons[2].setSprite(1, 0);
+        
+        icons[3].setPosition(12, (HEIGHT * 5) - 4);
+        icons[3].setSprite(3, 0);
+        
+        icons[4].setPosition(12, (HEIGHT * 7) - 4);
+        icons[4].setSprite(2, 0);
         
         //Initialize menubar buttons
         {
@@ -61,15 +81,15 @@ public class MenuBar extends Widget {
         //Initialize File submenu options
         {
             List<Rectangle> rectangles = new ArrayList<>() {{
-                add(new Rectangle(1, HEIGHT + 1,       298, HEIGHT));
-                add(new Rectangle(1, HEIGHT * 2,       298, HEIGHT));
-                add(new Rectangle(1, (HEIGHT * 3) - 1, 298, HEIGHT));
-                add(new Rectangle(1, HEIGHT * 4,       298, HEIGHT));
-                add(new Rectangle(1, (HEIGHT * 5) - 1, 298, HEIGHT));
-                add(new Rectangle(1, HEIGHT * 6,       298, HEIGHT));
+                add(new Rectangle(1, HEIGHT + 1,       318, HEIGHT));
+                add(new Rectangle(1, HEIGHT * 2,       318, HEIGHT));
+                add(new Rectangle(1, (HEIGHT * 3) - 1, 318, HEIGHT));
+                add(new Rectangle(1, HEIGHT * 4,       318, HEIGHT));
+                add(new Rectangle(1, (HEIGHT * 5) - 1, 318, HEIGHT));
+                add(new Rectangle(1, HEIGHT * 6,       318, HEIGHT));
             }};
             
-            Vector2i padding = new Vector2i(32, 2);
+            Vector2i padding = new Vector2i(42, 2);
             
             List<MenuOption> subMenuButtons = new ArrayList<>() {{
                 add(new MenuOption("New Map...",       rectangles.get(0), padding));
@@ -80,7 +100,7 @@ public class MenuBar extends Widget {
                 add(new MenuOption("Quit",             rectangles.get(5), padding));
             }};
             
-            subMenus.put(0, new SubMenu(subMenuButtons, new Rectangle(0, HEIGHT, 300, (HEIGHT * 6) + 1)));
+            subMenus.put(0, new SubMenu(subMenuButtons, new Rectangle(0, HEIGHT, 320, (HEIGHT * 6) + 1)));
         }
         
         //TODO: add Edit submenu options
@@ -144,7 +164,16 @@ public class MenuBar extends Widget {
             buttons.forEach(button -> button.renderBackground(background));
         background.batchEnd(program);
         
-        if(openSubMenus) subMenus.get(currMenuIndex).render(program, font);
+        if(openSubMenus) {
+            subMenus.get(currMenuIndex).render(program, font);
+            
+            switch(currMenuIndex) {
+                case 0:
+                    for(int i = 0; i < 5; i++) icons[i].render(program);
+                    break;
+            }
+        }
+        
         buttons.forEach(button -> button.renderText(program, font));
     }
     

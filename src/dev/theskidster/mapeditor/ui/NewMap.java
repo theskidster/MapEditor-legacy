@@ -14,6 +14,8 @@ public class NewMap extends Frame {
     
     private Rectangle[] rectangles;
     
+    private Icon icon;
+    
     Background background;
     
     public NewMap() {
@@ -22,12 +24,17 @@ public class NewMap extends Frame {
         rectangles = new Rectangle[] {
             new Rectangle(0, 0, 150, 75)
         };
+        
+        icon = new Icon("spr_icons.png", 20, 20);
+        icon.setSprite(5, 0);
     }
     
     @Override
     void update(int width, int height, Mouse mouse) {
         xOffset = (width / 2) - rectangles[0].width;
         yOffset = (height / 2) - rectangles[0].height;
+        
+        icon.setPosition((int) xOffset + 12, (int) yOffset - 9);
     }
 
     @Override
@@ -37,7 +44,9 @@ public class NewMap extends Frame {
             background.drawRectangle(xOffset, yOffset, 300, 150 + TITLE_HEIGHT, Color.DARK_GRAY);
         background.batchEnd(program);
         
-        font.drawString(program, "New Map", xOffset + 32, yOffset - (TITLE_HEIGHT / 3), 1, Color.WHITE);
+        font.drawString(program, "New Map", xOffset + 42, yOffset - (TITLE_HEIGHT / 3), 1, Color.WHITE);
+        
+        icon.render(program);
     }
     
 }
