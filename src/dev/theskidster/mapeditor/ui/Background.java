@@ -1,5 +1,6 @@
 package dev.theskidster.mapeditor.ui;
 
+import dev.theskidster.mapeditor.util.Color;
 import dev.theskidster.mapeditor.graphics.Graphics;
 import dev.theskidster.mapeditor.main.App;
 import dev.theskidster.mapeditor.main.LogLevel;

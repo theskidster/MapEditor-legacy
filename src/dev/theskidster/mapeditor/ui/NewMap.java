@@ -1,5 +1,6 @@
 package dev.theskidster.mapeditor.ui;
 
+import dev.theskidster.mapeditor.util.Color;
 import dev.theskidster.mapeditor.main.ShaderProgram;
 
 /**
@@ -22,11 +23,11 @@ public class NewMap extends Frame {
         background = new Background(3);
         
         rectangles = new Rectangle[] {
-            new Rectangle(0, 0, 150, 75)
+            new Rectangle(0, 0, 244, 215)
         };
         
         icon = new Icon("spr_icons.png", 20, 20);
-        icon.setSprite(5, 0);
+        icon.setSprite(2, 2);
     }
     
     @Override
@@ -34,17 +35,17 @@ public class NewMap extends Frame {
         xOffset = (width / 2) - rectangles[0].width;
         yOffset = (height / 2) - rectangles[0].height;
         
-        icon.setPosition((int) xOffset + 12, (int) yOffset - 9);
+        icon.setPosition((int) xOffset + 13, (int) yOffset - 9);
     }
 
     @Override
     void render(ShaderProgram program, TrueTypeFont font) {
         background.batchStart();
-            background.drawRectangle(xOffset, yOffset - TITLE_HEIGHT, 300, TITLE_HEIGHT, Color.BLACK);
-            background.drawRectangle(xOffset, yOffset, 300, 150 + TITLE_HEIGHT, Color.DARK_GRAY);
+            background.drawRectangle(xOffset, yOffset - TITLE_HEIGHT, 488, TITLE_HEIGHT, Color.BLACK);
+            background.drawRectangle(xOffset, yOffset, 488, 430, Color.DARK_GRAY);
         background.batchEnd(program);
         
-        font.drawString(program, "New Map", xOffset + 42, yOffset - (TITLE_HEIGHT / 3), 1, Color.WHITE);
+        font.drawString(program, "New Map", xOffset + 45, yOffset - (TITLE_HEIGHT / 3), 1, Color.WHITE);
         
         icon.render(program);
     }

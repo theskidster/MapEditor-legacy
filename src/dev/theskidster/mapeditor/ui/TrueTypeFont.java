@@ -1,5 +1,6 @@
 package dev.theskidster.mapeditor.ui;
 
+import dev.theskidster.mapeditor.util.Color;
 import com.mlomb.freetypejni.Face;
 import static com.mlomb.freetypejni.FreeTypeConstants.FT_LOAD_RENDER;
 import com.mlomb.freetypejni.Library;

@@ -106,6 +106,8 @@ class Icon {
     }
     
     void render(ShaderProgram program) {
+        glEnable(GL_BLEND);
+        
         glBindTexture(GL_TEXTURE_2D, texture.handle);
         glBindVertexArray(g.vao);
         
@@ -114,6 +116,8 @@ class Icon {
         program.setUniform("uPosition", position);
         
         glDrawElements(GL_TRIANGLES, g.indices.limit(), GL_UNSIGNED_INT, 0);
+        
+        glDisable(GL_BLEND);
         
         App.checkGLError();
     }

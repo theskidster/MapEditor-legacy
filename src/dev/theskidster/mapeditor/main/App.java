@@ -3,6 +3,7 @@ package dev.theskidster.mapeditor.main;
 import dev.theskidster.mapeditor.scene.Scene;
 import dev.theskidster.mapeditor.ui.NewMap;
 import dev.theskidster.mapeditor.ui.UI;
+import dev.theskidster.mapeditor.util.Color;
 import dev.theskidster.mapeditor.util.Event;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -47,7 +48,7 @@ public final class App {
         
         glReady = glInit();
         
-        glClearColor(0.5f, 0.5f, 0.5f, 0);
+        setClearColor(Color.SLATE);
         
         window.show(monitor, ui);
         Logger.printSystemInfo();
@@ -197,6 +198,10 @@ public final class App {
     
     public static void addEvent(Event event) {
         events.add(event);
+    }
+    
+    public static void setClearColor(Color color) {
+        glClearColor(color.r, color.g, color.b, 0);
     }
     
 }
