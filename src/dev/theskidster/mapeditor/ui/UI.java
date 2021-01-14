@@ -19,6 +19,8 @@ public class UI {
     
     TrueTypeFont font;
     
+    private static TextArea textArea;
+    
     private final Mouse mouse         = new Mouse();
     private final Matrix4f projMatrix = new Matrix4f();
     
@@ -49,6 +51,10 @@ public class UI {
         program.setUniform("uProjection", false, projMatrix);
         
         widgets.forEach((name, widget) -> widget.render(program, font));
+    }
+    
+    static void setTextArea(TextArea area) {
+        textArea = area;
     }
     
     public void setMousePosition(double x, double y) {
@@ -82,6 +88,10 @@ public class UI {
     
     public void addWidget(String name, Widget widget) {
         widgets.put(name, widget);
+    }
+    
+    public void enterText(int key, int action) {
+        if(textArea != null) textArea.processInput(key, action);
     }
     
 }

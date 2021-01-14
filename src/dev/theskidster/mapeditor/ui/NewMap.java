@@ -10,7 +10,9 @@ import java.util.List;
  * Created: Jan 8, 2021
  */
 
-public class NewMap extends Frame {
+public final class NewMap extends Frame {
+    
+    private final TextArea textArea;
     
     private final Background background;
     private List<Rectangle> rectangles;
@@ -18,7 +20,9 @@ public class NewMap extends Frame {
     public NewMap(int xPos, int yPos) {
         super(new Icon("spr_icons.png", 20, 20), "New Map", xPos, yPos, 488, 430, true);
         
-        background = new Background(5);
+        background = new Background(7);
+        
+        textArea = new TextArea(700, 400, 40);
         
         rectangles = new ArrayList<>() {{
             add(titleBar);
@@ -32,6 +36,7 @@ public class NewMap extends Frame {
     void update(int width, int height, Mouse mouse) {
         center(width, height);
         closeButton.update(mouse);
+        textArea.update(mouse, xPos, yPos);
     }
 
     @Override
@@ -43,6 +48,7 @@ public class NewMap extends Frame {
             background.drawRectangle(xPos + 13, yPos + 38, 462, 58, Color.LIGHT_GRAY);
             background.drawRectangle(xPos + 14, yPos + 39, 460, 56, Color.DARK_GRAY);
             closeButton.renderBackground(background);
+            textArea.renderBackground(background);
         background.batchEnd(program);
         
         font.drawString(program, "New Map", xPos + 45, yPos - (TITLE_BAR_HEIGHT / 3), 1, Color.WHITE);
@@ -51,6 +57,12 @@ public class NewMap extends Frame {
         
         icon.render(program);
         closeButton.renderIcon(program);
+        textArea.renderIcon(program);
+    }
+
+    @Override
+    void close() {
+        //TODO: close method provided to unfocus all text areas.
     }
     
 }

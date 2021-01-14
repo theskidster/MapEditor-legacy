@@ -117,12 +117,8 @@ public final class Window {
             
         });
         
-        glfwSetCharCallback(handle, (window, codepoint) -> {
-            
-        });
-        
         glfwSetKeyCallback(handle, (window, key, scancode, action, mods) -> {
-            
+            ui.enterText(key, action);
         });
         
         glfwSetCursorPosCallback(handle, (window, xPos, yPos) -> ui.setMousePosition(xPos, yPos));

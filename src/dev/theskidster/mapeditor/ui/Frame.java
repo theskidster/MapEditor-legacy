@@ -9,7 +9,20 @@ import dev.theskidster.mapeditor.util.Color;
  */
 
 abstract class Frame extends Widget {
-
+    
+    protected final int TITLE_BAR_HEIGHT = 40;
+    
+    protected int xPos;
+    protected int yPos;
+    protected final int width;
+    protected final int height;
+    
+    protected Icon icon;
+    protected String title;
+    protected final Rectangle titleBar;
+    protected final Rectangle content;
+    protected final CloseButton closeButton;
+    
     protected final class CloseButton {
         
         private final Rectangle rectangle;
@@ -30,7 +43,10 @@ abstract class Frame extends Widget {
         void update(Mouse mouse) {
             if(rectangle.intersects(mouse.cursorPos)) {
                 color = Color.RED;
-                if(mouse.clicked) removeRequest = true;
+                if(mouse.clicked) {
+                    close();
+                    removeRequest = true;
+                }
             } else {
                 color = Color.BLACK;
             }
@@ -49,19 +65,6 @@ abstract class Frame extends Widget {
             icon.render(program);
         }
     }
-    
-    protected final int TITLE_BAR_HEIGHT = 40;
-    
-    protected int xPos;
-    protected int yPos;
-    protected final int width;
-    protected final int height;
-    
-    protected Icon icon;
-    protected String title;
-    protected final Rectangle titleBar;
-    protected final Rectangle content;
-    protected final CloseButton closeButton;
     
     public Frame(int xPos, int yPos, int width, int height, boolean closeable) {
         this.xPos   = xPos;
@@ -90,6 +93,8 @@ abstract class Frame extends Widget {
     @Override
     abstract void render(ShaderProgram program, TrueTypeFont font);
 
+    abstract void close();
+    
     protected void center(int width, int height) {
         xPos = (width / 2) - ((int) content.width / 2);
         yPos = (height / 2) - ((int) content.height / 2);
