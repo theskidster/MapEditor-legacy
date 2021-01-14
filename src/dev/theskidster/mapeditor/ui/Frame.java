@@ -18,10 +18,10 @@ abstract class Frame extends Widget {
         
         CloseButton() {
             rectangle = new Rectangle(
-                    xPos + (width - TITLE_HEIGHT), 
+                    xPos + (width - TITLE_BAR_HEIGHT), 
                     yPos, 
-                    TITLE_HEIGHT, 
-                    TITLE_HEIGHT);
+                    TITLE_BAR_HEIGHT, 
+                    TITLE_BAR_HEIGHT);
             
             icon = new Icon("spr_icons.png", 20, 20);
             icon.setSprite(0, 0);
@@ -35,8 +35,8 @@ abstract class Frame extends Widget {
                 color = Color.BLACK;
             }
             
-            rectangle.xPos = xPos + (width - TITLE_HEIGHT);
-            rectangle.yPos = yPos - TITLE_HEIGHT;
+            rectangle.xPos = xPos + (width - TITLE_BAR_HEIGHT);
+            rectangle.yPos = yPos - TITLE_BAR_HEIGHT;
             
             icon.setPosition(rectangle.xPos + 9, yPos - 9);
         }
@@ -50,26 +50,38 @@ abstract class Frame extends Widget {
         }
     }
     
-    protected final int TITLE_HEIGHT = 40;
+    protected final int TITLE_BAR_HEIGHT = 40;
     
     protected int xPos;
     protected int yPos;
     protected final int width;
     protected final int height;
     
-    protected final Rectangle title;
-    protected final Rectangle body;
+    protected Icon icon;
+    protected String title;
+    protected final Rectangle titleBar;
+    protected final Rectangle content;
     protected final CloseButton closeButton;
     
-    public Frame(int xPos, int yPos, int width, int height) {
+    public Frame(int xPos, int yPos, int width, int height, boolean closeable) {
         this.xPos   = xPos;
         this.yPos   = yPos;
         this.width  = width;
         this.height = height;
         
-        title       = new Rectangle(0, 0, width, TITLE_HEIGHT);
-        body        = new Rectangle(0, 0, width, height);
-        closeButton = new CloseButton();
+        titleBar    = new Rectangle(0, 0, width, TITLE_BAR_HEIGHT);
+        content     = new Rectangle(0, 0, width, height);
+        closeButton = (closeable) ? new CloseButton() : null;
+    }
+    
+    public Frame(String title, int xPos, int yPos, int width, int height, boolean closable) {
+        this(xPos, yPos, width, height, closable);
+        this.title = title;
+    }
+    
+    public Frame(Icon icon, String title, int xPos, int yPos, int width, int height, boolean closable) {
+        this(title, xPos, yPos, width, height, closable);
+        this.icon = icon;
     }
     
     @Override
@@ -79,8 +91,10 @@ abstract class Frame extends Widget {
     abstract void render(ShaderProgram program, TrueTypeFont font);
 
     protected void center(int width, int height) {
-        xPos = (width / 2) - ((int) body.width / 2);
-        yPos = (height / 2) - ((int) body.height / 2);
+        xPos = (width / 2) - ((int) content.width / 2);
+        yPos = (height / 2) - ((int) content.height / 2);
+        
+        if(icon != null) icon.setPosition(xPos + 13, yPos - 9);
     }
     
 }
