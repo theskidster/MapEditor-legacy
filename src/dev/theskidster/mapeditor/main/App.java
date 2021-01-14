@@ -160,7 +160,7 @@ public final class App {
             if(!event.resolved) {
                 switch(event.type) {
                     case Event.WIDGET_NEW_MAP:
-                        ui.addWidget("New Map", new NewMap());
+                        ui.addWidget("New Map", new NewMap(window.width, window.height));
                         event.resolved = true;
                         break;
                 }
