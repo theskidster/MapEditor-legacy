@@ -30,7 +30,7 @@ class TrueTypeFont {
     private final int vao = glGenVertexArrays();
     private final int vbo = glGenBuffers();
     
-    private Map<Character, Glyph> glyphs = new HashMap<>();
+    private static Map<Character, Glyph> glyphs = new HashMap<>();
     
     TrueTypeFont(Library freeType, String filename) {
         try(InputStream file = TrueTypeFont.class.getResourceAsStream("/dev/theskidster/mapeditor/assets/" + filename)) {
@@ -155,11 +155,15 @@ class TrueTypeFont {
         glDisable(GL_SCISSOR_TEST);
     }
     
-    int getLengthInPixels(String text) {
+    static int getLengthInPixels(String text, float scale) {
         int length = 0;
-        for(char c : text.toCharArray()) length += glyphs.get(c).advance;
+        for(char c : text.toCharArray()) length += (glyphs.get(c).advance >> 6) * scale;
         
         return length;
     }
+    
+    static int getCharAdvance(char c, float scale) {
+        return (int) ((glyphs.get(c).advance >> 6) * scale);
+    } 
     
 }

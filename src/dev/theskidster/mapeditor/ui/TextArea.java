@@ -12,7 +12,7 @@ import static org.lwjgl.glfw.GLFW.*;
  * Created: Jan 13, 2021
  */
 
-public final class TextArea {
+final class TextArea {
     
     private final int TEXT_AREA_HEIGHT = 30;
     
@@ -24,8 +24,8 @@ public final class TextArea {
     private boolean hasFocus;
     private boolean shiftHeld;
     
-    private StringBuilder typed = new StringBuilder();
-    private Vector2i textPos    = new Vector2i();
+    private final StringBuilder typed = new StringBuilder();
+    private final Vector2i textPos    = new Vector2i();
     
     private Rectangle rectBack;
     private Rectangle rectFront;
@@ -60,9 +60,11 @@ public final class TextArea {
         
         iconLeft  = new Icon("spr_icons.png", 15, TEXT_AREA_HEIGHT);
         iconRight = new Icon("spr_icons.png", 15, TEXT_AREA_HEIGHT);
+        carat     = new Icon("spr_icons.png", 15, TEXT_AREA_HEIGHT);
         
         iconLeft.setSprite(6, 0);
         iconRight.setSprite(7, 0);
+        carat.setSprite(4, 2);
         
         iconLeft.setPosition(xOffset, yOffset + TEXT_AREA_HEIGHT);
         iconRight.setPosition(xOffset + (width - 15), yOffset + TEXT_AREA_HEIGHT);
@@ -126,16 +128,14 @@ public final class TextArea {
     
     private void insertChar(char c) {
         typed.insert(xIndex, c);
-        
         xIndex++;
-        
         scroll();
     }
     
     private void scroll() {
-        if(typed.length() > 0) {
-            
-        }
+        carat.setPosition(
+                rectFront.xPos + TrueTypeFont.getLengthInPixels(typed.substring(0, xIndex), 1) + 4, 
+                rectFront.yPos + TEXT_AREA_HEIGHT - 6);
     }
     
     public void processInput(int key, int action) {
@@ -147,16 +147,21 @@ public final class TextArea {
             
             switch(key) {
                 case GLFW_KEY_BACKSPACE:
+                    if(xIndex > 0) {
+                        xIndex--;
+                        typed.deleteCharAt(xIndex);
+                        scroll();
+                    }
                     break;
                     
                 case GLFW_KEY_RIGHT:
+                    xIndex = (xIndex > typed.length() - 1) ? xIndex = typed.length() : xIndex + 1;
+                    scroll();
                     break;
                     
                 case GLFW_KEY_LEFT:
-                    break;
-                    
-                case GLFW_KEY_ENTER:
-                    unfocus();
+                    xIndex = (xIndex <= 0) ? xIndex = 0 : xIndex - 1;
+                    scroll();
                     break;
                     
                 case GLFW_KEY_TAB:
@@ -229,6 +234,8 @@ public final class TextArea {
     void renderIcon(ShaderProgram program) {
         iconLeft.render(program);
         iconRight.render(program);
+        
+        if(hasFocus) carat.render(program);
     }
     
     void renderText(ShaderProgram program, TrueTypeFont font) {
