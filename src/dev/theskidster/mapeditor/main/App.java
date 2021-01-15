@@ -22,6 +22,8 @@ import static org.lwjgl.opengl.GL20.*;
  */
 public final class App {
     
+    private static int tickCount = 0;
+    
     private static boolean vSync = true; //TODO: pull these values in from prefrences file
     static boolean glReady;
     
@@ -69,8 +71,9 @@ public final class App {
             ticked   = false;
             
             while(delta >= TARGET_DELTA) {
-                delta   -= TARGET_DELTA;
-                ticked  = true;
+                delta    -= TARGET_DELTA;
+                ticked    = true;
+                tickCount = (tickCount == Integer.MAX_VALUE) ? 0 : tickCount + 1;
                 
                 glfwPollEvents();
                 pollEvents();
@@ -202,6 +205,10 @@ public final class App {
     
     public static void setClearColor(Color color) {
         glClearColor(color.r, color.g, color.b, 0);
+    }
+    
+    public static boolean tick(int cycles) {
+        return tickCount % cycles == 0;
     }
     
 }

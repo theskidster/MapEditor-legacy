@@ -1,7 +1,11 @@
 package dev.theskidster.mapeditor.ui;
 
+import dev.theskidster.mapeditor.main.App;
 import dev.theskidster.mapeditor.main.ShaderProgram;
 import dev.theskidster.mapeditor.util.Color;
+import dev.theskidster.mapeditor.util.Timer;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.Map;
 import org.joml.Vector2i;
@@ -12,7 +16,7 @@ import static org.lwjgl.glfw.GLFW.*;
  * Created: Jan 13, 2021
  */
 
-final class TextArea {
+final class TextArea implements PropertyChangeListener {
     
     private final int TEXT_AREA_HEIGHT = 30;
     
@@ -23,6 +27,8 @@ final class TextArea {
     
     private boolean hasFocus;
     private boolean shiftHeld;
+    private boolean caratIdle;
+    private boolean caratBlink;
     
     private final StringBuilder typed = new StringBuilder();
     private final Vector2i textPos    = new Vector2i();
@@ -34,6 +40,8 @@ final class TextArea {
     private Icon iconLeft;
     private Icon iconRight;
     private Icon carat;
+    
+    private Timer timer = new Timer(1, 18, this);
     
     private Map<Integer, Key> keyChars;
     
@@ -126,6 +134,15 @@ final class TextArea {
         typed.append(text);
     }
     
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        switch(evt.getPropertyName()) {
+            case "finished": //Used for cursor timer
+                caratIdle = (Boolean) evt.getNewValue();
+                break;
+        }
+    }
+    
     private void insertChar(char c) {
         typed.insert(xIndex, c);
         xIndex++;
@@ -133,6 +150,8 @@ final class TextArea {
     }
     
     private void scroll() {
+        //TODO: fix carat going beyond the bounds of the text area by scrolling text left
+        
         carat.setPosition(
                 rectFront.xPos + TrueTypeFont.getLengthInPixels(typed.substring(0, xIndex), 1) + 4, 
                 rectFront.yPos + TEXT_AREA_HEIGHT - 6);
@@ -140,6 +159,9 @@ final class TextArea {
     
     public void processInput(int key, int action) {
         if(action == GLFW_PRESS || action == GLFW_REPEAT) {
+            caratIdle  = false;
+            caratBlink = true;
+            timer.restart();
             
             keyChars.forEach((k, c) -> {
                 if(key == k) insertChar(c.getChar(shiftHeld));
@@ -165,9 +187,11 @@ final class TextArea {
                     break;
                     
                 case GLFW_KEY_TAB:
-                    
+                    //TODO: add observable to skip to next component in widget?
                     break;
             }
+        } else {
+            timer.start();
         }
         
         switch(key) {
@@ -188,6 +212,9 @@ final class TextArea {
     }
     
     void update(Mouse mouse, int parentX, int parentY) {
+        timer.update();
+        if(App.tick(18) && caratIdle) caratBlink = !caratBlink;
+        
         if(rectFront.intersects(mouse.cursorPos)) {
             //TODO: set cursor image
             
@@ -235,7 +262,7 @@ final class TextArea {
         iconLeft.render(program);
         iconRight.render(program);
         
-        if(hasFocus) carat.render(program);
+        if(hasFocus && caratBlink) carat.render(program);
     }
     
     void renderText(ShaderProgram program, TrueTypeFont font) {
