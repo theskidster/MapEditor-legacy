@@ -25,6 +25,8 @@ class MenuOption {
         this.text      = text;
         this.rectangle = rectangle;
         this.padding   = padding;
+        
+        //TODO: add optional shortcut string
     }
 
     void update(Mouse mouse, MenuBar menubar, boolean active) {

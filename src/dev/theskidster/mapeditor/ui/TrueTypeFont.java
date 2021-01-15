@@ -146,4 +146,20 @@ class TrueTypeFont {
         App.checkGLError();
     }
     
+    void drawString(Rectangle rectangle, ShaderProgram program, String text, float x, float y, float scale, Color color) {
+        glEnable(GL_SCISSOR_TEST);
+        
+        glScissor((int) rectangle.xPos, (int) rectangle.yPos, (int) rectangle.width, (int) rectangle.width);
+        drawString(program, text, x, y, scale, color);
+        
+        glDisable(GL_SCISSOR_TEST);
+    }
+    
+    int getLengthInPixels(String text) {
+        int length = 0;
+        for(char c : text.toCharArray()) length += glyphs.get(c).advance;
+        
+        return length;
+    }
+    
 }

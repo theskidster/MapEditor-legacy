@@ -4,6 +4,7 @@ import dev.theskidster.mapeditor.main.ShaderProgram;
 import dev.theskidster.mapeditor.util.Color;
 import java.util.HashMap;
 import java.util.Map;
+import org.joml.Vector2i;
 import static org.lwjgl.glfw.GLFW.*;
 
 /**
@@ -15,15 +16,24 @@ public final class TextArea {
     
     private final int TEXT_AREA_HEIGHT = 30;
     
-    boolean hasFocus;
+    private int xOffset;
+    private int yOffset;
+    private int width;
+    private int xIndex;
+    
+    private boolean hasFocus;
+    private boolean shiftHeld;
     
     private StringBuilder typed = new StringBuilder();
+    private Vector2i textPos    = new Vector2i();
     
     private Rectangle rectBack;
     private Rectangle rectFront;
+    private Rectangle scissorBox;
     
     private Icon iconLeft;
     private Icon iconRight;
+    private Icon carat;
     
     private Map<Integer, Key> keyChars;
     
@@ -39,9 +49,14 @@ public final class TextArea {
         public char getChar(boolean shiftHeld) { return (!shiftHeld) ? c : C; }
     }
     
-    TextArea(int xPos, int yPos, int width) {
-        rectBack  = new Rectangle(xPos, yPos, width, TEXT_AREA_HEIGHT);
-        rectFront = new Rectangle(xPos, yPos + 1, width, TEXT_AREA_HEIGHT - 2);
+    TextArea(int xOffset, int yOffset, int width) {
+        this.xOffset = xOffset;
+        this.yOffset = yOffset;
+        this.width   = width;
+        
+        rectBack   = new Rectangle(xOffset, yOffset, width, TEXT_AREA_HEIGHT);
+        rectFront  = new Rectangle(xOffset, yOffset + 1, width, TEXT_AREA_HEIGHT - 2);
+        scissorBox = new Rectangle();
         
         iconLeft  = new Icon("spr_icons.png", 15, TEXT_AREA_HEIGHT);
         iconRight = new Icon("spr_icons.png", 15, TEXT_AREA_HEIGHT);
@@ -49,8 +64,8 @@ public final class TextArea {
         iconLeft.setSprite(6, 0);
         iconRight.setSprite(7, 0);
         
-        iconLeft.setPosition(xPos, yPos + TEXT_AREA_HEIGHT);
-        iconRight.setPosition(xPos + (width - 15), yPos + TEXT_AREA_HEIGHT);
+        iconLeft.setPosition(xOffset, yOffset + TEXT_AREA_HEIGHT);
+        iconRight.setPosition(xOffset + (width - 15), yOffset + TEXT_AREA_HEIGHT);
         
         keyChars = new HashMap<>() {{
             put(GLFW_KEY_SPACE,      new Key(' ', ' '));
@@ -104,8 +119,57 @@ public final class TextArea {
         }};
     }
     
-    public void processInput(int key, int action) {
+    TextArea(String text, int xOffset, int yOffset, int width) {
+        this(xOffset, yOffset, width);
+        typed.append(text);
+    }
+    
+    private void insertChar(char c) {
+        typed.insert(xIndex, c);
         
+        xIndex++;
+        
+        scroll();
+    }
+    
+    private void scroll() {
+        if(typed.length() > 0) {
+            
+        }
+    }
+    
+    public void processInput(int key, int action) {
+        if(action == GLFW_PRESS || action == GLFW_REPEAT) {
+            
+            keyChars.forEach((k, c) -> {
+                if(key == k) insertChar(c.getChar(shiftHeld));
+            });
+            
+            switch(key) {
+                case GLFW_KEY_BACKSPACE:
+                    break;
+                    
+                case GLFW_KEY_RIGHT:
+                    break;
+                    
+                case GLFW_KEY_LEFT:
+                    break;
+                    
+                case GLFW_KEY_ENTER:
+                    unfocus();
+                    break;
+                    
+                case GLFW_KEY_TAB:
+                    
+                    break;
+            }
+        }
+        
+        switch(key) {
+            case GLFW_KEY_LEFT_SHIFT: case GLFW_KEY_RIGHT_SHIFT:
+                shiftHeld = action == GLFW_PRESS;
+                break;
+        }
     }
     
     void focus() {
@@ -120,6 +184,8 @@ public final class TextArea {
     
     void update(Mouse mouse, int parentX, int parentY) {
         if(rectFront.intersects(mouse.cursorPos)) {
+            //TODO: set cursor image
+            
             if(mouse.clicked) {
                 if(hasFocus) {
                     //TODO: set caret position
@@ -127,7 +193,32 @@ public final class TextArea {
                     focus();
                 }
             }
+        } else {
+            if(mouse.clicked) unfocus();
         }
+        
+        rectBack.xPos = parentX + xOffset;
+        rectBack.yPos = parentY + yOffset;
+        
+        rectFront.xPos = parentX + xOffset;
+        rectFront.yPos = parentY + yOffset + 1;
+        
+        scissorBox.xPos   = parentX + xOffset + 1;
+        scissorBox.yPos   = parentY + yOffset + TEXT_AREA_HEIGHT;
+        scissorBox.width  = width;
+        scissorBox.height = TEXT_AREA_HEIGHT;
+        
+        iconLeft.setPosition(
+                parentX + xOffset, 
+                parentY + yOffset + TEXT_AREA_HEIGHT);
+        
+        iconRight.setPosition(
+                parentX + (xOffset + (width - 15)), 
+                parentY + yOffset + TEXT_AREA_HEIGHT);
+        
+        textPos.set(
+                parentX + xOffset + 4, 
+                parentY + yOffset + 21);
     }
     
     void renderBackground(Background background) {
@@ -138,6 +229,17 @@ public final class TextArea {
     void renderIcon(ShaderProgram program) {
         iconLeft.render(program);
         iconRight.render(program);
+    }
+    
+    void renderText(ShaderProgram program, TrueTypeFont font) {
+        font.drawString(
+                scissorBox,
+                program, 
+                typed.toString(), 
+                textPos.x, 
+                textPos.y, 
+                1, 
+                Color.WHITE);
     }
     
 }

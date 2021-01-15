@@ -15,6 +15,13 @@ class Rectangle {
     float width;
     float height;
     
+    Rectangle() {
+        xPos   = 0;
+        yPos   = 0;
+        width  = 0;
+        height = 0;
+    }
+    
     Rectangle(int xPos, int yPos, float width, float height) {
         this.xPos   = xPos;
         this.yPos   = yPos;

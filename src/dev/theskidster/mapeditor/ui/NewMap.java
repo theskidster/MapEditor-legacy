@@ -22,7 +22,7 @@ public final class NewMap extends Frame {
         
         background = new Background(7);
         
-        textArea = new TextArea(700, 400, 40);
+        textArea = new TextArea("asdf", 126, 52, 300);
         
         rectangles = new ArrayList<>() {{
             add(titleBar);
@@ -51,13 +51,15 @@ public final class NewMap extends Frame {
             textArea.renderBackground(background);
         background.batchEnd(program);
         
-        font.drawString(program, "New Map", xPos + 45, yPos - (TITLE_BAR_HEIGHT / 3), 1, Color.WHITE);
-        font.drawString(program, "Blockset:", xPos + 12, yPos + 24, 1, Color.WHITE);
-        font.drawString(program, "Source:", xPos + 26, yPos + 73, 1, Color.WHITE);
-        
         icon.render(program);
         closeButton.renderIcon(program);
         textArea.renderIcon(program);
+        
+        font.drawString(program, "New Map", xPos + 45, yPos - (TITLE_BAR_HEIGHT / 3), 1, Color.WHITE);
+        font.drawString(program, "Blockset:", xPos + 12, yPos + 24, 1, Color.WHITE);
+        font.drawString(program, "Source:", xPos + 26, yPos + 73, 1, Color.WHITE);
+        textArea.renderText(program, font);
+        
     }
 
     @Override
