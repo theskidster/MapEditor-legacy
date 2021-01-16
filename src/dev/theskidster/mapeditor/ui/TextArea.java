@@ -19,6 +19,7 @@ import static org.lwjgl.glfw.GLFW.*;
 final class TextArea implements PropertyChangeListener {
     
     private final int TEXT_AREA_HEIGHT = 30;
+    private final int PADDING = 4;
     
     private final int xOffset;
     private final int yOffset;
@@ -26,7 +27,7 @@ final class TextArea implements PropertyChangeListener {
     private int parentX;
     private int parentY;
     private int xIndex;
-    private int textLength;
+    private int lengthToIndex;
     
     private boolean hasFocus;
     private boolean shiftHeld;
@@ -150,8 +151,8 @@ final class TextArea implements PropertyChangeListener {
                 rectBack.xPos    = parentX + xOffset;
                 rectFront.xPos   = parentX + xOffset;
                 scissorBox.xPos  = parentX + xOffset + 1;
-                textPos.x        = parentX + xOffset + 4;
-                carat.position.x = (parentX + xOffset) + textLength + 4;
+                textPos.x        = parentX + xOffset + PADDING;
+                carat.position.x = (parentX + xOffset) + lengthToIndex + PADDING;
                 
                 iconLeft.position.x  = parentX + xOffset;
                 iconRight.position.x = parentX + (xOffset + (width - 15));
@@ -179,30 +180,23 @@ final class TextArea implements PropertyChangeListener {
     }
     
     private void scroll() {
-        textLength = TrueTypeFont.getLengthInPixels(typed.substring(0, xIndex), 1);
+        lengthToIndex  = TrueTypeFont.getLengthInPixels(typed.substring(0, xIndex), 1);
+        int textLength = TrueTypeFont.getLengthInPixels(typed.toString(), 1);
+        int caratPosX  = (parentX + xOffset) + lengthToIndex + PADDING;
+        int caratPosY  = (parentY + yOffset) + TEXT_AREA_HEIGHT - 5;
         
-        carat.position.set(
-                (parentX + xOffset) + textLength + 4, 
-                (parentY + yOffset) + TEXT_AREA_HEIGHT - 5);
-        
-        /*
-        int caratX = rectFront.xPos + TrueTypeFont.getLengthInPixels(typed.substring(0, xIndex), 1) + 4;
-        int length = TrueTypeFont.getLengthInPixels(typed.substring(0, xIndex), 1);
-        
-        if(caratX > rectFront.xPos + width) {
-            if(length > width) {
-                System.out.println(length + " " + textPos.x + " " + rectFront.xPos);
-                //System.out.println(length - (textPos.x - rectFront.xPos));
-                //System.out.println(Math.abs(length - textPos.x) > width);
+        if(textLength > width) {
+            //TODO: utilize the carats current position within the string to offset its X position
+            
+            if(textLength + textPos.x - (parentX + xOffset + PADDING) > width) {
+                int offset = width - (textLength + textPos.x - (parentX + xOffset + PADDING));
+                textPos.x += offset; //TODO: replace padding with char length?
+            } else {
                 
-                textPos.x -= TrueTypeFont.getCharAdvance(typed.charAt(xIndex - 1), 1);
             }
         } else {
-            if(caratX < rectFront.xPos) {
-            } else {
-                carat.setPosition(caratX, rectFront.yPos + TEXT_AREA_HEIGHT - 6);
-            }
-        }*/
+            carat.position.set(caratPosX, caratPosY);
+        }
     }
     
     public void processInput(int key, int action) {
