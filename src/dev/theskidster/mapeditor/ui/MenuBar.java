@@ -43,19 +43,19 @@ public class MenuBar extends Widget {
             icons[i] = new Icon("spr_icons.png", 20, 20);
         }
         
-        icons[0].setPosition(12, (HEIGHT * 2) - 4);
+        icons[0].position.set(12, (HEIGHT * 2) - 4);
         icons[0].setSprite(2, 2);
         
-        icons[1].setPosition(12, (HEIGHT * 3) - 4);
+        icons[1].position.set(12, (HEIGHT * 3) - 4);
         icons[1].setSprite(1, 2);
         
-        icons[2].setPosition(12, (HEIGHT * 4) - 5);
+        icons[2].position.set(12, (HEIGHT * 4) - 5);
         icons[2].setSprite(1, 0);
         
-        icons[3].setPosition(12, (HEIGHT * 5) - 4);
+        icons[3].position.set(12, (HEIGHT * 5) - 4);
         icons[3].setSprite(0, 2);
         
-        icons[4].setPosition(12, (HEIGHT * 7) - 4);
+        icons[4].position.set(12, (HEIGHT * 7) - 4);
         icons[4].setSprite(2, 0);
         
         //Initialize menubar buttons

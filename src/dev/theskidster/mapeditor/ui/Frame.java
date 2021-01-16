@@ -54,7 +54,7 @@ abstract class Frame extends Widget {
             rectangle.xPos = xPos + (width - TITLE_BAR_HEIGHT);
             rectangle.yPos = yPos - TITLE_BAR_HEIGHT;
             
-            icon.setPosition(rectangle.xPos + 9, yPos - 9);
+            icon.position.set(rectangle.xPos + 9, yPos - 9);
         }
         
         void renderBackground(Background background) {
@@ -99,7 +99,7 @@ abstract class Frame extends Widget {
         xPos = (width / 2) - ((int) content.width / 2);
         yPos = (height / 2) - ((int) content.height / 2);
         
-        if(icon != null) icon.setPosition(xPos + 13, yPos - 9);
+        if(icon != null) icon.position.set(xPos + 13, yPos - 9);
     }
     
 }

@@ -25,8 +25,8 @@ class Icon {
     private final Texture texture;
     private final Atlas atlas;
     
-    private Vector2f currCell       = new Vector2f();
-    private final Vector2f position = new Vector2f();
+    private Vector2f currCell = new Vector2f();
+    final Vector2f position   = new Vector2f();
     
     private final Map<Vector2i, Vector2f> texOffsets = new HashMap<>();
     
@@ -87,14 +87,6 @@ class Icon {
                 texOffsets.put(new Vector2i(cellPosX, cellPosY), new Vector2f(texPosX, texPosY));
             }
         }
-    }
-    
-    void setPosition(int x, int y) {
-        position.set(x, y);
-    }
-    
-    void setPosition(Vector2i position) {
-        position.set(position.x, position.y);
     }
     
     void setSprite(int cellX, int cellY) {

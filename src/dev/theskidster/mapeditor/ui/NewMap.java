@@ -2,6 +2,7 @@ package dev.theskidster.mapeditor.ui;
 
 import dev.theskidster.mapeditor.util.Color;
 import dev.theskidster.mapeditor.main.ShaderProgram;
+import dev.theskidster.mapeditor.util.Observable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +15,8 @@ public final class NewMap extends Frame {
     
     private final TextArea textArea;
     
+    private final Observable observable = new Observable(this);
+    
     private final Background background;
     private List<Rectangle> rectangles;
     
@@ -23,6 +26,10 @@ public final class NewMap extends Frame {
         background = new Background(7);
         
         textArea = new TextArea("asdf", 126, 52, 300);
+        
+        observable.properties.put("parentX", xPos);
+        observable.properties.put("parentY", yPos);
+        observable.addObserver(textArea);
         
         rectangles = new ArrayList<>() {{
             add(titleBar);
@@ -35,8 +42,11 @@ public final class NewMap extends Frame {
     @Override
     void update(int width, int height, Mouse mouse) {
         center(width, height);
+        observable.notifyObservers("parentX", xPos);
+        observable.notifyObservers("parentY", yPos);
+        
         closeButton.update(mouse);
-        textArea.update(mouse, xPos, yPos);
+        textArea.update(mouse);
     }
 
     @Override
