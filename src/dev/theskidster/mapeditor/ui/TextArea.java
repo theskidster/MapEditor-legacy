@@ -29,6 +29,7 @@ final class TextArea implements PropertyChangeListener {
     private boolean shiftHeld;
     private boolean caratIdle;
     private boolean caratBlink;
+    private boolean initialTextPos;
     
     private final StringBuilder typed = new StringBuilder();
     private final Vector2i textPos    = new Vector2i();
@@ -150,11 +151,24 @@ final class TextArea implements PropertyChangeListener {
     }
     
     private void scroll() {
-        //TODO: fix carat going beyond the bounds of the text area by scrolling text left
         
-        carat.setPosition(
-                rectFront.xPos + TrueTypeFont.getLengthInPixels(typed.substring(0, xIndex), 1) + 4, 
-                rectFront.yPos + TEXT_AREA_HEIGHT - 6);
+        int caratX = rectFront.xPos + TrueTypeFont.getLengthInPixels(typed.substring(0, xIndex), 1) + 4;
+        int length = TrueTypeFont.getLengthInPixels(typed.substring(0, xIndex), 1);
+        
+        if(caratX > rectFront.xPos + width) {
+            if(length > width) {
+                System.out.println(length + " " + textPos.x + " " + rectFront.xPos);
+                //System.out.println(length - (textPos.x - rectFront.xPos));
+                //System.out.println(Math.abs(length - textPos.x) > width);
+                
+                textPos.x -= TrueTypeFont.getCharAdvance(typed.charAt(xIndex - 1), 1);
+            }
+        } else {
+            if(caratX < rectFront.xPos) {
+            } else {
+                carat.setPosition(caratX, rectFront.yPos + TEXT_AREA_HEIGHT - 6);
+            }
+        }
     }
     
     public void processInput(int key, int action) {
@@ -248,9 +262,13 @@ final class TextArea implements PropertyChangeListener {
                 parentX + (xOffset + (width - 15)), 
                 parentY + yOffset + TEXT_AREA_HEIGHT);
         
-        textPos.set(
-                parentX + xOffset + 4, 
-                parentY + yOffset + 21);
+        //TODO: this is hacky
+        if(!initialTextPos) {
+            textPos.set(parentX + xOffset + 4, parentY + yOffset + 21);
+            initialTextPos = true;
+        } else {
+            textPos.y = parentY + yOffset + 21;
+        }
     }
     
     void renderBackground(Background background) {

@@ -162,4 +162,8 @@ class TrueTypeFont {
         return length;
     }
     
+    static int getCharAdvance(char c, float scale) {
+        return (int) ((glyphs.get(c).advance >> 6) * scale);
+    }
+    
 }
