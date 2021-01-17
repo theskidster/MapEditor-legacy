@@ -25,7 +25,7 @@ public final class NewMap extends Frame {
         
         background = new Background(7);
         
-        textArea = new TextArea("asdf", 126, 52, 300);
+        textArea = new TextArea(126, 52, 300);
         
         observable.properties.put("parentX", xPos);
         observable.properties.put("parentY", yPos);

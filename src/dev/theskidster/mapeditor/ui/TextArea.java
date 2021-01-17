@@ -240,6 +240,7 @@ final class TextArea implements PropertyChangeListener {
     void focus() {
         hasFocus = true;
         UI.setTextArea(this);
+        timer.start();
     }
     
     void unfocus() {
@@ -281,6 +282,14 @@ final class TextArea implements PropertyChangeListener {
     
     void renderText(ShaderProgram program, TrueTypeFont font) {
         font.drawString(scissorBox, program, typed.toString(), textPos.x + textOffset, textPos.y, 1, Color.WHITE);
+    }
+    
+    void setText(String text) {
+        typed.setLength(0);
+        
+        for(char c : text.toCharArray()) {
+            insertChar(c);
+        }
     }
     
 }
