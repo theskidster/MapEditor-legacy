@@ -183,10 +183,8 @@ final class TextArea implements PropertyChangeListener {
     private void scroll() {
         lengthToIndex = TrueTypeFont.getLengthInPixels(typed.substring(0, xIndex), 1);
         
-        if(TrueTypeFont.getLengthInPixels(typed.toString(), 1) > width) {
-            textOffset = (width - PADDING) - (lengthToIndex + textPos.x - (parentX + xOffset + PADDING));
-            if(textOffset > 0) textOffset = 0;
-        }
+        textOffset = (width - PADDING) - (lengthToIndex + textPos.x - (parentX + xOffset + PADDING));
+        if(textOffset > 0) textOffset = 0;
         
         carat.position.set(
                 (parentX + xOffset) + (lengthToIndex + textOffset) + PADDING, 
@@ -286,10 +284,9 @@ final class TextArea implements PropertyChangeListener {
     
     void setText(String text) {
         typed.setLength(0);
+        xIndex = 0;
         
-        for(char c : text.toCharArray()) {
-            insertChar(c);
-        }
+        for(char c : text.toCharArray()) insertChar(c);
     }
     
 }

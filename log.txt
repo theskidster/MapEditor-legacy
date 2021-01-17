@@ -6,3 +6,4 @@ INFO: OPENGL VERSION:	4.5.0 - Build 23.20.16.4973
 INFO: APP VERSION:	0.7.0
 INFO: --------------------------------------------------------------------------------
 
+INFO: Opening file: "design doc.md"

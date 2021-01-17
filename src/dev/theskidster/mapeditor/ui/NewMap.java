@@ -3,6 +3,8 @@ package dev.theskidster.mapeditor.ui;
 import dev.theskidster.mapeditor.util.Color;
 import dev.theskidster.mapeditor.main.ShaderProgram;
 import dev.theskidster.mapeditor.util.Observable;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +17,8 @@ public final class NewMap extends Frame {
     
     private final TextArea textArea;
     
+    private final FolderButton button1;
+    
     private final Observable observable = new Observable(this);
     
     private final Background background;
@@ -26,10 +30,12 @@ public final class NewMap extends Frame {
         background = new Background(7);
         
         textArea = new TextArea(126, 52, 300);
+        button1  = new FolderButton(440, 78, textArea);
         
         observable.properties.put("parentX", xPos);
         observable.properties.put("parentY", yPos);
         observable.addObserver(textArea);
+        observable.addObserver(button1);
         
         rectangles = new ArrayList<>() {{
             add(titleBar);
@@ -47,6 +53,7 @@ public final class NewMap extends Frame {
         
         closeButton.update(mouse);
         textArea.update(mouse);
+        button1.update(mouse);
     }
 
     @Override
@@ -64,6 +71,7 @@ public final class NewMap extends Frame {
         icon.render(program);
         closeButton.renderIcon(program);
         textArea.renderIcon(program);
+        button1.render(program);
         
         font.drawString(program, "New Map", xPos + 45, yPos - (TITLE_BAR_HEIGHT / 3), 1, Color.WHITE);
         font.drawString(program, "Blockset:", xPos + 12, yPos + 24, 1, Color.WHITE);
