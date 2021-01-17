@@ -28,6 +28,7 @@ final class TextArea implements PropertyChangeListener {
     private int parentY;
     private int xIndex;
     private int lengthToIndex;
+    private int textOffset;
     
     private boolean hasFocus;
     private boolean shiftHeld;
@@ -45,7 +46,7 @@ final class TextArea implements PropertyChangeListener {
     private Icon iconRight;
     private Icon carat;
     
-    private Timer timer = new Timer(1, 18, this);
+    private final Timer timer = new Timer(1, 18, this);
     
     private Map<Integer, Key> keyChars;
     
@@ -180,23 +181,16 @@ final class TextArea implements PropertyChangeListener {
     }
     
     private void scroll() {
-        lengthToIndex  = TrueTypeFont.getLengthInPixels(typed.substring(0, xIndex), 1);
-        int textLength = TrueTypeFont.getLengthInPixels(typed.toString(), 1);
-        int caratPosX  = (parentX + xOffset) + lengthToIndex + PADDING;
-        int caratPosY  = (parentY + yOffset) + TEXT_AREA_HEIGHT - 5;
+        lengthToIndex = TrueTypeFont.getLengthInPixels(typed.substring(0, xIndex), 1);
         
-        if(textLength > width) {
-            //TODO: utilize the carats current position within the string to offset its X position
-            
-            if(textLength + textPos.x - (parentX + xOffset + PADDING) > width) {
-                int offset = width - (textLength + textPos.x - (parentX + xOffset + PADDING));
-                textPos.x += offset; //TODO: replace padding with char length?
-            } else {
-                
-            }
-        } else {
-            carat.position.set(caratPosX, caratPosY);
+        if(TrueTypeFont.getLengthInPixels(typed.toString(), 1) > width) {
+            textOffset = (width - PADDING) - (lengthToIndex + textPos.x - (parentX + xOffset + PADDING));
+            if(textOffset > 0) textOffset = 0;
         }
+        
+        carat.position.set(
+                (parentX + xOffset) + (lengthToIndex + textOffset) + PADDING, 
+                (parentY + yOffset) + TEXT_AREA_HEIGHT - 5);
     }
     
     public void processInput(int key, int action) {
@@ -258,8 +252,6 @@ final class TextArea implements PropertyChangeListener {
         if(App.tick(18) && caratIdle) caratBlink = !caratBlink;
         
         if(rectFront.intersects(mouse.cursorPos)) {
-            //TODO: set cursor image
-            
             if(mouse.clicked) {
                 if(hasFocus) {
                     //TODO: set caret position
@@ -288,7 +280,7 @@ final class TextArea implements PropertyChangeListener {
     }
     
     void renderText(ShaderProgram program, TrueTypeFont font) {
-        font.drawString(scissorBox, program, typed.toString(), textPos.x, textPos.y, 1, Color.WHITE);
+        font.drawString(scissorBox, program, typed.toString(), textPos.x + textOffset, textPos.y, 1, Color.WHITE);
     }
     
 }
