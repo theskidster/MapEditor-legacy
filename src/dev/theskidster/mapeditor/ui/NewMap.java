@@ -3,6 +3,7 @@ package dev.theskidster.mapeditor.ui;
 import dev.theskidster.mapeditor.util.Color;
 import dev.theskidster.mapeditor.main.ShaderProgram;
 import dev.theskidster.mapeditor.util.Observable;
+import java.io.File;
 
 /**
  * @author J Hoffman
@@ -15,9 +16,15 @@ public final class NewMap extends Frame {
     private final TextArea textArea2;
     private final FolderButton fButton1;
     private final FolderButton fButton2;
+    private final SpinBox spinBox1;
+    private final SpinBox spinBox2;
     private final Background background;
     
     private final Observable observable = new Observable(this);
+    
+    //TODO: parse files using location provided from text areas
+    private File blockset;
+    private File skybox;
     
     public NewMap(int xPos, int yPos) {
         super(new Icon("spr_icons.png", 20, 20), "New Map", xPos, yPos, 488, 430, true);
@@ -28,6 +35,8 @@ public final class NewMap extends Frame {
         textArea2 = new TextArea(126, 162, 300);
         fButton1  = new FolderButton(440, 77, textArea1);
         fButton2  = new FolderButton(440, 187, textArea2);
+        spinBox1  = new SpinBox();
+        spinBox2  = new SpinBox();
         
         observable.properties.put("parentX", xPos);
         observable.properties.put("parentY", yPos);
@@ -90,7 +99,8 @@ public final class NewMap extends Frame {
 
     @Override
     void close() {
-        //TODO: close method provided to unfocus all text areas.
+        textArea1.unfocus();
+        textArea2.unfocus();
     }
     
 }

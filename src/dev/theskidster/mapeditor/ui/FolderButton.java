@@ -24,7 +24,7 @@ final class FolderButton extends Component implements PropertyChangeListener {
     private final Rectangle rectangle;
     private final Icon icon;
     private TextArea textArea;
-
+    
     FolderButton(int xOffset, int yOffset, TextArea textArea) {
         this.xOffset  = xOffset;
         this.yOffset  = yOffset;
