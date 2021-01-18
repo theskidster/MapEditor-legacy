@@ -100,6 +100,11 @@ abstract class Frame extends Widget {
         yPos = (height / 2) - ((int) content.height / 2);
         
         if(icon != null) icon.position.set(xPos + 13, yPos - 9);
+        
+        titleBar.xPos = xPos;
+        titleBar.yPos = yPos - TITLE_BAR_HEIGHT;
+        content.xPos  = xPos;
+        content.yPos  = yPos;
     }
     
 }

@@ -3,10 +3,6 @@ package dev.theskidster.mapeditor.ui;
 import dev.theskidster.mapeditor.util.Color;
 import dev.theskidster.mapeditor.main.ShaderProgram;
 import dev.theskidster.mapeditor.util.Observable;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author J Hoffman
@@ -15,32 +11,30 @@ import java.util.List;
 
 public final class NewMap extends Frame {
     
-    private final TextArea textArea;
-    
-    private final FolderButton button1;
+    private final TextArea textArea1;
+    private final TextArea textArea2;
+    private final FolderButton fButton1;
+    private final FolderButton fButton2;
+    private final Background background;
     
     private final Observable observable = new Observable(this);
-    
-    private final Background background;
-    private List<Rectangle> rectangles;
     
     public NewMap(int xPos, int yPos) {
         super(new Icon("spr_icons.png", 20, 20), "New Map", xPos, yPos, 488, 430, true);
         
-        background = new Background(7);
+        background = new Background(13);
         
-        textArea = new TextArea(126, 52, 300);
-        button1  = new FolderButton(440, 78, textArea);
+        textArea1 = new TextArea(126, 52, 300);
+        textArea2 = new TextArea(126, 162, 300);
+        fButton1  = new FolderButton(440, 77, textArea1);
+        fButton2  = new FolderButton(440, 187, textArea2);
         
         observable.properties.put("parentX", xPos);
         observable.properties.put("parentY", yPos);
-        observable.addObserver(textArea);
-        observable.addObserver(button1);
-        
-        rectangles = new ArrayList<>() {{
-            add(titleBar);
-            add(content);
-        }};
+        observable.addObserver(textArea1);
+        observable.addObserver(textArea2);
+        observable.addObserver(fButton1);
+        observable.addObserver(fButton2);
         
         icon.setSprite(2, 2);
     }
@@ -52,32 +46,46 @@ public final class NewMap extends Frame {
         observable.notifyObservers("parentY", yPos);
         
         closeButton.update(mouse);
-        textArea.update(mouse);
-        button1.update(mouse);
+        textArea1.update(mouse);
+        textArea2.update(mouse);
+        fButton1.update(mouse);
+        fButton2.update(mouse);
     }
 
     @Override
     void render(ShaderProgram program, TrueTypeFont font) {
         background.batchStart();
-            //background.drawRectangle(titleBar, Color.BLACK);
-            background.drawRectangle(xPos, yPos - TITLE_BAR_HEIGHT, 488, TITLE_BAR_HEIGHT, Color.BLACK);
-            background.drawRectangle(xPos, yPos, 488, 430, Color.DARK_GRAY);
+            background.drawRectangle(titleBar, Color.BLACK);
+            background.drawRectangle(content, Color.DARK_GRAY);
             background.drawRectangle(xPos + 13, yPos + 38, 462, 58, Color.LIGHT_GRAY);
             background.drawRectangle(xPos + 14, yPos + 39, 460, 56, Color.DARK_GRAY);
+            background.drawRectangle(xPos + 13, yPos + 148, 462, 58, Color.LIGHT_GRAY);
+            background.drawRectangle(xPos + 14, yPos + 149, 460, 56, Color.DARK_GRAY);
+            background.drawRectangle(xPos + 13, yPos + 258, 337, 144, Color.LIGHT_GRAY);
+            background.drawRectangle(xPos + 14, yPos + 259, 335, 142, Color.DARK_GRAY);
             closeButton.renderBackground(background);
-            textArea.renderBackground(background);
+            textArea1.renderBackground(background);
+            textArea2.renderBackground(background);
         background.batchEnd(program);
         
         icon.render(program);
         closeButton.renderIcon(program);
-        textArea.renderIcon(program);
-        button1.render(program);
+        textArea1.renderIcon(program);
+        textArea2.renderIcon(program);
+        fButton1.render(program);
+        fButton2.render(program);
         
         font.drawString(program, "New Map", xPos + 45, yPos - (TITLE_BAR_HEIGHT / 3), 1, Color.WHITE);
         font.drawString(program, "Blockset:", xPos + 12, yPos + 24, 1, Color.WHITE);
         font.drawString(program, "Source:", xPos + 26, yPos + 73, 1, Color.WHITE);
-        textArea.renderText(program, font);
-        
+        font.drawString(program, "Skybox:", xPos + 12, yPos + 134, 1, Color.WHITE);
+        font.drawString(program, "Source:", xPos + 26, yPos + 183, 1, Color.WHITE);
+        font.drawString(program, "Dimensions:", xPos + 12, yPos + 244, 1, Color.WHITE);
+        font.drawString(program, "Width:", xPos + 26, yPos + 293, 1, Color.WHITE);
+        font.drawString(program, "Height:", xPos + 26, yPos + 336, 1, Color.WHITE);
+        font.drawString(program, "Depth:", xPos + 26, yPos + 379, 1, Color.WHITE);
+        textArea1.renderText(program, font);
+        textArea2.renderText(program, font);
     }
 
     @Override
