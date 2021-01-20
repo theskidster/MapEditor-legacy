@@ -1,5 +1,6 @@
 package dev.theskidster.mapeditor.ui;
 
+import dev.theskidster.mapeditor.util.Mouse;
 import com.mlomb.freetypejni.FreeType;
 import dev.theskidster.mapeditor.main.ShaderProgram;
 import java.util.HashMap;

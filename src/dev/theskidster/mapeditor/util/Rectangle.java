@@ -1,4 +1,4 @@
-package dev.theskidster.mapeditor.ui;
+package dev.theskidster.mapeditor.util;
 
 import org.joml.Vector2i;
 
@@ -7,29 +7,29 @@ import org.joml.Vector2i;
  * Created: Jan 4, 2021
  */
 
-class Rectangle {
+public class Rectangle {
     
-    int xPos;
-    int yPos;
+    public int xPos;
+    public int yPos;
     
-    float width;
-    float height;
+    public float width;
+    public float height;
     
-    Rectangle() {
+    public Rectangle() {
         xPos   = 0;
         yPos   = 0;
         width  = 0;
         height = 0;
     }
     
-    Rectangle(int xPos, int yPos, float width, float height) {
+    public Rectangle(int xPos, int yPos, float width, float height) {
         this.xPos   = xPos;
         this.yPos   = yPos;
         this.width  = width;
         this.height = height;
     }
     
-    boolean intersects(Vector2i point) {
+    public boolean intersects(Vector2i point) {
         return (point.x > xPos && point.x < xPos + width) && 
                (point.y > yPos && point.y < yPos + height);
     }

@@ -1,5 +1,7 @@
 package dev.theskidster.mapeditor.ui;
 
+import dev.theskidster.mapeditor.util.Rectangle;
+import dev.theskidster.mapeditor.util.Mouse;
 import dev.theskidster.mapeditor.util.Color;
 import dev.theskidster.mapeditor.main.ShaderProgram;
 import java.util.List;
