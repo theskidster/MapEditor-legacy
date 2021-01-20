@@ -1,5 +1,6 @@
 package dev.theskidster.mapeditor.ui;
 
+import dev.theskidster.mapeditor.graphics.TrueTypeFont;
 import dev.theskidster.mapeditor.util.Mouse;
 import dev.theskidster.mapeditor.main.ShaderProgram;
 

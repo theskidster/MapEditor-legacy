@@ -1,8 +1,7 @@
-package dev.theskidster.mapeditor.ui;
+package dev.theskidster.mapeditor.graphics;
 
 import dev.theskidster.mapeditor.util.Rectangle;
 import dev.theskidster.mapeditor.util.Color;
-import dev.theskidster.mapeditor.graphics.Graphics;
 import dev.theskidster.mapeditor.main.App;
 import dev.theskidster.mapeditor.main.LogLevel;
 import dev.theskidster.mapeditor.main.Logger;
@@ -17,13 +16,13 @@ import static org.lwjgl.system.MemoryUtil.NULL;
  * Created: Jan 4, 2021
  */
 
-final class Background {
+public final class Background {
 
     private int numVertices;
     
     private final Graphics g = new Graphics();
     
-    Background(int numRectangles) {
+    public Background(int numRectangles) {
         g.vertices = MemoryUtil.memAllocFloat(20 * numRectangles * Float.BYTES);
         g.indices  = MemoryUtil.memAllocInt(6 * numRectangles * Float.BYTES);
         
@@ -58,11 +57,11 @@ final class Background {
         App.checkGLError();
     }
     
-    void batchStart() {
+    public void batchStart() {
         numVertices = 0;
     }
     
-    void batchEnd(ShaderProgram program) {
+    public void batchEnd(ShaderProgram program) {
         if(numVertices > 0) {
             g.vertices.flip();
             g.indices.flip();
@@ -76,7 +75,7 @@ final class Background {
         }
     }
     
-    void drawRectangle(float x, float y, float width, float height, Color color) {
+    public void drawRectangle(float x, float y, float width, float height, Color color) {
         try {
             int startIndex = (numVertices / 20) * Float.BYTES;
             
@@ -97,7 +96,7 @@ final class Background {
         }
     }
     
-    void drawRectangle(Rectangle rectangle, Color color) {
+    public void drawRectangle(Rectangle rectangle, Color color) {
         drawRectangle(
                 rectangle.xPos,
                 rectangle.yPos,
@@ -106,7 +105,7 @@ final class Background {
                 color);
     }
     
-    void destroy() {
+    public void destroy() {
         MemoryUtil.memFree(g.vertices);
         MemoryUtil.memFree(g.indices);
         g.freeBuffers();

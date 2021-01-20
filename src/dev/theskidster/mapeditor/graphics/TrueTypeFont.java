@@ -1,4 +1,4 @@
-package dev.theskidster.mapeditor.ui;
+package dev.theskidster.mapeditor.graphics;
 
 import dev.theskidster.mapeditor.util.Rectangle;
 import dev.theskidster.mapeditor.util.Color;
@@ -22,7 +22,7 @@ import static org.lwjgl.opengl.GL30.*;
  * Created: Jan 5, 2021
  */
 
-class TrueTypeFont {
+public class TrueTypeFont {
     
     public static final int FONT_HEIGHT = 17;
     
@@ -33,7 +33,7 @@ class TrueTypeFont {
     
     private static Map<Character, Glyph> glyphs = new HashMap<>();
     
-    TrueTypeFont(Library freeType, String filename) {
+    public TrueTypeFont(Library freeType, String filename) {
         try(InputStream file = TrueTypeFont.class.getResourceAsStream("/dev/theskidster/mapeditor/assets/" + filename)) {
             loadFont(freeType, file);
             
@@ -103,7 +103,7 @@ class TrueTypeFont {
         }
     }
     
-    void drawString(ShaderProgram program, String text, float x, float y, float scale, Color color) {
+    public void drawString(ShaderProgram program, String text, float x, float y, float scale, Color color) {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         
@@ -147,7 +147,7 @@ class TrueTypeFont {
         App.checkGLError();
     }
     
-    void drawString(Rectangle rectangle, ShaderProgram program, String text, float x, float y, float scale, Color color) {
+    public void drawString(Rectangle rectangle, ShaderProgram program, String text, float x, float y, float scale, Color color) {
         glEnable(GL_SCISSOR_TEST);
         
         glScissor((int) rectangle.xPos, (int) rectangle.yPos, (int) rectangle.width, (int) rectangle.width);
@@ -156,14 +156,14 @@ class TrueTypeFont {
         glDisable(GL_SCISSOR_TEST);
     }
     
-    static int getLengthInPixels(String text, float scale) {
+    public static int getLengthInPixels(String text, float scale) {
         int length = 0;
         for(char c : text.toCharArray()) length += (glyphs.get(c).advance >> 6) * scale;
         
         return length;
     }
     
-    static int getCharAdvance(char c, float scale) {
+    public static int getCharAdvance(char c, float scale) {
         return (int) ((glyphs.get(c).advance >> 6) * scale);
     }
     

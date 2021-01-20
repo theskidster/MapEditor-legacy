@@ -10,7 +10,9 @@ import org.joml.Vector2i;
 public class Mouse {
     
     public boolean clicked;
-    public String button      = "";
+    
+    public String button = "";
+    
     public Vector2i cursorPos = new Vector2i();
     
 }

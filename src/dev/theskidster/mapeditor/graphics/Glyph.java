@@ -1,4 +1,4 @@
-package dev.theskidster.mapeditor.ui;
+package dev.theskidster.mapeditor.graphics;
 
 import org.joml.Vector2i;
 
@@ -8,8 +8,11 @@ import org.joml.Vector2i;
  */
 
 class Glyph {
+    
     int texHandle;
     int advance;
+    
     Vector2i size;
     Vector2i bearing;
+    
 }

@@ -1,8 +1,5 @@
-package dev.theskidster.mapeditor.ui;
+package dev.theskidster.mapeditor.graphics;
 
-import dev.theskidster.mapeditor.graphics.Atlas;
-import dev.theskidster.mapeditor.graphics.Graphics;
-import dev.theskidster.mapeditor.graphics.Texture;
 import dev.theskidster.mapeditor.main.App;
 import dev.theskidster.mapeditor.main.LogLevel;
 import dev.theskidster.mapeditor.main.Logger;
@@ -19,18 +16,18 @@ import org.lwjgl.system.MemoryStack;
  * Created: Jan 10, 2021
  */
 
-class Icon {
+public class Icon {
     
     private final Graphics g = new Graphics();
     private final Texture texture;
     private final Atlas atlas;
     
-    private Vector2f currCell = new Vector2f();
-    final Vector2f position   = new Vector2f();
+    private Vector2f currCell      = new Vector2f();
+    public final Vector2f position = new Vector2f();
     
     private final Map<Vector2i, Vector2f> texOffsets = new HashMap<>();
     
-    Icon(String filename, int cellWidth, int cellHeight) {
+    public Icon(String filename, int cellWidth, int cellHeight) {
         texture = new Texture(filename);
         
         glBindTexture(GL_TEXTURE_2D, texture.handle);
@@ -89,7 +86,7 @@ class Icon {
         }
     }
     
-    void setSprite(int cellX, int cellY) {
+    public void setSprite(int cellX, int cellY) {
         Vector2i cell = new Vector2i(cellX, cellY);
         
         if(texOffsets.containsKey(cell)) {
@@ -101,7 +98,7 @@ class Icon {
         }
     }
     
-    void render(ShaderProgram program) {
+    public void render(ShaderProgram program) {
         glEnable(GL_BLEND);
         
         glBindTexture(GL_TEXTURE_2D, texture.handle);
