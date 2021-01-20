@@ -1,7 +1,7 @@
 package dev.theskidster.mapeditor.main;
 
 import dev.theskidster.mapeditor.scene.Scene;
-import dev.theskidster.mapeditor.ui.NewMap;
+import dev.theskidster.mapeditor.ui.FrameNewMap;
 import dev.theskidster.mapeditor.ui.UI;
 import dev.theskidster.mapeditor.util.Color;
 import dev.theskidster.mapeditor.util.Event;
@@ -163,7 +163,7 @@ public final class App {
             if(!event.resolved) {
                 switch(event.type) {
                     case Event.WIDGET_NEW_MAP:
-                        ui.addWidget("New Map", new NewMap(window.width, window.height));
+                        ui.addWidget("New Map", new FrameNewMap(window.width, window.height));
                         event.resolved = true;
                         break;
                 }

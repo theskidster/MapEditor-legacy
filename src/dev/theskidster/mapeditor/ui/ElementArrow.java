@@ -12,13 +12,13 @@ import dev.theskidster.mapeditor.util.Color;
  * Created: Jan 17, 2021
  */
 
-class Arrow {
+class ElementArrow {
     
     private Icon icon;
     private Rectangle rectangle;
     private Color color;
     
-    Arrow(boolean up) {
+    ElementArrow(boolean up) {
         icon      = new Icon("spr_icons.png", 20, 20);
         rectangle = new Rectangle(0, 0, 20, 10);
     }

@@ -1,12 +1,13 @@
 package dev.theskidster.mapeditor.ui;
 
+import dev.theskidster.mapeditor.graphics.Background;
 import dev.theskidster.mapeditor.graphics.Icon;
+import dev.theskidster.mapeditor.graphics.TrueTypeFont;
 import dev.theskidster.mapeditor.util.Rectangle;
 import dev.theskidster.mapeditor.util.Mouse;
 import dev.theskidster.mapeditor.main.LogLevel;
 import dev.theskidster.mapeditor.main.Logger;
 import dev.theskidster.mapeditor.main.ShaderProgram;
-import java.awt.Component;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -17,18 +18,17 @@ import javax.swing.JFileChooser;
  * Created: Jan 16, 2021
  */
 
-final class FolderButton extends Component implements PropertyChangeListener {
+final class ElementFolderButton extends Element implements PropertyChangeListener {
 
     private final int xOffset;
     private final int yOffset;
-
     private boolean clicked;
 
     private final Rectangle rectangle;
     private final Icon icon;
-    private TextArea textArea;
+    private final FocusableTextArea textArea;
     
-    FolderButton(int xOffset, int yOffset, TextArea textArea) {
+    ElementFolderButton(int xOffset, int yOffset, FocusableTextArea textArea) {
         this.xOffset  = xOffset;
         this.yOffset  = yOffset;
         this.textArea = textArea;
@@ -39,7 +39,8 @@ final class FolderButton extends Component implements PropertyChangeListener {
         icon.setSprite(1, 0);
     }
 
-    public void update(Mouse mouse) {
+    @Override
+    void update(Mouse mouse) {
         if(rectangle.intersects(mouse.cursorPos)) {
             if(mouse.clicked) {
                 if(!clicked) {
@@ -64,10 +65,17 @@ final class FolderButton extends Component implements PropertyChangeListener {
         }
     }
 
-    public void render(ShaderProgram program) {
+    @Override
+    void renderBackground(Background backgound) {}
+
+    @Override
+    void renderIcon(ShaderProgram program) {
         icon.render(program);
     }
 
+    @Override
+    void renderText(ShaderProgram program, TrueTypeFont font) {}
+    
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         switch(evt.getPropertyName()) {
@@ -86,4 +94,5 @@ final class FolderButton extends Component implements PropertyChangeListener {
                 break;
         }
     }
+    
 }

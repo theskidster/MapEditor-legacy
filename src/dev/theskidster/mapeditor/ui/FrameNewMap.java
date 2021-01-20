@@ -14,14 +14,15 @@ import java.io.File;
  * Created: Jan 8, 2021
  */
 
-public final class NewMap extends Frame {
+public final class FrameNewMap extends Frame {
     
-    private final TextArea textArea1;
-    private final TextArea textArea2;
-    private final FolderButton fButton1;
-    private final FolderButton fButton2;
-    private final SpinBox spinBox1;
-    private final SpinBox spinBox2;
+    private final FocusableTextArea textArea1;
+    private final FocusableTextArea textArea2;
+    private final ElementFolderButton fButton1;
+    private final ElementFolderButton fButton2;
+    private final FocusableSpinBox spinBox1;
+    private final FocusableSpinBox spinBox2;
+    
     private final Background background;
     
     private final Observable observable = new Observable(this);
@@ -30,17 +31,17 @@ public final class NewMap extends Frame {
     private File blockset;
     private File skybox;
     
-    public NewMap(int xPos, int yPos) {
+    public FrameNewMap(int xPos, int yPos) {
         super(new Icon("spr_icons.png", 20, 20), "New Map", xPos, yPos, 488, 430, true);
         
         background = new Background(13);
         
-        textArea1 = new TextArea(126, 52, 300);
-        textArea2 = new TextArea(126, 162, 300);
-        fButton1  = new FolderButton(440, 77, textArea1);
-        fButton2  = new FolderButton(440, 187, textArea2);
-        spinBox1  = new SpinBox();
-        spinBox2  = new SpinBox();
+        textArea1 = new FocusableTextArea(126, 52, 300);
+        textArea2 = new FocusableTextArea(126, 162, 300);
+        fButton1  = new ElementFolderButton(440, 77, textArea1);
+        fButton2  = new ElementFolderButton(440, 187, textArea2);
+        spinBox1  = new FocusableSpinBox();
+        spinBox2  = new FocusableSpinBox();
         
         observable.properties.put("parentX", xPos);
         observable.properties.put("parentY", yPos);
@@ -85,8 +86,8 @@ public final class NewMap extends Frame {
         closeButton.renderIcon(program);
         textArea1.renderIcon(program);
         textArea2.renderIcon(program);
-        fButton1.render(program);
-        fButton2.render(program);
+        fButton1.renderIcon(program);
+        fButton2.renderIcon(program);
         
         font.drawString(program, "New Map", xPos + 45, yPos - (TITLE_BAR_HEIGHT / 3), 1, Color.WHITE);
         font.drawString(program, "Blockset:", xPos + 12, yPos + 24, 1, Color.WHITE);

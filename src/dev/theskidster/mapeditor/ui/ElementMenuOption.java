@@ -13,7 +13,7 @@ import org.joml.Vector2i;
  * Created: Jan 8, 2021
  */
 
-class MenuOption {
+class ElementMenuOption extends Element {
     
     private boolean prevPressed;
     private boolean currPressed;
@@ -25,7 +25,7 @@ class MenuOption {
     private final Vector2i padding;
     private Color color;
 
-    MenuOption(String text, Rectangle rectangle, Vector2i padding) {
+    ElementMenuOption(String text, Rectangle rectangle, Vector2i padding) {
         this.text      = text;
         this.rectangle = rectangle;
         this.padding   = padding;
@@ -33,7 +33,7 @@ class MenuOption {
         //TODO: add optional shortcut string
     }
 
-    void update(Mouse mouse, MenuBar menubar, boolean active) {
+    void update(Mouse mouse, WidgetMenuBar menubar, boolean active) {
         if(rectangle.intersects(mouse.cursorPos)) {
             hovered     = true;
             prevPressed = currPressed;
@@ -51,16 +51,22 @@ class MenuOption {
         }
     }
 
+    @Override
     void update(Mouse mouse) {
         hovered = rectangle.intersects(mouse.cursorPos);
         color   = (hovered) ? Color.BLUE : Color.DARK_GRAY;
         clicked = (hovered && mouse.clicked);
     }
 
+    @Override
     void renderBackground(Background background) {
         background.drawRectangle(rectangle, color);
     }
 
+    @Override
+    void renderIcon(ShaderProgram program) {}
+    
+    @Override
     void renderText(ShaderProgram program, TrueTypeFont font) {
         int xOffset = rectangle.xPos + padding.x;
         int yOffset = rectangle.yPos + padding.y + TrueTypeFont.FONT_HEIGHT;

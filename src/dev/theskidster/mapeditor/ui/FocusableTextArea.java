@@ -21,7 +21,7 @@ import static org.lwjgl.glfw.GLFW.*;
  * Created: Jan 13, 2021
  */
 
-final class TextArea implements PropertyChangeListener {
+final class FocusableTextArea extends Focusable implements PropertyChangeListener {
     
     private final int TEXT_AREA_HEIGHT = 30;
     private final int PADDING = 4;
@@ -35,7 +35,6 @@ final class TextArea implements PropertyChangeListener {
     private int lengthToIndex;
     private int textOffset;
     
-    private boolean hasFocus;
     private boolean shiftHeld;
     private boolean caratIdle;
     private boolean caratBlink;
@@ -67,7 +66,7 @@ final class TextArea implements PropertyChangeListener {
         public char getChar(boolean shiftHeld) { return (!shiftHeld) ? c : C; }
     }
     
-    TextArea(int xOffset, int yOffset, int width) {
+    FocusableTextArea(int xOffset, int yOffset, int width) {
         this.xOffset = xOffset;
         this.yOffset = yOffset;
         this.width   = width;
@@ -139,44 +138,9 @@ final class TextArea implements PropertyChangeListener {
         }};
     }
     
-    TextArea(String text, int xOffset, int yOffset, int width) {
+    FocusableTextArea(String text, int xOffset, int yOffset, int width) {
         this(xOffset, yOffset, width);
         typed.append(text);
-    }
-    
-    @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-        switch(evt.getPropertyName()) {
-            case "finished": //Used for cursor timer
-                caratIdle = (Boolean) evt.getNewValue();
-                break;
-                
-            case "parentX":
-                parentX = (Integer) evt.getNewValue();
-                
-                rectBack.xPos    = parentX + xOffset;
-                rectFront.xPos   = parentX + xOffset;
-                scissorBox.xPos  = parentX + xOffset + 1;
-                textPos.x        = parentX + xOffset + PADDING;
-                carat.position.x = (parentX + xOffset) + lengthToIndex + PADDING;
-                
-                iconLeft.position.x  = parentX + xOffset;
-                iconRight.position.x = parentX + (xOffset + (width - 15));
-                break;
-                
-            case "parentY":
-                parentY = (Integer) evt.getNewValue();
-                
-                rectBack.yPos    = parentY + yOffset;
-                rectFront.yPos   = parentY + yOffset + 1;
-                scissorBox.yPos  = parentY + yOffset + TEXT_AREA_HEIGHT;
-                textPos.y        = parentY + yOffset + 21;
-                carat.position.y = (parentY + yOffset) + TEXT_AREA_HEIGHT - 5;
-                
-                iconLeft.position.y  = parentY + yOffset + TEXT_AREA_HEIGHT;
-                iconRight.position.y = parentY + yOffset + TEXT_AREA_HEIGHT;
-                break;
-        }
     }
     
     private void insertChar(char c) {
@@ -196,7 +160,31 @@ final class TextArea implements PropertyChangeListener {
                 (parentY + yOffset) + TEXT_AREA_HEIGHT - 5);
     }
     
-    public void processInput(int key, int action) {
+    void setText(String text) {
+        typed.setLength(0);
+        xIndex = 0;
+        
+        for(char c : text.toCharArray()) insertChar(c);
+    }
+    
+    @Override
+    void focus() {
+        hasFocus = true;
+        UI.setFocusable(this);
+        timer.start();
+    }
+    
+    @Override
+    void unfocus() {
+        hasFocus = false;
+        
+        if(UI.getFocusable() != null && UI.getFocusable().equals(this)) {
+            UI.setFocusable(null);
+        }
+    }
+    
+    @Override
+    void processInput(int key, int action) {
         if(action == GLFW_PRESS || action == GLFW_REPEAT) {
             caratIdle  = false;
             caratBlink = true;
@@ -240,17 +228,7 @@ final class TextArea implements PropertyChangeListener {
         }
     }
     
-    void focus() {
-        hasFocus = true;
-        UI.setTextArea(this);
-        timer.start();
-    }
-    
-    void unfocus() {
-        hasFocus = false;
-        UI.setTextArea(null);
-    }
-    
+    @Override
     void update(Mouse mouse) {
         timer.update();
         if(App.tick(18) && caratIdle) caratBlink = !caratBlink;
@@ -271,11 +249,13 @@ final class TextArea implements PropertyChangeListener {
         scissorBox.height = TEXT_AREA_HEIGHT;
     }
     
+    @Override
     void renderBackground(Background background) {
         background.drawRectangle(rectBack, Color.LIGHT_GRAY);
         background.drawRectangle(rectFront, Color.MEDIUM_GRAY);
     }
     
+    @Override
     void renderIcon(ShaderProgram program) {
         iconLeft.render(program);
         iconRight.render(program);
@@ -283,15 +263,44 @@ final class TextArea implements PropertyChangeListener {
         if(hasFocus && caratBlink) carat.render(program);
     }
     
+    @Override
     void renderText(ShaderProgram program, TrueTypeFont font) {
         font.drawString(scissorBox, program, typed.toString(), textPos.x + textOffset, textPos.y, 1, Color.WHITE);
     }
     
-    void setText(String text) {
-        typed.setLength(0);
-        xIndex = 0;
-        
-        for(char c : text.toCharArray()) insertChar(c);
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        switch(evt.getPropertyName()) {
+            case "finished": //Used for cursor timer
+                caratIdle = (Boolean) evt.getNewValue();
+                break;
+                
+            case "parentX":
+                parentX = (Integer) evt.getNewValue();
+                
+                rectBack.xPos    = parentX + xOffset;
+                rectFront.xPos   = parentX + xOffset;
+                scissorBox.xPos  = parentX + xOffset + 1;
+                textPos.x        = parentX + xOffset + PADDING;
+                carat.position.x = (parentX + xOffset) + lengthToIndex + PADDING;
+                
+                iconLeft.position.x  = parentX + xOffset;
+                iconRight.position.x = parentX + (xOffset + (width - 15));
+                break;
+                
+            case "parentY":
+                parentY = (Integer) evt.getNewValue();
+                
+                rectBack.yPos    = parentY + yOffset;
+                rectFront.yPos   = parentY + yOffset + 1;
+                scissorBox.yPos  = parentY + yOffset + TEXT_AREA_HEIGHT;
+                textPos.y        = parentY + yOffset + 21;
+                carat.position.y = (parentY + yOffset) + TEXT_AREA_HEIGHT - 5;
+                
+                iconLeft.position.y  = parentY + yOffset + TEXT_AREA_HEIGHT;
+                iconRight.position.y = parentY + yOffset + TEXT_AREA_HEIGHT;
+                break;
+        }
     }
     
 }

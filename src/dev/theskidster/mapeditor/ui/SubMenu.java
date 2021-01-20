@@ -20,9 +20,9 @@ class SubMenu {
     private final Background background;
     private final Rectangle rectangle;
 
-    final List<MenuOption> buttons;
+    final List<ElementMenuOption> buttons;
 
-    SubMenu(List<MenuOption> buttons, Rectangle rectangle) {
+    SubMenu(List<ElementMenuOption> buttons, Rectangle rectangle) {
         this.buttons   = buttons;
         this.rectangle = rectangle;
         

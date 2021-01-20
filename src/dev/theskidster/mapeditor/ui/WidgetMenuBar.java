@@ -22,7 +22,7 @@ import org.joml.Vector2i;
  * Created: Jan 4, 2021
  */
 
-public class MenuBar extends Widget {
+public class WidgetMenuBar extends Widget {
     
     private final int HEIGHT = 28;
     private int currMenuIndex;
@@ -35,10 +35,10 @@ public class MenuBar extends Widget {
     private final Background background;
     private final Icon[] icons = new Icon[5];
     
-    private final List<MenuOption> buttons;
+    private final List<ElementMenuOption> buttons;
     private final Map<Integer, SubMenu> subMenus = new HashMap<>();
     
-    public MenuBar() {
+    public WidgetMenuBar() {
         rectangle   = new Rectangle(0, 0, 0, HEIGHT);
         background  = new Background(6);
         activeMenu  = new boolean[5];
@@ -76,11 +76,11 @@ public class MenuBar extends Widget {
             Vector2i padding = new Vector2i(8, 2);
 
             buttons = new ArrayList<>() {{
-                add(new MenuOption("File",  rectangles[0], padding));
-                add(new MenuOption("Edit",  rectangles[1], padding));
-                add(new MenuOption("View",  rectangles[2], padding));
-                add(new MenuOption("Map",   rectangles[3], padding));
-                add(new MenuOption("Layer", rectangles[4], padding));
+                add(new ElementMenuOption("File",  rectangles[0], padding));
+                add(new ElementMenuOption("Edit",  rectangles[1], padding));
+                add(new ElementMenuOption("View",  rectangles[2], padding));
+                add(new ElementMenuOption("Map",   rectangles[3], padding));
+                add(new ElementMenuOption("Layer", rectangles[4], padding));
             }};
         }
         
@@ -97,13 +97,13 @@ public class MenuBar extends Widget {
             
             Vector2i padding = new Vector2i(42, 2);
             
-            List<MenuOption> subMenuButtons = new ArrayList<>() {{
-                add(new MenuOption("New Map...",       rectangles.get(0), padding));
-                add(new MenuOption("New Blockset...",  rectangles.get(1), padding));
-                add(new MenuOption("Open...",          rectangles.get(2), padding));
-                add(new MenuOption("Save",             rectangles.get(3), padding));
-                add(new MenuOption("Save As...",       rectangles.get(4), padding));
-                add(new MenuOption("Quit",             rectangles.get(5), padding));
+            List<ElementMenuOption> subMenuButtons = new ArrayList<>() {{
+                add(new ElementMenuOption("New Map...",       rectangles.get(0), padding));
+                add(new ElementMenuOption("New Blockset...",  rectangles.get(1), padding));
+                add(new ElementMenuOption("Open...",          rectangles.get(2), padding));
+                add(new ElementMenuOption("Save",             rectangles.get(3), padding));
+                add(new ElementMenuOption("Save As...",       rectangles.get(4), padding));
+                add(new ElementMenuOption("Quit",             rectangles.get(5), padding));
             }};
             
             subMenus.put(0, new SubMenu(subMenuButtons, new Rectangle(0, HEIGHT, 320, (HEIGHT * 6) + 1)));

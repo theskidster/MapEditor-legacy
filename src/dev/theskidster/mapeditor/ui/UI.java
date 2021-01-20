@@ -19,20 +19,20 @@ public class UI {
     private int width;
     private int height;
     
-    TrueTypeFont font;
+    private final TrueTypeFont font;
     
-    private static TextArea textArea;
+    private static Focusable focusable;
     
     private final Mouse mouse         = new Mouse();
     private final Matrix4f projMatrix = new Matrix4f();
     
-    private Map<String, Widget> widgets;
+    private final Map<String, Widget> widgets;
     
     public UI() {
         font = new TrueTypeFont(FreeType.newLibrary(), "fnt_karla_regular.ttf");
         
         widgets = new HashMap<String, Widget>() {{
-            put("Menu Bar", new MenuBar());
+            put("Menu Bar", new WidgetMenuBar());
         }};
     }
     
@@ -55,8 +55,12 @@ public class UI {
         widgets.forEach((name, widget) -> widget.render(program, font));
     }
     
-    static void setTextArea(TextArea area) {
-        textArea = area;
+    static void setFocusable(Focusable obj) {
+        focusable = obj;
+    }
+    
+    static Focusable getFocusable() {
+        return focusable;
     }
     
     public void setMousePosition(double x, double y) {
@@ -81,11 +85,11 @@ public class UI {
     }
     
     public boolean getMenuBarActive() {
-        return ((MenuBar) widgets.get("Menu Bar")).getMenuBarActive();
+        return ((WidgetMenuBar) widgets.get("Menu Bar")).getMenuBarActive();
     }
     
     public void resetMenuBar() {
-        ((MenuBar) widgets.get("Menu Bar")).resetState();
+        ((WidgetMenuBar) widgets.get("Menu Bar")).resetState();
     }
     
     public void addWidget(String name, Widget widget) {
@@ -93,7 +97,7 @@ public class UI {
     }
     
     public void enterText(int key, int action) {
-        if(textArea != null) textArea.processInput(key, action);
+        if(focusable != null) focusable.processInput(key, action);
     }
     
 }
