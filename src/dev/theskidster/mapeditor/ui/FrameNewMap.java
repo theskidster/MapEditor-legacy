@@ -40,8 +40,8 @@ public final class FrameNewMap extends Frame {
         textArea2 = new FocusableTextArea(126, 162, 300);
         fButton1  = new ElementFolderButton(440, 77, textArea1);
         fButton2  = new ElementFolderButton(440, 187, textArea2);
-        spinBox1  = new FocusableSpinBox();
-        spinBox2  = new FocusableSpinBox();
+        spinBox1  = new FocusableSpinBox(0, 0, 0);
+        spinBox2  = new FocusableSpinBox(0, 0, 0);
         
         observable.properties.put("parentX", xPos);
         observable.properties.put("parentY", yPos);

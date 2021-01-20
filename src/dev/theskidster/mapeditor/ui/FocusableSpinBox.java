@@ -12,16 +12,23 @@ import dev.theskidster.mapeditor.main.ShaderProgram;
 
 class FocusableSpinBox extends Focusable {
     
-    public FocusableSpinBox() {
-        
+    public FocusableSpinBox(int xOffset, int yOffset, int width) {
+        super(xOffset, yOffset, width);
     }
 
     @Override
     void focus() {
+        hasFocus = true;
+        UI.setFocusable(this);
     }
 
     @Override
     void unfocus() {
+        hasFocus = false;
+        
+        if(UI.getFocusable() != null && UI.getFocusable().equals(this)) {
+            UI.setFocusable(null);
+        }
     }
 
     @Override
