@@ -16,8 +16,8 @@ import static org.lwjgl.glfw.GLFW.*;
 
 public class UI {
     
-    private int width;
-    private int height;
+    private static int viewWidth;
+    private static int viewHeight;
     
     private final TrueTypeFont font;
     
@@ -37,15 +37,15 @@ public class UI {
     }
     
     public void update() {
-        float hw = (2f / width);
-        float hh = (-2f / height);
+        float hw = (2f / viewWidth);
+        float hh = (-2f / viewHeight);
         
         projMatrix.set(hw,  0,   0, 0, 
                         0, hh,   0, 0, 
                         0,  0, -1f, 0, 
                       -1f, 1f,   0, 1f);
         
-        widgets.forEach((name, widget) -> widget.update(width, height, mouse));
+        widgets.forEach((name, widget) -> widget.update(viewWidth, viewHeight, mouse));
         widgets.entrySet().removeIf(widget -> widget.getValue().removeRequest);
     }
     
@@ -63,6 +63,14 @@ public class UI {
         return focusable;
     }
     
+    static int getViewWidth() {
+        return viewWidth;
+    }
+    
+    static int getViewHeight() {
+        return viewHeight;
+    }
+    
     public void setMousePosition(double x, double y) {
         mouse.cursorPos.set((int) x, (int) y);
     }
@@ -78,8 +86,8 @@ public class UI {
     }
     
     public void setViewport(int width, int height) {
-        this.width  = width;
-        this.height = height;
+        viewWidth  = width;
+        viewHeight = height;
         
         projMatrix.setPerspective((float) Math.toRadians(45), (float) width / height, 0.1f, Float.POSITIVE_INFINITY);
     }

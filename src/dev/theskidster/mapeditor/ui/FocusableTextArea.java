@@ -1,15 +1,14 @@
 package dev.theskidster.mapeditor.ui;
 
 import dev.theskidster.mapeditor.graphics.Background;
-import dev.theskidster.mapeditor.graphics.TrueTypeFont;
 import dev.theskidster.mapeditor.graphics.Icon;
+import dev.theskidster.mapeditor.graphics.TrueTypeFont;
 import dev.theskidster.mapeditor.util.Mouse;
 import dev.theskidster.mapeditor.main.App;
 import dev.theskidster.mapeditor.main.ShaderProgram;
 import dev.theskidster.mapeditor.util.Color;
 import dev.theskidster.mapeditor.util.Timer;
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import static org.lwjgl.glfw.GLFW.*;
 
 /**
@@ -17,7 +16,7 @@ import static org.lwjgl.glfw.GLFW.*;
  * Created: Jan 13, 2021
  */
 
-final class FocusableTextArea extends Focusable implements PropertyChangeListener {
+final class FocusableTextArea extends Focusable {
     
     private Icon iconLeft;
     private Icon iconRight;
@@ -32,9 +31,6 @@ final class FocusableTextArea extends Focusable implements PropertyChangeListene
         
         iconLeft.setSprite(6, 0);
         iconRight.setSprite(7, 0);
-        
-        iconLeft.position.set(xOffset, yOffset + FOCUSABLE_HEIGHT);
-        iconRight.position.set(xOffset + (width - 15), yOffset + FOCUSABLE_HEIGHT);
     }
     
     FocusableTextArea(String text, int xOffset, int yOffset, int width) {
@@ -153,11 +149,7 @@ final class FocusableTextArea extends Focusable implements PropertyChangeListene
             case "parentX":
                 parentX = (Integer) evt.getNewValue();
                 
-                rectBack.xPos    = parentX + xOffset;
-                rectFront.xPos   = parentX + xOffset;
-                scissorBox.xPos  = parentX + xOffset + 1;
-                textPos.x        = parentX + xOffset + PADDING;
-                carat.position.x = (parentX + xOffset) + lengthToIndex + PADDING;
+                updatePosX();
                 
                 iconLeft.position.x  = parentX + xOffset;
                 iconRight.position.x = parentX + (xOffset + (width - 15));
@@ -166,11 +158,7 @@ final class FocusableTextArea extends Focusable implements PropertyChangeListene
             case "parentY":
                 parentY = (Integer) evt.getNewValue();
                 
-                rectBack.yPos    = parentY + yOffset;
-                rectFront.yPos   = parentY + yOffset + 1;
-                scissorBox.yPos  = parentY + yOffset + FOCUSABLE_HEIGHT;
-                textPos.y        = parentY + yOffset + 21;
-                carat.position.y = (parentY + yOffset) + FOCUSABLE_HEIGHT - 5;
+                updatePosY();
                 
                 iconLeft.position.y  = parentY + yOffset + FOCUSABLE_HEIGHT;
                 iconRight.position.y = parentY + yOffset + FOCUSABLE_HEIGHT;

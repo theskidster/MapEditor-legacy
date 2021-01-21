@@ -150,7 +150,7 @@ public class TrueTypeFont {
     public void drawString(Rectangle rectangle, ShaderProgram program, String text, float x, float y, float scale, Color color) {
         glEnable(GL_SCISSOR_TEST);
         
-        glScissor((int) rectangle.xPos, (int) rectangle.yPos, (int) rectangle.width, (int) rectangle.width);
+        glScissor((int) rectangle.xPos, (int) rectangle.yPos, (int) rectangle.width, (int) rectangle.height);
         drawString(program, text, x, y, scale, color);
         
         glDisable(GL_SCISSOR_TEST);

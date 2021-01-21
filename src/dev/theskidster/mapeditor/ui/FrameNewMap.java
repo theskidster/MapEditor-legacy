@@ -22,6 +22,7 @@ public final class FrameNewMap extends Frame {
     private final ElementFolderButton fButton2;
     private final FocusableSpinBox spinBox1;
     private final FocusableSpinBox spinBox2;
+    private final FocusableSpinBox spinBox3;
     
     private final Background background;
     
@@ -34,14 +35,15 @@ public final class FrameNewMap extends Frame {
     public FrameNewMap(int xPos, int yPos) {
         super(new Icon("spr_icons.png", 20, 20), "New Map", xPos, yPos, 488, 430, true);
         
-        background = new Background(13);
+        background = new Background(19);
         
         textArea1 = new FocusableTextArea(126, 52, 300);
         textArea2 = new FocusableTextArea(126, 162, 300);
         fButton1  = new ElementFolderButton(440, 77, textArea1);
         fButton2  = new ElementFolderButton(440, 187, textArea2);
-        spinBox1  = new FocusableSpinBox(0, 0, 0);
-        spinBox2  = new FocusableSpinBox(0, 0, 0);
+        spinBox1  = new FocusableSpinBox(126, 272, 186, "blocks", 64);
+        spinBox2  = new FocusableSpinBox(126, 315, 186, "blocks", 32);
+        spinBox3  = new FocusableSpinBox(126, 358, 186, "blocks", 64);
         
         observable.properties.put("parentX", xPos);
         observable.properties.put("parentY", yPos);
@@ -49,6 +51,9 @@ public final class FrameNewMap extends Frame {
         observable.addObserver(textArea2);
         observable.addObserver(fButton1);
         observable.addObserver(fButton2);
+        observable.addObserver(spinBox1);
+        observable.addObserver(spinBox2);
+        observable.addObserver(spinBox3);
         
         icon.setSprite(2, 2);
     }
@@ -64,6 +69,9 @@ public final class FrameNewMap extends Frame {
         textArea2.update(mouse);
         fButton1.update(mouse);
         fButton2.update(mouse);
+        spinBox1.update(mouse);
+        spinBox2.update(mouse);
+        spinBox3.update(mouse);
     }
 
     @Override
@@ -80,6 +88,9 @@ public final class FrameNewMap extends Frame {
             closeButton.renderBackground(background);
             textArea1.renderBackground(background);
             textArea2.renderBackground(background);
+            spinBox1.renderBackground(background);
+            spinBox2.renderBackground(background);
+            spinBox3.renderBackground(background);
         background.batchEnd(program);
         
         icon.render(program);
@@ -88,6 +99,9 @@ public final class FrameNewMap extends Frame {
         textArea2.renderIcon(program);
         fButton1.renderIcon(program);
         fButton2.renderIcon(program);
+        spinBox1.renderIcon(program);
+        spinBox2.renderIcon(program);
+        spinBox3.renderIcon(program);
         
         font.drawString(program, "New Map", xPos + 45, yPos - (TITLE_BAR_HEIGHT / 3), 1, Color.WHITE);
         font.drawString(program, "Blockset:", xPos + 12, yPos + 24, 1, Color.WHITE);
@@ -100,12 +114,18 @@ public final class FrameNewMap extends Frame {
         font.drawString(program, "Depth:", xPos + 26, yPos + 379, 1, Color.WHITE);
         textArea1.renderText(program, font);
         textArea2.renderText(program, font);
+        spinBox1.renderText(program, font);
+        spinBox2.renderText(program, font);
+        spinBox3.renderText(program, font);
     }
 
     @Override
     void close() {
         textArea1.unfocus();
         textArea2.unfocus();
+        spinBox1.unfocus();
+        spinBox2.unfocus();
+        spinBox3.unfocus();
     }
     
 }

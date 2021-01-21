@@ -2,8 +2,11 @@ package dev.theskidster.mapeditor.ui;
 
 import dev.theskidster.mapeditor.graphics.Icon;
 import dev.theskidster.mapeditor.graphics.TrueTypeFont;
+import dev.theskidster.mapeditor.main.ShaderProgram;
+import dev.theskidster.mapeditor.util.Color;
 import dev.theskidster.mapeditor.util.Rectangle;
 import dev.theskidster.mapeditor.util.Timer;
+import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.Map;
 import org.joml.Vector2i;
@@ -14,10 +17,11 @@ import static org.lwjgl.glfw.GLFW.*;
  * Created: Jan 19, 2021
  */
 
-public abstract class Focusable extends Element {
+public abstract class Focusable extends Element implements PropertyChangeListener {
     
     protected final int FOCUSABLE_HEIGHT = 30;
-    protected final int PADDING = 4;
+    protected final int PADDING          = 4;
+    protected final int MAX_VALUE        = 480;
     
     protected int parentX;
     protected int parentY;
@@ -123,11 +127,6 @@ public abstract class Focusable extends Element {
         }};
     }
     
-    abstract void focus();
-    abstract void unfocus();
-    
-    abstract void processInput(int key, int action);
-
     protected void insertChar(char c) {
         typed.insert(xIndex, c);
         xIndex++;
@@ -144,6 +143,27 @@ public abstract class Focusable extends Element {
                 (parentX + xOffset) + (lengthToIndex + textOffset) + PADDING, 
                 (parentY + yOffset) + FOCUSABLE_HEIGHT - 5);
     }
+    
+    protected void updatePosX() {
+        rectBack.xPos    = parentX + xOffset;
+        rectFront.xPos   = parentX + xOffset;
+        scissorBox.xPos  = parentX + xOffset + 1;
+        textPos.x        = parentX + xOffset + PADDING;
+        carat.position.x = (parentX + xOffset) + lengthToIndex + PADDING;
+    }
+    
+    protected void updatePosY() {
+        rectBack.yPos    = parentY + yOffset;
+        rectFront.yPos   = parentY + yOffset + 1;
+        scissorBox.yPos  = Math.abs(UI.getViewHeight() - (parentY + yOffset + FOCUSABLE_HEIGHT));
+        textPos.y        = parentY + yOffset + 21;
+        carat.position.y = (parentY + yOffset) + FOCUSABLE_HEIGHT - 5;
+    }
+    
+    abstract void focus();
+    abstract void unfocus();
+    
+    abstract void processInput(int key, int action);
     
     void setText(String text) {
         typed.setLength(0);
