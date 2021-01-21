@@ -3,7 +3,6 @@ package dev.theskidster.mapeditor.ui;
 import dev.theskidster.mapeditor.graphics.Background;
 import dev.theskidster.mapeditor.graphics.TrueTypeFont;
 import dev.theskidster.mapeditor.graphics.Icon;
-import dev.theskidster.mapeditor.util.Rectangle;
 import dev.theskidster.mapeditor.util.Mouse;
 import dev.theskidster.mapeditor.main.App;
 import dev.theskidster.mapeditor.main.ShaderProgram;
@@ -11,7 +10,6 @@ import dev.theskidster.mapeditor.util.Color;
 import dev.theskidster.mapeditor.util.Timer;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import org.joml.Vector2i;
 import static org.lwjgl.glfw.GLFW.*;
 
 /**
@@ -21,45 +19,19 @@ import static org.lwjgl.glfw.GLFW.*;
 
 final class FocusableTextArea extends Focusable implements PropertyChangeListener {
     
-    private final int FOCUSABLE_HEIGHT = 30;
-    private final int PADDING = 4;
-    
-    private int parentX;
-    private int parentY;
-    private int xIndex;
-    private int lengthToIndex;
-    private int textOffset;
-    
-    private boolean caratIdle;
-    private boolean caratBlink;
-    
-    private final StringBuilder typed = new StringBuilder();
-    private final Vector2i textPos    = new Vector2i();
-    
-    private Rectangle rectBack;
-    private Rectangle rectFront;
-    private Rectangle scissorBox;
-    
     private Icon iconLeft;
     private Icon iconRight;
-    private Icon carat;
-    
-    private final Timer timer = new Timer(1, 18, this);
     
     FocusableTextArea(int xOffset, int yOffset, int width) {
         super(xOffset, yOffset, width);
         
-        rectBack   = new Rectangle(xOffset, yOffset, width, FOCUSABLE_HEIGHT);
-        rectFront  = new Rectangle(xOffset, yOffset + 1, width, FOCUSABLE_HEIGHT - 2);
-        scissorBox = new Rectangle();
+        timer = new Timer(1, 18, this);
         
         iconLeft  = new Icon("spr_icons.png", 15, FOCUSABLE_HEIGHT);
         iconRight = new Icon("spr_icons.png", 15, FOCUSABLE_HEIGHT);
-        carat     = new Icon("spr_icons.png", 15, FOCUSABLE_HEIGHT);
         
         iconLeft.setSprite(6, 0);
         iconRight.setSprite(7, 0);
-        carat.setSprite(4, 2);
         
         iconLeft.position.set(xOffset, yOffset + FOCUSABLE_HEIGHT);
         iconRight.position.set(xOffset + (width - 15), yOffset + FOCUSABLE_HEIGHT);
@@ -68,30 +40,6 @@ final class FocusableTextArea extends Focusable implements PropertyChangeListene
     FocusableTextArea(String text, int xOffset, int yOffset, int width) {
         this(xOffset, yOffset, width);
         typed.append(text);
-    }
-    
-    private void insertChar(char c) {
-        typed.insert(xIndex, c);
-        xIndex++;
-        scroll();
-    }
-    
-    private void scroll() {
-        lengthToIndex = TrueTypeFont.getLengthInPixels(typed.substring(0, xIndex), 1);
-        
-        textOffset = (width - PADDING) - (lengthToIndex + textPos.x - (parentX + xOffset + PADDING));
-        if(textOffset > 0) textOffset = 0;
-        
-        carat.position.set(
-                (parentX + xOffset) + (lengthToIndex + textOffset) + PADDING, 
-                (parentY + yOffset) + FOCUSABLE_HEIGHT - 5);
-    }
-    
-    void setText(String text) {
-        typed.setLength(0);
-        xIndex = 0;
-        
-        for(char c : text.toCharArray()) insertChar(c);
     }
     
     @Override

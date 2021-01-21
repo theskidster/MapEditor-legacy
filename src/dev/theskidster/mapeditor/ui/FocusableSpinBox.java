@@ -4,6 +4,7 @@ import dev.theskidster.mapeditor.graphics.TrueTypeFont;
 import dev.theskidster.mapeditor.graphics.Background;
 import dev.theskidster.mapeditor.util.Mouse;
 import dev.theskidster.mapeditor.main.ShaderProgram;
+import dev.theskidster.mapeditor.util.Color;
 
 /**
  * @author J Hoffman
@@ -14,6 +15,8 @@ class FocusableSpinBox extends Focusable {
     
     public FocusableSpinBox(int xOffset, int yOffset, int width) {
         super(xOffset, yOffset, width);
+        
+        
     }
 
     @Override
@@ -40,7 +43,9 @@ class FocusableSpinBox extends Focusable {
     }
 
     @Override
-    void renderBackground(Background backgound) {
+    void renderBackground(Background background) {
+        background.drawRectangle(rectBack, Color.LIGHT_GRAY);
+        background.drawRectangle(rectFront, Color.MEDIUM_GRAY);
     }
 
     @Override

@@ -1,7 +1,12 @@
 package dev.theskidster.mapeditor.ui;
 
+import dev.theskidster.mapeditor.graphics.Icon;
+import dev.theskidster.mapeditor.graphics.TrueTypeFont;
+import dev.theskidster.mapeditor.util.Rectangle;
+import dev.theskidster.mapeditor.util.Timer;
 import java.util.HashMap;
 import java.util.Map;
+import org.joml.Vector2i;
 import static org.lwjgl.glfw.GLFW.*;
 
 /**
@@ -10,13 +15,35 @@ import static org.lwjgl.glfw.GLFW.*;
  */
 
 public abstract class Focusable extends Element {
-
+    
+    protected final int FOCUSABLE_HEIGHT = 30;
+    protected final int PADDING = 4;
+    
+    protected int parentX;
+    protected int parentY;
+    protected int xIndex;
+    protected int lengthToIndex;
+    protected int textOffset;
+    
     protected final int xOffset;
     protected final int yOffset;
     protected final int width;
     
     protected boolean hasFocus;
     protected boolean shiftHeld;
+    protected boolean caratIdle;
+    protected boolean caratBlink;
+    
+    protected final StringBuilder typed = new StringBuilder();
+    protected final Vector2i textPos    = new Vector2i();
+    
+    protected Rectangle rectBack;
+    protected Rectangle rectFront;
+    protected Rectangle scissorBox;
+    
+    protected final Icon carat;
+    
+    protected Timer timer;
     
     protected Map<Integer, Key> keyChars;
     
@@ -36,6 +63,13 @@ public abstract class Focusable extends Element {
         this.xOffset = xOffset;
         this.yOffset = yOffset;
         this.width   = width;
+        
+        rectBack   = new Rectangle(xOffset, yOffset, width, FOCUSABLE_HEIGHT);
+        rectFront  = new Rectangle(xOffset, yOffset + 1, width, FOCUSABLE_HEIGHT - 2);
+        scissorBox = new Rectangle();
+        carat      = new Icon("spr_icons.png", 15, FOCUSABLE_HEIGHT);
+        
+        carat.setSprite(4, 2);
         
         keyChars = new HashMap<>() {{
             put(GLFW_KEY_SPACE,      new Key(' ', ' '));
@@ -94,4 +128,28 @@ public abstract class Focusable extends Element {
     
     abstract void processInput(int key, int action);
 
+    protected void insertChar(char c) {
+        typed.insert(xIndex, c);
+        xIndex++;
+        scroll();
+    }
+    
+    protected void scroll() {
+        lengthToIndex = TrueTypeFont.getLengthInPixels(typed.substring(0, xIndex), 1);
+        
+        textOffset = (width - PADDING) - (lengthToIndex + textPos.x - (parentX + xOffset + PADDING));
+        if(textOffset > 0) textOffset = 0;
+        
+        carat.position.set(
+                (parentX + xOffset) + (lengthToIndex + textOffset) + PADDING, 
+                (parentY + yOffset) + FOCUSABLE_HEIGHT - 5);
+    }
+    
+    void setText(String text) {
+        typed.setLength(0);
+        xIndex = 0;
+        
+        for(char c : text.toCharArray()) insertChar(c);
+    }
+    
 }
