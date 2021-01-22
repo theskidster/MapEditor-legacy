@@ -93,21 +93,21 @@ class FocusableSpinBox extends Focusable implements PropertyChangeListener {
             
             switch(key) {
                 case GLFW_KEY_BACKSPACE:
-                    if(xIndex > 0) {
-                        xIndex--;
-                        typed.deleteCharAt(xIndex);
+                    if(getIndex() > 0) {
+                        setIndex(getIndex() - 1);
+                        typed.deleteCharAt(getIndex());
                         parseValue();
                         scroll();
                     }
                     break;
                     
                 case GLFW_KEY_RIGHT:
-                    xIndex = (xIndex > typed.length() - 1) ? xIndex = typed.length() : xIndex + 1;
+                    setIndex((getIndex() > typed.length() - 1) ? typed.length() : getIndex() + 1);
                     scroll();
                     break;
                     
                 case GLFW_KEY_LEFT:
-                    xIndex = (xIndex <= 0) ? xIndex = 0 : xIndex - 1;
+                    setIndex((getIndex() <= 0) ? 0 : getIndex() - 1);
                     scroll();
                     break;
                     
@@ -128,16 +128,6 @@ class FocusableSpinBox extends Focusable implements PropertyChangeListener {
         if(rectFront.intersects(mouse.cursorPos)) {
             if(mouse.clicked) {
                 if(hasFocus) {
-                    int textLength  = TrueTypeFont.getLengthInPixels(typed.toString(), 1);
-                    int mouseOffset = mouse.cursorPos.x - (parentX + xOffset);
-                    /*
-                    textOffset = a negative value use to move the string backwards or forwards when its too large to fit in the box
-                    textLength = the total length in pixels of the string
-                    
-                    NEEDED: mouse position relative to box width
-                    */
-                    
-                    System.out.println(mouse.cursorPos.x - (parentX + xOffset));
                     //TODO: set caret position
                 } else {
                     focus();
@@ -168,7 +158,7 @@ class FocusableSpinBox extends Focusable implements PropertyChangeListener {
     
     @Override
     void renderText(ShaderProgram program, TrueTypeFont font) {
-        font.drawString(scissorBox, program, typed + " " + unit, textPos.x + textOffset, textPos.y, 1, Color.WHITE);
+        font.drawString(scissorBox, program, typed + " " + unit, textPos.x + getTextOffset(), textPos.y, 1, Color.WHITE);
     }
 
     @Override

@@ -67,23 +67,20 @@ final class FocusableTextArea extends Focusable {
             
             switch(key) {
                 case GLFW_KEY_BACKSPACE:
-                    if(xIndex > 0) {
-                        prevXIndex = xIndex; //TODO: move this into method
-                        xIndex--;
-                        typed.deleteCharAt(xIndex);
+                    if(getIndex() > 0) {
+                        setIndex(getIndex() - 1);
+                        typed.deleteCharAt(getIndex());
                         scroll();
                     }
                     break;
                     
                 case GLFW_KEY_RIGHT:
-                    prevXIndex = xIndex; //TODO: move this into method
-                    xIndex = (xIndex > typed.length() - 1) ? xIndex = typed.length() : xIndex + 1;
+                    setIndex((getIndex() > typed.length() - 1) ? typed.length() : getIndex() + 1);
                     scroll();
                     break;
                     
                 case GLFW_KEY_LEFT:
-                    prevXIndex = xIndex; //TODO: move this into method
-                    xIndex = (xIndex <= 0) ? xIndex = 0 : xIndex - 1;
+                    setIndex((getIndex() <= 0) ? 0 : getIndex() - 1);
                     scroll();
                     break;
                     
@@ -139,7 +136,7 @@ final class FocusableTextArea extends Focusable {
     
     @Override
     void renderText(ShaderProgram program, TrueTypeFont font) {        
-        font.drawString(scissorBox, program, typed.toString(), textPos.x + textOffset, textPos.y, 1, Color.WHITE);
+        font.drawString(scissorBox, program, typed.toString(), textPos.x + getTextOffset(), textPos.y, 1, Color.WHITE);
     }
     
     @Override

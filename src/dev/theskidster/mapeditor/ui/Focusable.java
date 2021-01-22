@@ -23,10 +23,10 @@ public abstract class Focusable extends Element implements PropertyChangeListene
     
     protected int parentX;
     protected int parentY;
-    protected int xIndex;
-    protected int prevXIndex;
-    protected int lengthToIndex;
-    protected int textOffset;
+    private int currIndex;
+    private int prevIndex;
+    private int lengthToIndex;
+    private int textOffset;
     
     protected final int xOffset;
     protected final int yOffset;
@@ -127,18 +127,18 @@ public abstract class Focusable extends Element implements PropertyChangeListene
     }
     
     protected void insertChar(char c) {
-        typed.insert(xIndex, c);
-        prevXIndex = xIndex; //TODO: move this into method
-        xIndex++;
+        typed.insert(currIndex, c);
+        prevIndex = currIndex; //TODO: move this into method
+        currIndex++;
         scroll();
     }
     
     protected void scroll() {
-        lengthToIndex = TrueTypeFont.getLengthInPixels(typed.substring(0, xIndex), 1);
+        lengthToIndex = TrueTypeFont.getLengthInPixels(typed.substring(0, currIndex), 1);
         
         int result = (width - PADDING) - (lengthToIndex + textPos.x - (parentX + xOffset + PADDING));
         
-        if(prevXIndex < xIndex) {
+        if(prevIndex < currIndex) {
             if(carat.position.x > (parentX + xOffset + width) - PADDING) {
                 textOffset = result;
                 if(textOffset > 0) textOffset = 0;
@@ -170,6 +170,14 @@ public abstract class Focusable extends Element implements PropertyChangeListene
         carat.position.y = (parentY + yOffset) + FOCUSABLE_HEIGHT - 5;
     }
     
+    protected void setIndex(int index) {
+        prevIndex = currIndex;
+        currIndex = index;
+    }
+    
+    protected int getIndex()      { return currIndex; }
+    protected int getTextOffset() { return textOffset; }
+    
     abstract void focus();
     abstract void unfocus();
     
@@ -177,7 +185,7 @@ public abstract class Focusable extends Element implements PropertyChangeListene
     
     void setText(String text) {
         typed.setLength(0);
-        xIndex = 0;
+        currIndex = 0;
         
         for(char c : text.toCharArray()) insertChar(c);
     }
