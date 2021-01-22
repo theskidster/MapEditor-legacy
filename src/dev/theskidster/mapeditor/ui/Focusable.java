@@ -2,8 +2,6 @@ package dev.theskidster.mapeditor.ui;
 
 import dev.theskidster.mapeditor.graphics.Icon;
 import dev.theskidster.mapeditor.graphics.TrueTypeFont;
-import dev.theskidster.mapeditor.main.ShaderProgram;
-import dev.theskidster.mapeditor.util.Color;
 import dev.theskidster.mapeditor.util.Rectangle;
 import dev.theskidster.mapeditor.util.Timer;
 import java.beans.PropertyChangeListener;
@@ -26,6 +24,7 @@ public abstract class Focusable extends Element implements PropertyChangeListene
     protected int parentX;
     protected int parentY;
     protected int xIndex;
+    protected int prevXIndex;
     protected int lengthToIndex;
     protected int textOffset;
     
@@ -129,6 +128,7 @@ public abstract class Focusable extends Element implements PropertyChangeListene
     
     protected void insertChar(char c) {
         typed.insert(xIndex, c);
+        prevXIndex = xIndex; //TODO: move this into method
         xIndex++;
         scroll();
     }
@@ -136,8 +136,18 @@ public abstract class Focusable extends Element implements PropertyChangeListene
     protected void scroll() {
         lengthToIndex = TrueTypeFont.getLengthInPixels(typed.substring(0, xIndex), 1);
         
-        textOffset = (width - PADDING) - (lengthToIndex + textPos.x - (parentX + xOffset + PADDING));
-        if(textOffset > 0) textOffset = 0;
+        int result = (width - PADDING) - (lengthToIndex + textPos.x - (parentX + xOffset + PADDING));
+        
+        if(prevXIndex < xIndex) {
+            if(carat.position.x > (parentX + xOffset + width) - PADDING) {
+                textOffset = result;
+                if(textOffset > 0) textOffset = 0;
+            }
+        } else {
+            if(carat.position.x < parentX + xOffset + PADDING) {
+                textOffset = result - width;
+            }
+        }
         
         carat.position.set(
                 (parentX + xOffset) + (lengthToIndex + textOffset) + PADDING, 

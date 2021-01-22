@@ -46,6 +46,12 @@ class FocusableSpinBox extends Focusable implements PropertyChangeListener {
         iconRight.setSprite(7, 0);
     }
 
+    private void parseValue() {
+        try {
+            value = Integer.parseInt(typed.toString());
+        } catch(NumberFormatException e) {}
+    }
+    
     @Override
     void focus() {
         hasFocus = true;
@@ -65,7 +71,7 @@ class FocusableSpinBox extends Focusable implements PropertyChangeListener {
         if(value > MAX_VALUE) {
             value = MAX_VALUE;
             setText(value + "");
-        } else if(value < 1) {
+        } else if(value < 1 || typed.toString().equals("")) {
             value = 1;
             setText(value + "");
         }
@@ -81,8 +87,7 @@ class FocusableSpinBox extends Focusable implements PropertyChangeListener {
             keyChars.forEach((k, c) -> {
                 if(key == k && (k >= 48 && k <= 57)) {
                     insertChar(c.getChar(shiftHeld));
-                    value = Integer.parseInt(typed.toString());
-                    System.out.println(value);
+                    parseValue();
                 }
             });
             
@@ -91,12 +96,7 @@ class FocusableSpinBox extends Focusable implements PropertyChangeListener {
                     if(xIndex > 0) {
                         xIndex--;
                         typed.deleteCharAt(xIndex);
-                        
-                        if(!typed.toString().equals("")) {
-                            value = Integer.parseInt(typed.toString());
-                            System.out.println(value);
-                        }
-                        
+                        parseValue();
                         scroll();
                     }
                     break;
@@ -128,6 +128,16 @@ class FocusableSpinBox extends Focusable implements PropertyChangeListener {
         if(rectFront.intersects(mouse.cursorPos)) {
             if(mouse.clicked) {
                 if(hasFocus) {
+                    int textLength  = TrueTypeFont.getLengthInPixels(typed.toString(), 1);
+                    int mouseOffset = mouse.cursorPos.x - (parentX + xOffset);
+                    /*
+                    textOffset = a negative value use to move the string backwards or forwards when its too large to fit in the box
+                    textLength = the total length in pixels of the string
+                    
+                    NEEDED: mouse position relative to box width
+                    */
+                    
+                    System.out.println(mouse.cursorPos.x - (parentX + xOffset));
                     //TODO: set caret position
                 } else {
                     focus();
