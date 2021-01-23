@@ -166,6 +166,8 @@ public abstract class Focusable extends Element implements PropertyChangeListene
     }
     
     protected int findClosestIndex(int cursorX) {
+        if(typed.length() <= 1) return 0;
+        
         List<Integer> culled = new ArrayList<>();
         
         //Remove numbers that are outside of the carats range
