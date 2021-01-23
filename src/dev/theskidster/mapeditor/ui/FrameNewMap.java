@@ -7,6 +7,8 @@ import dev.theskidster.mapeditor.util.Mouse;
 import dev.theskidster.mapeditor.util.Color;
 import dev.theskidster.mapeditor.main.ShaderProgram;
 import dev.theskidster.mapeditor.util.Observable;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 
 /**
@@ -14,7 +16,7 @@ import java.io.File;
  * Created: Jan 8, 2021
  */
 
-public final class FrameNewMap extends Frame {
+public final class FrameNewMap extends Frame implements PropertyChangeListener {
     
     private final FocusableTextArea textArea1;
     private final FocusableTextArea textArea2;
@@ -23,6 +25,8 @@ public final class FrameNewMap extends Frame {
     private final FocusableSpinBox spinBox1;
     private final FocusableSpinBox spinBox2;
     private final FocusableSpinBox spinBox3;
+    private final ElementLabelButton lButton1;
+    private final ElementLabelButton lButton2;
     
     private final Background background;
     
@@ -35,7 +39,7 @@ public final class FrameNewMap extends Frame {
     public FrameNewMap(int xPos, int yPos) {
         super(new Icon("spr_icons.png", 20, 20), "New Map", xPos, yPos, 488, 430, true);
         
-        background = new Background(25);
+        background = new Background(27);
         
         textArea1 = new FocusableTextArea(126, 52, 300);
         textArea2 = new FocusableTextArea(126, 162, 300);
@@ -44,6 +48,8 @@ public final class FrameNewMap extends Frame {
         spinBox1  = new FocusableSpinBox(126, 272, 186, "blocks", 64);
         spinBox2  = new FocusableSpinBox(126, 315, 186, "blocks", 32);
         spinBox3  = new FocusableSpinBox(126, 358, 186, "blocks", 64);
+        lButton1  = new ElementLabelButton(368, 329, 96, "Save As...", this);
+        lButton2  = new ElementLabelButton(368, 372, 96, "Cancel", this);
         
         observable.properties.put("parentX", xPos);
         observable.properties.put("parentY", yPos);
@@ -54,6 +60,8 @@ public final class FrameNewMap extends Frame {
         observable.addObserver(spinBox1);
         observable.addObserver(spinBox2);
         observable.addObserver(spinBox3);
+        observable.addObserver(lButton1);
+        observable.addObserver(lButton2);
         
         icon.setSprite(2, 2);
     }
@@ -72,6 +80,8 @@ public final class FrameNewMap extends Frame {
         spinBox1.update(mouse);
         spinBox2.update(mouse);
         spinBox3.update(mouse);
+        lButton1.update(mouse);
+        lButton2.update(mouse);
     }
 
     @Override
@@ -91,6 +101,8 @@ public final class FrameNewMap extends Frame {
             spinBox1.renderBackground(background);
             spinBox2.renderBackground(background);
             spinBox3.renderBackground(background);
+            lButton1.renderBackground(background);
+            lButton2.renderBackground(background);
         background.batchEnd(program);
         
         icon.render(program);
@@ -102,6 +114,8 @@ public final class FrameNewMap extends Frame {
         spinBox1.renderIcon(program);
         spinBox2.renderIcon(program);
         spinBox3.renderIcon(program);
+        lButton1.renderIcon(program);
+        lButton2.renderIcon(program);
         
         font.drawString(program, "New Map", xPos + 45, yPos - (TITLE_BAR_HEIGHT / 3), 1, Color.WHITE);
         font.drawString(program, "Blockset:", xPos + 12, yPos + 24, 1, Color.WHITE);
@@ -117,6 +131,8 @@ public final class FrameNewMap extends Frame {
         spinBox1.renderText(program, font);
         spinBox2.renderText(program, font);
         spinBox3.renderText(program, font);
+        lButton1.renderText(program, font);
+        lButton2.renderText(program, font);
     }
 
     @Override
@@ -126,6 +142,28 @@ public final class FrameNewMap extends Frame {
         spinBox1.unfocus();
         spinBox2.unfocus();
         spinBox3.unfocus();
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        switch(evt.getPropertyName()) {
+            case "labelButtonClicked":
+                switch(((ElementLabelButton) evt.getSource()).text) {
+                    case "Save As...":
+                        if((Boolean) evt.getNewValue()) {
+                            //TODO: create map using data parsed from elements
+                        }
+                        break;
+                        
+                    case "Cancel":
+                        if((Boolean) evt.getNewValue()) {
+                            removeRequest = true;
+                            close();
+                        }
+                        break;
+                }
+                break;
+        }
     }
     
 }
