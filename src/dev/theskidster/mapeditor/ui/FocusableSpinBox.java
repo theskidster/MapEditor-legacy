@@ -128,7 +128,11 @@ class FocusableSpinBox extends Focusable implements PropertyChangeListener {
         if(rectFront.intersects(mouse.cursorPos)) {
             if(mouse.clicked) {
                 if(hasFocus) {
-                    //TODO: set caret position
+                    if(typed.length() > 0) {
+                        int newIndex = findClosestIndex(mouse.cursorPos.x - (parentX + xOffset));
+                        setIndex(newIndex);
+                        scroll();
+                    }
                 } else {
                     focus();
                 }

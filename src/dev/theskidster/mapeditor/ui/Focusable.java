@@ -5,7 +5,9 @@ import dev.theskidster.mapeditor.graphics.TrueTypeFont;
 import dev.theskidster.mapeditor.util.Rectangle;
 import dev.theskidster.mapeditor.util.Timer;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.joml.Vector2i;
 import static org.lwjgl.glfw.GLFW.*;
@@ -124,6 +126,67 @@ public abstract class Focusable extends Element implements PropertyChangeListene
             put(GLFW_KEY_RIGHT_BRACKET, new Key(']', '}'));
             put(GLFW_KEY_GRAVE_ACCENT,  new Key('`', '~'));
         }};
+    }
+    
+    private int getClosest(int value1, int value2, int target) {
+        return (target - value1 >= value2 - target) ? value2 : value1;
+    }
+    
+    private int search(int[] values, int cursorX) {
+        int n = values.length;
+        
+        if(cursorX <= values[0])     return values[0];
+        if(cursorX >= values[n - 1]) return values[n - 1];
+        
+        int i   = 0;
+        int j   = n;
+        int mid = 0;
+        
+        while(i < j) {
+            mid = (i + j) / 2;
+            
+            if(values[mid] == cursorX) return values[mid]; 
+            
+            if(cursorX < values[mid]) {
+                if(mid > 0 && cursorX > values[mid - 1]) {
+                    return getClosest(values[mid - 1], values[mid], cursorX);
+                }
+                
+                j = mid;
+            } else {
+                if(mid < n - 1 && cursorX < values[mid + 1]) {
+                    return getClosest(values[mid], values[mid + 1], cursorX);
+                }
+                
+                i = mid + 1;
+            }
+        }
+        
+        return values[mid];
+    }
+    
+    protected int findClosestIndex(int cursorX) {
+        List<Integer> culled = new ArrayList<>();
+        
+        //Remove numbers that are outside of the carats range
+        for(int i = 0; i < typed.length(); i++) {
+            int position = TrueTypeFont.getLengthInPixels(typed.substring(0, i), 1) + textOffset;
+            
+            if(position > 0 && position < width) {
+                culled.add(position);
+            }
+        }
+        
+        int[] values = culled.stream().mapToInt(Integer::intValue).toArray();
+        int result   = 0;
+        
+        for(int i = 0; i < typed.length(); i++) {
+            if(TrueTypeFont.getLengthInPixels(typed.substring(0, i), 1) + textOffset == search(values, cursorX)) {
+                result = i;
+            }
+        }
+        
+        return result;
     }
     
     protected void insertChar(char c) {
