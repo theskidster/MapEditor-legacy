@@ -17,7 +17,7 @@ public class Timer {
     private boolean finished;
     private boolean start;
     
-    private Observable observable = new Observable(this);
+    private final Observable observable = new Observable(this);
     
     public Timer(int time, int speed) {
         this.time   = time;

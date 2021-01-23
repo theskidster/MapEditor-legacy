@@ -13,7 +13,7 @@ import org.joml.Vector2i;
  * Created: Jan 8, 2021
  */
 
-class ElementMenuOption extends Element {
+final class ElementMenuOption extends Element {
     
     private boolean prevPressed;
     private boolean currPressed;

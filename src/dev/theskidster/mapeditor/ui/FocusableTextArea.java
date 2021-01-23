@@ -108,7 +108,7 @@ final class FocusableTextArea extends Focusable {
             if(mouse.clicked) {
                 if(hasFocus) {
                     if(typed.length() > 0) {
-                        int newIndex = findClosestIndex(mouse.cursorPos.x - (parentX + xOffset));
+                        int newIndex = findClosestIndex(mouse.cursorPos.x - (parentX + xOffset) - PADDING);
                         setIndex(newIndex);
                         scroll();
                     }

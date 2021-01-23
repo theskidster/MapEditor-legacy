@@ -17,7 +17,7 @@ import static org.lwjgl.glfw.GLFW.*;
  * Created: Jan 17, 2021
  */
 
-class FocusableSpinBox extends Focusable implements PropertyChangeListener {
+final class FocusableSpinBox extends Focusable implements PropertyChangeListener {
     
     int value;
     
@@ -26,6 +26,9 @@ class FocusableSpinBox extends Focusable implements PropertyChangeListener {
     private final Icon iconLeft;
     private final Icon iconMiddle;
     private final Icon iconRight;
+    
+    private final ElementArrow upArr;
+    private final ElementArrow downArr;
     
     public FocusableSpinBox(int xOffset, int yOffset, int width, String unit, int value) {
         super(xOffset, yOffset, width);
@@ -44,12 +47,25 @@ class FocusableSpinBox extends Focusable implements PropertyChangeListener {
         iconLeft.setSprite(6, 0);
         iconMiddle.setSprite(6, 1);
         iconRight.setSprite(7, 0);
+        
+        upArr   = new ElementArrow(width, 0, true, this);
+        downArr = new ElementArrow(width, 15, false, this);
     }
 
     private void parseValue() {
         try {
             value = Integer.parseInt(typed.toString());
         } catch(NumberFormatException e) {}
+    }
+    
+    private void validateInput() {
+        if(value > MAX_VALUE) {
+            value = MAX_VALUE;
+            setText(value + "");
+        } else if(value < 1 || typed.toString().equals("")) {
+            value = 1;
+            setText(value + "");
+        }
     }
     
     @Override
@@ -67,14 +83,7 @@ class FocusableSpinBox extends Focusable implements PropertyChangeListener {
             UI.setFocusable(null);
         }
         
-        //Included some minor validation
-        if(value > MAX_VALUE) {
-            value = MAX_VALUE;
-            setText(value + "");
-        } else if(value < 1 || typed.toString().equals("")) {
-            value = 1;
-            setText(value + "");
-        }
+        validateInput();
     }
     
     @Override
@@ -129,7 +138,7 @@ class FocusableSpinBox extends Focusable implements PropertyChangeListener {
             if(mouse.clicked) {
                 if(hasFocus) {
                     if(typed.length() > 0) {
-                        int newIndex = findClosestIndex(mouse.cursorPos.x - (parentX + xOffset));
+                        int newIndex = findClosestIndex(mouse.cursorPos.x - (parentX + xOffset) - PADDING);
                         setIndex(newIndex);
                         scroll();
                     }
@@ -143,12 +152,18 @@ class FocusableSpinBox extends Focusable implements PropertyChangeListener {
         
         scissorBox.width  = width;
         scissorBox.height = FOCUSABLE_HEIGHT;
+        
+        upArr.update(mouse);
+        downArr.update(mouse);
     }
 
     @Override
     void renderBackground(Background background) {
         background.drawRectangle(rectBack, Color.LIGHT_GRAY);
         background.drawRectangle(rectFront, Color.MEDIUM_GRAY);
+        
+        upArr.renderBackground(background);
+        downArr.renderBackground(background);
     }
 
     @Override
@@ -156,6 +171,9 @@ class FocusableSpinBox extends Focusable implements PropertyChangeListener {
         iconLeft.render(program);
         iconMiddle.render(program);
         iconRight.render(program);
+        
+        upArr.renderIcon(program);
+        downArr.renderIcon(program);
         
         if(hasFocus && caratBlink) carat.render(program);
     }
@@ -177,6 +195,9 @@ class FocusableSpinBox extends Focusable implements PropertyChangeListener {
                 
                 updatePosX();
                 
+                upArr.setParentX(parentX + xOffset);
+                downArr.setParentX(parentX + xOffset);
+                
                 iconLeft.position.x   = parentX + xOffset;
                 iconMiddle.position.x = parentX + (xOffset + (width - 6));
                 iconRight.position.x  = parentX + (xOffset + (width + 9));
@@ -187,11 +208,30 @@ class FocusableSpinBox extends Focusable implements PropertyChangeListener {
                 
                 updatePosY();
                 
+                upArr.setParentY(parentY + yOffset);
+                downArr.setParentY(parentY + yOffset);
+                
                 int iconPosY = parentY + yOffset + FOCUSABLE_HEIGHT;
                 
                 iconLeft.position.y   = iconPosY;
                 iconMiddle.position.y = iconPosY;
                 iconRight.position.y  = iconPosY;
+                break;
+                
+            case "clickedUp":
+                if((Boolean) evt.getNewValue()) {
+                    value++;
+                    validateInput();
+                    setText(value + "");
+                }
+                break;
+                
+            case "clickedDown":
+                if((Boolean) evt.getNewValue()) {
+                    value--;
+                    validateInput();
+                    setText(value + "");
+                }
                 break;
         }
     }

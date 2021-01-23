@@ -35,7 +35,7 @@ public final class FrameNewMap extends Frame {
     public FrameNewMap(int xPos, int yPos) {
         super(new Icon("spr_icons.png", 20, 20), "New Map", xPos, yPos, 488, 430, true);
         
-        background = new Background(19);
+        background = new Background(25);
         
         textArea1 = new FocusableTextArea(126, 52, 300);
         textArea2 = new FocusableTextArea(126, 162, 300);
