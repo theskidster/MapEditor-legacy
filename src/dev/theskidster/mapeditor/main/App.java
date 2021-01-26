@@ -1,6 +1,6 @@
 package dev.theskidster.mapeditor.main;
 
-import dev.theskidster.mapeditor.scene.Scene;
+import dev.theskidster.mapeditor.world.World;
 import dev.theskidster.mapeditor.ui.FrameNewMap;
 import dev.theskidster.mapeditor.ui.UI;
 import dev.theskidster.mapeditor.util.Color;
@@ -34,7 +34,7 @@ public final class App {
     private static ShaderProgram worldProgram;
     private ShaderProgram uiProgram;
     private Camera camera;
-    private Scene scene;
+    private World scene;
     private UI ui;
     
     private static final Queue<Event> events = new LinkedList<>();
@@ -52,7 +52,7 @@ public final class App {
         
         setClearColor(Color.SLATE);
         
-        window.show(monitor, ui);
+        window.show(monitor, ui, camera);
         Logger.printSystemInfo();
         
         final double TARGET_DELTA = 1 / 60.0;
@@ -150,7 +150,7 @@ public final class App {
         }
         
         camera = new Camera(window.width, window.height);
-        scene  = new Scene();
+        scene  = new World();
         ui     = new UI();
         
         return true;

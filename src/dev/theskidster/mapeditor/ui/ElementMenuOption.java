@@ -37,7 +37,7 @@ final class ElementMenuOption extends Element {
         if(rectangle.intersects(mouse.cursorPos)) {
             hovered     = true;
             prevPressed = currPressed;
-            currPressed = mouse.clicked;
+            currPressed = mouse.clicked && mouse.button.equals("left");
 
             if(prevPressed != currPressed && !prevPressed) {
                 menubar.openSubMenus = !menubar.openSubMenus;

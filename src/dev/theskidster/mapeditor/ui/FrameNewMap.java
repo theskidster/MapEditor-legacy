@@ -31,7 +31,6 @@ public final class FrameNewMap extends Frame implements PropertyChangeListener {
     private final Observable observable = new Observable(this);
     
     //TODO: parse files using location provided from text areas
-    private File blockset;
     private File skybox;
     
     public FrameNewMap(int xPos, int yPos) {

@@ -25,6 +25,9 @@ public final class Window {
     
     public final long handle;
     
+    private boolean rightHeld;
+    private boolean middleHeld;
+    
     String title;
     Vector2i position;
     
@@ -91,7 +94,7 @@ public final class Window {
      * 
      * @param monitor the monitor to display this window on
      */
-    void show(Monitor monitor, UI ui) {
+    void show(Monitor monitor, UI ui, Camera camera) {
         setWindowIcon("img_logo.png");
         
         glfwSetWindowMonitor(handle, NULL, position.x, position.y, width, height, monitor.refreshRate);
@@ -114,18 +117,38 @@ public final class Window {
         });
         
         glfwSetScrollCallback(handle, (window, xOffset, yOffset) -> {
-            
+            camera.dolly((float) yOffset);
         });
         
         glfwSetKeyCallback(handle, (window, key, scancode, action, mods) -> {
             ui.enterText(key, action);
         });
         
-        glfwSetCursorPosCallback(handle, (window, xPos, yPos) -> ui.setMousePosition(xPos, yPos));
+        glfwSetCursorPosCallback(handle, (window, xPos, yPos) -> {
+            ui.setMousePosition(xPos, yPos);
+            
+            if(rightHeld ^ middleHeld) {
+                if(rightHeld) camera.setDirection(xPos, yPos);
+                if(middleHeld) camera.setPosition(xPos, yPos);
+            } else {
+                camera.prevX = xPos;
+                camera.prevY = yPos;
+            }
+        });
         
         glfwSetMouseButtonCallback(handle, (window, button, action, mods) -> {
             ui.setMouseAction(button, action);
             if(action == GLFW_PRESS && !ui.getMenuBarActive()) ui.resetMenuBar();
+            
+            switch(button) {
+                case GLFW_MOUSE_BUTTON_MIDDLE:
+                    middleHeld = action == GLFW_PRESS;
+                    break;
+                
+                case GLFW_MOUSE_BUTTON_RIGHT:
+                    rightHeld = action == GLFW_PRESS;
+                    break;
+            }
         });
     }
     

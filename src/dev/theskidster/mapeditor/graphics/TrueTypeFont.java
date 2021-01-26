@@ -31,7 +31,7 @@ public class TrueTypeFont {
     private final int vao = glGenVertexArrays();
     private final int vbo = glGenBuffers();
     
-    private static Map<Character, Glyph> glyphs = new HashMap<>();
+    private static final Map<Character, Glyph> glyphs = new HashMap<>();
     
     public TrueTypeFont(Library freeType, String filename) {
         try(InputStream file = TrueTypeFont.class.getResourceAsStream("/dev/theskidster/mapeditor/assets/" + filename)) {

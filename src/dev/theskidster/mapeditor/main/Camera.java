@@ -13,10 +13,20 @@ import org.joml.Vector3f;
  */
 final class Camera {
     
+    private float pitch;
+    private float yaw               = -90f;
+    private final float sensitivity = 0.1f;
+    
+    double prevX;
+    double prevY;
+    
     private final Vector3f position;
     private final Vector3f direction;
     private final Vector3f up;
     private final Vector3f tempFront;
+    private final Vector3f tempDirec;
+    private final Vector3f tempRight;
+    private final Vector3f tempUp;
     
     private final Matrix4f view;
     private final Matrix4f proj;
@@ -26,13 +36,15 @@ final class Camera {
         direction = new Vector3f(0, 0, -1);
         up        = new Vector3f(0, 1, 0);
         tempFront = new Vector3f();
+        tempDirec = new Vector3f();
+        tempRight = new Vector3f();
+        tempUp    = new Vector3f();
         
         view = new Matrix4f();
         proj = new Matrix4f();
     }
     
     void update(int width, int height) {
-        //TODO: add camera control via keyboard
         proj.setPerspective((float) Math.toRadians(45), (float) width / height, 0.1f, Float.POSITIVE_INFINITY);
     }
     
@@ -41,6 +53,46 @@ final class Camera {
         
         program.setUniform("uView", false, view);
         program.setUniform("uProjection", false, proj);
+    }
+    
+    private float getChangeIntensity(double currValue, double prevValue) {
+        return (float) (currValue - prevValue) * sensitivity;
+    }
+    
+    public void setDirection(double xPos, double yPos) {
+        if(xPos != prevX || yPos != prevY) {
+            yaw   += getChangeIntensity(xPos, prevX) * 2;
+            pitch += getChangeIntensity(yPos, prevY) * 2;
+            
+            if(pitch > 89f)  pitch = 89;
+            if(pitch < -89f) pitch = -89;
+            
+            direction.x = (float) (Math.cos(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch)));
+            direction.y = (float) Math.sin(Math.toRadians(pitch)) * -1;
+            direction.z = (float) (Math.sin(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch)));
+            
+            prevX = xPos;
+            prevY = yPos;
+        }
+    }
+    
+    public void setPosition(double xPos, double yPos) {
+        if(xPos != prevX || yPos != prevY) {
+            float speedX = getChangeIntensity(-xPos, -prevX);
+            float speedY = getChangeIntensity(-yPos, -prevY);
+            
+            position.add(direction.cross(up, tempRight).normalize().mul(speedX));
+            
+            tempRight.set(1, 0, 0);
+            position.add(direction.cross(tempRight, tempUp).normalize().mul(speedY));
+            
+            prevX = xPos;
+            prevY = yPos;
+        }
+    }
+    
+    public void dolly(float speed) {
+        position.add(direction.mul(speed * 10, tempDirec));
     }
     
 }

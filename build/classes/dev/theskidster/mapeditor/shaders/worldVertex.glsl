@@ -17,5 +17,10 @@ void main() {
             ioColor     = aColor;
             gl_Position = uProjection * uView * uModel * vec4(aPosition, 1.0f);
             break;
+
+        case 1:
+            ioColor = vec3(1);
+            gl_Position = uProjection * uView * uModel * vec4(aPosition, 1.0f);
+            break;
     }
 }

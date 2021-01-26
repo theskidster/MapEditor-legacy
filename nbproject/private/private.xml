@@ -2,6 +2,13 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/C:/Users/thesk/Documents/Projects/RG/tools/MapEditor/src/dev/theskidster/mapeditor/ui/FrameNewMap.java</file>
+            <file>file:/C:/Users/thesk/Documents/Projects/RG/tools/MapEditor/src/dev/theskidster/mapeditor/ui/SubMenu.java</file>
+            <file>file:/C:/Users/thesk/Documents/Projects/RG/tools/MapEditor/src/dev/theskidster/mapeditor/graphics/Vertex.java</file>
+            <file>file:/C:/Users/thesk/Documents/Projects/RG/tools/MapEditor/src/dev/theskidster/mapeditor/graphics/Shape.java</file>
+            <file>file:/C:/Users/thesk/Documents/Projects/RG/tools/MapEditor/src/dev/theskidster/mapeditor/scene/skyLayout.xml</file>
+            <file>file:/C:/Users/thesk/Documents/Projects/RG/tools/MapEditor/src/dev/theskidster/mapeditor/scene/Scene.java</file>
+        </group>
     </open-files>
 </project-private>
