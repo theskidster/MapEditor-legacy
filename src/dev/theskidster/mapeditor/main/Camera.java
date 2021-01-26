@@ -14,8 +14,7 @@ import org.joml.Vector3f;
 final class Camera {
     
     private float pitch;
-    private float yaw               = -90f;
-    private final float sensitivity = 0.1f;
+    private float yaw = -90f;
     
     double prevX;
     double prevY;
@@ -45,7 +44,8 @@ final class Camera {
     }
     
     void update(int width, int height) {
-        proj.setPerspective((float) Math.toRadians(45), (float) width / height, 0.1f, Float.POSITIVE_INFINITY);
+        //TODO: control FOV with prefrences
+        proj.setPerspective((float) Math.toRadians(90), (float) width / height, 0.1f, Float.POSITIVE_INFINITY);
     }
     
     void render(ShaderProgram program) {
@@ -55,14 +55,15 @@ final class Camera {
         program.setUniform("uProjection", false, proj);
     }
     
-    private float getChangeIntensity(double currValue, double prevValue) {
+    private float getChangeIntensity(double currValue, double prevValue, float sensitivity) {
         return (float) (currValue - prevValue) * sensitivity;
     }
     
     public void setDirection(double xPos, double yPos) {
         if(xPos != prevX || yPos != prevY) {
-            yaw   += getChangeIntensity(xPos, prevX) * 2;
-            pitch += getChangeIntensity(yPos, prevY) * 2;
+            yaw   += getChangeIntensity(xPos, prevX, 0.2f) * 2;
+            pitch += getChangeIntensity(yPos, prevY, 0.2f) * 2;
+            //TODO: import sensitivity from prefrences file
             
             if(pitch > 89f)  pitch = 89;
             if(pitch < -89f) pitch = -89;
@@ -78,13 +79,18 @@ final class Camera {
     
     public void setPosition(double xPos, double yPos) {
         if(xPos != prevX || yPos != prevY) {
-            float speedX = getChangeIntensity(-xPos, -prevX);
-            float speedY = getChangeIntensity(-yPos, -prevY);
+            float speedX = getChangeIntensity(-xPos, -prevX, 0.35f);
+            float speedY = getChangeIntensity(-yPos, -prevY, 0.35f);
+            //TODO: import inverted controls from prefrences file
             
             position.add(direction.cross(up, tempRight).normalize().mul(speedX));
             
-            tempRight.set(1, 0, 0);
-            position.add(direction.cross(tempRight, tempUp).normalize().mul(speedY));
+            tempRight.set(
+                    (float) (Math.cos(Math.toRadians(yaw + 90)) * Math.cos(Math.toRadians(pitch))), 
+                    0, 
+                    (float) (Math.sin(Math.toRadians(yaw + 90)) * Math.cos(Math.toRadians(pitch))));
+            
+            position.add(0, direction.cross(tempRight, tempUp).normalize().mul(speedY).y, 0);
             
             prevX = xPos;
             prevY = yPos;
@@ -92,7 +98,7 @@ final class Camera {
     }
     
     public void dolly(float speed) {
-        position.add(direction.mul(speed * 10, tempDirec));
+        position.add(direction.mul(speed * 18, tempDirec));
     }
     
 }
