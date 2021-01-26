@@ -34,7 +34,7 @@ public final class App {
     private static ShaderProgram worldProgram;
     private ShaderProgram uiProgram;
     private Camera camera;
-    private World scene;
+    private World world;
     private UI ui;
     
     private static final Queue<Event> events = new LinkedList<>();
@@ -79,7 +79,7 @@ public final class App {
                 pollEvents();
                 
                 camera.update(window.width, window.height);
-                scene.update();
+                world.update();
                 ui.update();
             }
             
@@ -87,7 +87,7 @@ public final class App {
             
             worldProgram.use();
             camera.render(worldProgram);
-            scene.render(worldProgram);
+            world.render(worldProgram);
             
             uiProgram.use();
             ui.render(uiProgram);
@@ -147,10 +147,11 @@ public final class App {
             worldProgram.addUniform(ShaderBufferType.MAT4, "uModel");
             worldProgram.addUniform(ShaderBufferType.MAT4, "uView");
             worldProgram.addUniform(ShaderBufferType.MAT4, "uProjection");
+            worldProgram.addUniform(ShaderBufferType.VEC3, "uColor");
         }
         
         camera = new Camera(window.width, window.height);
-        scene  = new World();
+        world  = new World(64, 32, 64);
         ui     = new UI();
         
         return true;
