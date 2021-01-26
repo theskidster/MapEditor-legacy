@@ -52,16 +52,13 @@ public class WidgetMenuBar extends Widget {
         icons[0].setSprite(2, 2);
         
         icons[1].position.set(12, (HEIGHT * 3) - 4);
-        icons[1].setSprite(1, 2);
+        icons[1].setSprite(1, 0);
         
         icons[2].position.set(12, (HEIGHT * 4) - 5);
-        icons[2].setSprite(1, 0);
+        icons[2].setSprite(0, 2);
         
-        icons[3].position.set(12, (HEIGHT * 5) - 4);
-        icons[3].setSprite(0, 2);
-        
-        icons[4].position.set(12, (HEIGHT * 7) - 4);
-        icons[4].setSprite(2, 0);
+        icons[3].position.set(12, (HEIGHT * 6) - 4);
+        icons[3].setSprite(2, 0);
         
         //Initialize menubar buttons
         {
@@ -88,25 +85,23 @@ public class WidgetMenuBar extends Widget {
         {
             List<Rectangle> rectangles = new ArrayList<>() {{
                 add(new Rectangle(1, HEIGHT + 1,       318, HEIGHT));
-                add(new Rectangle(1, HEIGHT * 2,       318, HEIGHT));
-                add(new Rectangle(1, (HEIGHT * 3) - 1, 318, HEIGHT));
-                add(new Rectangle(1, HEIGHT * 4,       318, HEIGHT));
-                add(new Rectangle(1, (HEIGHT * 5) - 1, 318, HEIGHT));
-                add(new Rectangle(1, HEIGHT * 6,       318, HEIGHT));
+                add(new Rectangle(1, (HEIGHT * 2) - 1, 318, HEIGHT));
+                add(new Rectangle(1, HEIGHT * 3,       318, HEIGHT));
+                add(new Rectangle(1, (HEIGHT * 4) - 1, 318, HEIGHT));
+                add(new Rectangle(1, HEIGHT * 5,       318, HEIGHT));
             }};
             
             Vector2i padding = new Vector2i(42, 2);
             
             List<ElementMenuOption> subMenuButtons = new ArrayList<>() {{
                 add(new ElementMenuOption("New Map...",       rectangles.get(0), padding));
-                add(new ElementMenuOption("New Blockset...",  rectangles.get(1), padding));
-                add(new ElementMenuOption("Open...",          rectangles.get(2), padding));
-                add(new ElementMenuOption("Save",             rectangles.get(3), padding));
-                add(new ElementMenuOption("Save As...",       rectangles.get(4), padding));
-                add(new ElementMenuOption("Quit",             rectangles.get(5), padding));
+                add(new ElementMenuOption("Open Map...",      rectangles.get(1), padding));
+                add(new ElementMenuOption("Save",             rectangles.get(2), padding));
+                add(new ElementMenuOption("Save As...",       rectangles.get(3), padding));
+                add(new ElementMenuOption("Quit",             rectangles.get(4), padding));
             }};
             
-            subMenus.put(0, new SubMenu(subMenuButtons, new Rectangle(0, HEIGHT, 320, (HEIGHT * 6) + 1)));
+            subMenus.put(0, new SubMenu(subMenuButtons, new Rectangle(0, HEIGHT, 320, (HEIGHT * 5) + 1)));
         }
         
         //TODO: add Edit submenu options
