@@ -61,8 +61,8 @@ final class Camera {
     
     public void setDirection(double xPos, double yPos) {
         if(xPos != prevX || yPos != prevY) {
-            yaw   += getChangeIntensity(xPos, prevX, 0.2f) * 2;
-            pitch += getChangeIntensity(yPos, prevY, 0.2f) * 2;
+            yaw   += getChangeIntensity(xPos, prevX, 0.25f) * 2;
+            pitch += getChangeIntensity(yPos, prevY, 0.25f) * 2;
             //TODO: import sensitivity from prefrences file
             
             if(pitch > 89f)  pitch = 89;
@@ -79,8 +79,8 @@ final class Camera {
     
     public void setPosition(double xPos, double yPos) {
         if(xPos != prevX || yPos != prevY) {
-            float speedX = getChangeIntensity(-xPos, -prevX, 0.35f);
-            float speedY = getChangeIntensity(-yPos, -prevY, 0.35f);
+            float speedX = getChangeIntensity(-xPos, -prevX, 0.38f);
+            float speedY = getChangeIntensity(-yPos, -prevY, 0.38f);
             //TODO: import inverted controls from prefrences file
             
             position.add(direction.cross(up, tempRight).normalize().mul(speedX));

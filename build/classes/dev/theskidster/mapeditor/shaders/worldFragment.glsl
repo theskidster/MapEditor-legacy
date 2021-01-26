@@ -11,7 +11,5 @@ void main() {
         case 0: case 1:
             ioResult = vec4(ioColor, 0);
             break;
-
-        
     }
 }
