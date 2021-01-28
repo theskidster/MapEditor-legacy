@@ -3,6 +3,8 @@ package dev.theskidster.mapeditor.graphics;
 import dev.theskidster.mapeditor.main.App;
 import dev.theskidster.mapeditor.main.ShaderProgram;
 import static dev.theskidster.mapeditor.world.World.HCS;
+import java.nio.FloatBuffer;
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import static org.lwjgl.opengl.GL30.*;
 import org.lwjgl.system.MemoryStack;
@@ -14,51 +16,58 @@ import org.lwjgl.system.MemoryStack;
 
 public final class Shape {
 
-    public Vector3f position;
+    private final int vao = glGenVertexArrays();
+    private final int vbo = glGenBuffers();
     
-    private final Graphics g;
+    public boolean removeRequest;
+    public boolean selected;
+    
+    public Vector3f position;
     private Texture texture;
+    private final FloatBuffer vertices;
+    private final Matrix4f modelMatrix = new Matrix4f();
     
     public Shape(Vector3f position) {
         this.position = position;
         
-        g = new Graphics();
-        
         try(MemoryStack stack = MemoryStack.stackPush()) {
-            g.vertices = stack.mallocFloat(24);
+            vertices = stack.mallocFloat(24);
             
             //(vec3 position)
-            g.vertices.put(position.x - HCS).put(position.y + HCS).put(position.z - HCS); //0
-            g.vertices.put(position.x + HCS).put(position.y + HCS).put(position.z - HCS); //1
-            g.vertices.put(position.x + HCS).put(position.y - HCS).put(position.z - HCS); //2
-            g.vertices.put(position.x - HCS).put(position.y - HCS).put(position.z - HCS); //3
-            g.vertices.put(position.x - HCS).put(position.y + HCS).put(position.z + HCS); //4
-            g.vertices.put(position.x + HCS).put(position.y + HCS).put(position.z + HCS); //5
-            g.vertices.put(position.x + HCS).put(position.y - HCS).put(position.z + HCS); //6
-            g.vertices.put(position.x - HCS).put(position.y - HCS).put(position.z + HCS); //7
+            vertices.put(position.x - HCS).put(position.y + HCS).put(position.z - HCS); //0
+            vertices.put(position.x + HCS).put(position.y + HCS).put(position.z - HCS); //1
+            vertices.put(position.x + HCS).put(position.y - HCS).put(position.z - HCS); //2
+            vertices.put(position.x - HCS).put(position.y - HCS).put(position.z - HCS); //3
+            vertices.put(position.x - HCS).put(position.y + HCS).put(position.z + HCS); //4
+            vertices.put(position.x + HCS).put(position.y + HCS).put(position.z + HCS); //5
+            vertices.put(position.x + HCS).put(position.y - HCS).put(position.z + HCS); //6
+            vertices.put(position.x - HCS).put(position.y - HCS).put(position.z + HCS); //7
             
-            g.vertices.flip();
+            vertices.flip();
         }
         
-        g.bindBuffers();
+        glBindVertexArray(vao);
+        
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW);
         
         glVertexAttribPointer(0, 3, GL_FLOAT, false, (3 * Float.BYTES), 0);
-        
         glEnableVertexAttribArray(0);
         
         setTexture("img_terrain.png");
     }
     
     public void update() {
-        g.modelMatrix.translation(position);
+        modelMatrix.translation(position);
     }
     
     public void render(ShaderProgram program) {
         glPointSize(5);
-        glBindVertexArray(g.vao);
+        glBindVertexArray(vao);
         
         program.setUniform("uType", 1);
-        program.setUniform("uModel", false, g.modelMatrix);
+        program.setUniform("uModel", false, modelMatrix);
+        program.setUniform("uSelected", (selected) ? 1f : 0f);
         
         glDrawArrays(GL_POINTS, 0, 8);
         

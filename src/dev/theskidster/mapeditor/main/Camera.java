@@ -11,7 +11,7 @@ import org.joml.Vector3f;
 /**
  * Represents a camera that can be used to move throughout the {@link dev.theskidster.mapeditor.scene.Scene Scene}.
  */
-final class Camera {
+public final class Camera {
     
     private float pitch;
     private float yaw = -90f;
@@ -19,25 +19,21 @@ final class Camera {
     double prevX;
     double prevY;
     
-    private final Vector3f position;
+    public final Vector3f position;
     private final Vector3f direction;
     private final Vector3f up;
-    private final Vector3f tempFront;
-    private final Vector3f tempDirec;
-    private final Vector3f tempRight;
-    private final Vector3f tempUp;
+    private final Vector3f temp1;
+    private final Vector3f temp2;
     
-    private final Matrix4f view;
-    private final Matrix4f proj;
+    public final Matrix4f view;
+    public final Matrix4f proj;
     
     Camera(float width, float height) {
         position  = new Vector3f();
         direction = new Vector3f(0, 0, -1);
         up        = new Vector3f(0, 1, 0);
-        tempFront = new Vector3f();
-        tempDirec = new Vector3f();
-        tempRight = new Vector3f();
-        tempUp    = new Vector3f();
+        temp1     = new Vector3f();
+        temp2     = new Vector3f();
         
         view = new Matrix4f();
         proj = new Matrix4f();
@@ -49,7 +45,7 @@ final class Camera {
     }
     
     void render(ShaderProgram program) {
-        view.setLookAt(position, position.add(direction, tempFront), up);
+        view.setLookAt(position, position.add(direction, temp1), up);
         
         program.setUniform("uView", false, view);
         program.setUniform("uProjection", false, proj);
@@ -83,14 +79,14 @@ final class Camera {
             float speedY = getChangeIntensity(-yPos, -prevY, 0.38f);
             //TODO: import inverted controls from prefrences file
             
-            position.add(direction.cross(up, tempRight).normalize().mul(speedX));
+            position.add(direction.cross(up, temp1).normalize().mul(speedX));
             
-            tempRight.set(
+            temp1.set(
                     (float) (Math.cos(Math.toRadians(yaw + 90)) * Math.cos(Math.toRadians(pitch))), 
                     0, 
                     (float) (Math.sin(Math.toRadians(yaw + 90)) * Math.cos(Math.toRadians(pitch))));
             
-            position.add(0, direction.cross(tempRight, tempUp).normalize().mul(speedY).y, 0);
+            position.add(0, direction.cross(temp1, temp2).normalize().mul(speedY).y, 0);
             
             prevX = xPos;
             prevY = yPos;
@@ -98,7 +94,7 @@ final class Camera {
     }
     
     public void dolly(float speed) {
-        position.add(direction.mul(speed * 18, tempDirec));
+        position.add(direction.mul(speed * 18, temp1));
     }
     
 }

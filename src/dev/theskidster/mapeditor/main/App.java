@@ -143,11 +143,12 @@ public final class App {
             worldProgram = new ShaderProgram(shaderSourceFiles);
             worldProgram.use();
             
-            worldProgram.addUniform(ShaderBufferType.INT,  "uType");
-            worldProgram.addUniform(ShaderBufferType.MAT4, "uModel");
-            worldProgram.addUniform(ShaderBufferType.MAT4, "uView");
-            worldProgram.addUniform(ShaderBufferType.MAT4, "uProjection");
-            worldProgram.addUniform(ShaderBufferType.VEC3, "uColor");
+            worldProgram.addUniform(ShaderBufferType.INT,   "uType");
+            worldProgram.addUniform(ShaderBufferType.MAT4,  "uModel");
+            worldProgram.addUniform(ShaderBufferType.MAT4,  "uView");
+            worldProgram.addUniform(ShaderBufferType.MAT4,  "uProjection");
+            worldProgram.addUniform(ShaderBufferType.VEC3,  "uColor");
+            worldProgram.addUniform(ShaderBufferType.FLOAT, "uSelected");
         }
         
         camera = new Camera(window.width, window.height);

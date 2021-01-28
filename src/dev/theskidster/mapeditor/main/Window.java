@@ -1,6 +1,7 @@
 package dev.theskidster.mapeditor.main;
 
 import dev.theskidster.mapeditor.ui.UI;
+import dev.theskidster.mapeditor.world.World;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -134,6 +135,16 @@ public final class Window {
                 camera.prevX = xPos;
                 camera.prevY = yPos;
             }
+            
+            /*
+            float x = (float) ((2.0f * xPos) / width - 1.0f);
+            float y = (float) (1.0f - (2.0f * yPos) / height);
+            float z = 1.0f;
+            */
+            
+            World.selectShape(camera);
+            
+            //https://lwjglgamedev.gitbooks.io/3d-game-development-with-lwjgl/content/chapter23/chapter23.html
         });
         
         glfwSetMouseButtonCallback(handle, (window, button, action, mods) -> {
