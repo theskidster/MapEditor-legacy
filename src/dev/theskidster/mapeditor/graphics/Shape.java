@@ -27,11 +27,17 @@ public final class Shape {
     private final FloatBuffer vertices;
     private final Matrix4f modelMatrix = new Matrix4f();
     
+    public Vector3f[] verts = new Vector3f[3];
+    
     public Shape(Vector3f position) {
         this.position = position;
         
         try(MemoryStack stack = MemoryStack.stackPush()) {
             vertices = stack.mallocFloat(24);
+            
+            verts[0] = new Vector3f(position.x - HCS, position.y + HCS, position.z - HCS);
+            verts[1] = new Vector3f(position.x + HCS, position.y + HCS, position.z - HCS);
+            verts[2] = new Vector3f(position.x + HCS, position.y - HCS, position.z - HCS);
             
             //(vec3 position)
             vertices.put(position.x - HCS).put(position.y + HCS).put(position.z - HCS); //0

@@ -1,12 +1,10 @@
 package dev.theskidster.mapeditor.world;
 
 import dev.theskidster.mapeditor.graphics.Shape;
-import dev.theskidster.mapeditor.main.Camera;
 import dev.theskidster.mapeditor.main.ShaderProgram;
 import java.util.HashMap;
 import java.util.Map;
 import org.joml.Intersectionf;
-import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 /**
@@ -60,36 +58,16 @@ public class World {
         origin.render(program);
     }
     
-    private static Vector3f dir = new Vector3f();
-    private static Vector3f min = new Vector3f();
-    private static Vector3f max = new Vector3f();
-    private static Vector2f nearFar = new Vector2f();
+    static Vector3f origin2 = new Vector3f();
+    static int count = 0;
     
-    //TODO: move this to somewhere more appropriate
-    public static void selectShape(Camera camera) {
-        int id              = 0;
-        Shape selectedShape = null;
-        float closestDist   = Float.POSITIVE_INFINITY;
-        
-        camera.view.positiveZ(dir).negate();
-        
-        for(int i = 0; i < shapes.size(); i++) {
-            shapes.get(i).selected = false;
-            min.set(shapes.get(i).position);
-            max.set(shapes.get(i).position);
-            min.add(-CELL_SIZE, -CELL_SIZE, -CELL_SIZE);
-            max.add(CELL_SIZE, CELL_SIZE, CELL_SIZE);
-            
-            if(Intersectionf.intersectRayAab(camera.position, dir, min, max, nearFar) && nearFar.x < closestDist) {
-                closestDist   = nearFar.x;
-                selectedShape = shapes.get(i);
-                id            = i;
+    public static void selectShape(Vector3f position, Vector3f ray) {
+        for(int s = 0; s < shapes.size(); s++) {
+            if(Intersectionf.testRayTriangle(position, ray, shapes.get(s).verts[0], shapes.get(s).verts[1], shapes.get(s).verts[2], 1)) {
+                System.out.println(count);
+                count++;
             }
         }
-        
-        if(selectedShape != null) {
-            shapes.get(id).selected = true;
-        }
     }
-    
+
 }

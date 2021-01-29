@@ -3,13 +3,11 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/thesk/Documents/Projects/RG/tools/MapEditor/src/dev/theskidster/mapeditor/util/Color.java</file>
             <file>file:/C:/Users/thesk/Documents/Projects/RG/tools/MapEditor/src/dev/theskidster/mapeditor/shaders/worldFragment.glsl</file>
-            <file>file:/C:/Users/thesk/Documents/Projects/RG/tools/MapEditor/src/dev/theskidster/mapeditor/graphics/Graphics.java</file>
-            <file>file:/C:/Users/thesk/Documents/Projects/RG/tools/MapEditor/src/dev/theskidster/mapeditor/world/Origin.java</file>
+            <file>file:/C:/Users/thesk/Documents/Projects/RG/tools/MapEditor/src/dev/theskidster/mapeditor/main/Window.java</file>
             <file>file:/C:/Users/thesk/Documents/Projects/RG/tools/MapEditor/src/dev/theskidster/mapeditor/main/Camera.java</file>
-            <file>file:/C:/Users/thesk/Documents/Projects/RG/tools/MapEditor/src/dev/theskidster/mapeditor/world/World.java</file>
             <file>file:/C:/Users/thesk/Documents/Projects/RG/tools/MapEditor/src/dev/theskidster/mapeditor/graphics/Shape.java</file>
+            <file>file:/C:/Users/thesk/Documents/Projects/RG/tools/MapEditor/src/dev/theskidster/mapeditor/world/World.java</file>
             <file>file:/C:/Users/thesk/Documents/Projects/RG/tools/MapEditor/src/dev/theskidster/mapeditor/shaders/worldVertex.glsl</file>
             <file>file:/C:/Users/thesk/Documents/Projects/RG/tools/MapEditor/src/dev/theskidster/mapeditor/main/App.java</file>
         </group>

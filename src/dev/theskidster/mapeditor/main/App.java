@@ -151,7 +151,7 @@ public final class App {
             worldProgram.addUniform(ShaderBufferType.FLOAT, "uSelected");
         }
         
-        camera = new Camera(window.width, window.height);
+        camera = new Camera();
         world  = new World(64, 32, 64);
         ui     = new UI();
         

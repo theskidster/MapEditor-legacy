@@ -6,7 +6,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
+import org.joml.Matrix4f;
 import org.joml.Vector2i;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 import static org.lwjgl.glfw.GLFW.*;
 import org.lwjgl.glfw.GLFWImage;
 import static org.lwjgl.opengl.GL11.glViewport;
@@ -123,6 +126,10 @@ public final class Window {
         
         glfwSetKeyCallback(handle, (window, key, scancode, action, mods) -> {
             ui.enterText(key, action);
+            
+            if(GLFW_KEY_LEFT == key) {
+                camera.position.x += 0.1f;
+            }
         });
         
         glfwSetCursorPosCallback(handle, (window, xPos, yPos) -> {
@@ -136,15 +143,8 @@ public final class Window {
                 camera.prevY = yPos;
             }
             
-            /*
-            float x = (float) ((2.0f * xPos) / width - 1.0f);
-            float y = (float) (1.0f - (2.0f * yPos) / height);
-            float z = 1.0f;
-            */
-            
-            World.selectShape(camera);
-            
-            //https://lwjglgamedev.gitbooks.io/3d-game-development-with-lwjgl/content/chapter23/chapter23.html
+            camera.castRay((float) ((2f * xPos) / width - 1f), (float) (1f - (2f * yPos) / height));
+            World.selectShape(camera.position, camera.ray);
         });
         
         glfwSetMouseButtonCallback(handle, (window, button, action, mods) -> {

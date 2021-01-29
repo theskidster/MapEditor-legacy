@@ -1,7 +1,9 @@
 package dev.theskidster.mapeditor.main;
 
+import org.joml.FrustumRayBuilder;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 /**
  * @author J Hoffman
@@ -19,25 +21,18 @@ public final class Camera {
     double prevX;
     double prevY;
     
-    public final Vector3f position;
-    private final Vector3f direction;
-    private final Vector3f up;
-    private final Vector3f temp1;
-    private final Vector3f temp2;
+    final Vector3f position  = new Vector3f();
+    final Vector3f direction = new Vector3f(0, 0, -1);
+    final Vector3f up        = new Vector3f(0, 1, 0);
+    final Vector3f ray       = new Vector3f();
     
-    public final Matrix4f view;
-    public final Matrix4f proj;
+    private final Vector3f tempVec1 = new Vector3f();
+    private final Vector3f tempVec2 = new Vector3f();
+    private final Vector4f tempVec3 = new Vector4f();
     
-    Camera(float width, float height) {
-        position  = new Vector3f();
-        direction = new Vector3f(0, 0, -1);
-        up        = new Vector3f(0, 1, 0);
-        temp1     = new Vector3f();
-        temp2     = new Vector3f();
-        
-        view = new Matrix4f();
-        proj = new Matrix4f();
-    }
+    private final Matrix4f view    = new Matrix4f();
+    private final Matrix4f proj    = new Matrix4f();
+    private final Matrix4f tempMat = new Matrix4f();
     
     void update(int width, int height) {
         //TODO: control FOV with prefrences
@@ -45,7 +40,7 @@ public final class Camera {
     }
     
     void render(ShaderProgram program) {
-        view.setLookAt(position, position.add(direction, temp1), up);
+        view.setLookAt(position, position.add(direction, tempVec1), up);
         
         program.setUniform("uView", false, view);
         program.setUniform("uProjection", false, proj);
@@ -79,14 +74,14 @@ public final class Camera {
             float speedY = getChangeIntensity(-yPos, -prevY, 0.38f);
             //TODO: import inverted controls from prefrences file
             
-            position.add(direction.cross(up, temp1).normalize().mul(speedX));
+            position.add(direction.cross(up, tempVec1).normalize().mul(speedX));
             
-            temp1.set(
+            tempVec1.set(
                     (float) (Math.cos(Math.toRadians(yaw + 90)) * Math.cos(Math.toRadians(pitch))), 
                     0, 
                     (float) (Math.sin(Math.toRadians(yaw + 90)) * Math.cos(Math.toRadians(pitch))));
             
-            position.add(0, direction.cross(temp1, temp2).normalize().mul(speedY).y, 0);
+            position.add(0, direction.cross(tempVec1, tempVec2).normalize().mul(speedY).y, 0);
             
             prevX = xPos;
             prevY = yPos;
@@ -94,7 +89,29 @@ public final class Camera {
     }
     
     public void dolly(float speed) {
-        position.add(direction.mul(speed * 18, temp1));
+        position.add(direction.mul(speed * 18, tempVec1));
+    }
+    
+    private FrustumRayBuilder rb = new FrustumRayBuilder();
+    
+    public void castRay(float x, float y) {
+        
+        tempVec3.set(x, y, -1f, 1f);
+            
+        proj.invert(tempMat);
+        tempVec3.set(tempVec3.mul(tempMat).x, tempVec3.mul(tempMat).y, -1f, 0);
+        view.invert(tempMat);
+
+        ray.set(tempVec3.mul(tempMat).x, tempVec3.mul(tempMat).y, tempVec3.mul(tempMat).z);
+        ray.normalize();
+        
+        /*
+        tempMat.set(view);
+        tempVec1.set(position);
+        
+        rb.set(tempMat);
+        rb.origin(tempVec1);
+        rb.dir(x, y, ray);*/
     }
     
 }
