@@ -35,19 +35,19 @@ public final class Shape {
         try(MemoryStack stack = MemoryStack.stackPush()) {
             vertices = stack.mallocFloat(24);
             
-            verts[0] = new Vector3f(position.x - HCS, position.y + HCS, position.z - HCS);
-            verts[1] = new Vector3f(position.x + HCS, position.y + HCS, position.z - HCS);
-            verts[2] = new Vector3f(position.x + HCS, position.y - HCS, position.z - HCS);
+            verts[0] = new Vector3f(-HCS, HCS, -HCS);
+            verts[1] = new Vector3f( HCS, HCS, -HCS);
+            verts[2] = new Vector3f( HCS, -HCS, -HCS);
             
             //(vec3 position)
-            vertices.put(position.x - HCS).put(position.y + HCS).put(position.z - HCS); //0
-            vertices.put(position.x + HCS).put(position.y + HCS).put(position.z - HCS); //1
-            vertices.put(position.x + HCS).put(position.y - HCS).put(position.z - HCS); //2
-            vertices.put(position.x - HCS).put(position.y - HCS).put(position.z - HCS); //3
-            vertices.put(position.x - HCS).put(position.y + HCS).put(position.z + HCS); //4
-            vertices.put(position.x + HCS).put(position.y + HCS).put(position.z + HCS); //5
-            vertices.put(position.x + HCS).put(position.y - HCS).put(position.z + HCS); //6
-            vertices.put(position.x - HCS).put(position.y - HCS).put(position.z + HCS); //7
+            vertices.put(verts[0].x).put(verts[0].y).put(verts[0].z); //0
+            vertices.put(verts[1].x).put(verts[1].y).put(verts[1].z); //1
+            vertices.put(verts[2].x).put(verts[2].y).put(verts[2].z); //2
+            vertices.put(-HCS).put(-HCS).put(-HCS); //3
+            vertices.put(-HCS).put( HCS).put( HCS); //4
+            vertices.put( HCS).put( HCS).put( HCS); //5
+            vertices.put( HCS).put(-HCS).put( HCS); //6
+            vertices.put(-HCS).put(-HCS).put( HCS); //7
             
             vertices.flip();
         }

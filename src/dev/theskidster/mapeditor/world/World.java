@@ -5,7 +5,6 @@ import dev.theskidster.mapeditor.main.ShaderProgram;
 import java.util.HashMap;
 import java.util.Map;
 import org.joml.Intersectionf;
-import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 /**
@@ -56,7 +55,21 @@ public class World {
     public void update() {
         shapes.forEach((id, shape) -> shape.update());
         
-        //test.position.set(shapes.get(0).position);
+        /*
+        TODO: 
+        
+        merge TestObject and Shape classes, probably will require dynamic draw 
+        since the triangle intersection test requires vertices to work right- 
+        
+        Shape -> Face -> Vertex
+        
+        A single shape will exhibit multiple faces- we'll let users define faces 
+        using 3 of the shapes vertices.
+        
+        Vertex data should be mutable so we'll likely need to use dynamic draw
+        */
+        
+        test.position.set(shapes.get(0).position);
         test.update();
     }
     
@@ -71,8 +84,6 @@ public class World {
     static int count = 0;
     
     public static void selectShape(Vector3f position, Vector3f ray) {
-        Vector2f nearFar = new Vector2f();
-        
         for(int s = 0; s < shapes.size(); s++) {
             Shape shape = shapes.get(s);
             
@@ -82,7 +93,7 @@ public class World {
                     shape.verts[0], 
                     shape.verts[1], 
                     shape.verts[2], 
-                    0.000001f)) {
+                    0)) {
                 shape.selected = true;
             } else {
                 shape.selected = false;
