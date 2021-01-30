@@ -8,6 +8,7 @@ import dev.theskidster.mapeditor.util.Event;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
+import org.joml.Vector4f;
 import static org.lwjgl.glfw.GLFW.*;
 import org.lwjgl.opengl.GL;
 import static org.lwjgl.opengl.GL20.*;

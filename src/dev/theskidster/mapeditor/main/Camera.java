@@ -24,11 +24,10 @@ public final class Camera {
     final Vector3f position  = new Vector3f();
     final Vector3f direction = new Vector3f(0, 0, -1);
     final Vector3f up        = new Vector3f(0, 1, 0);
-    final Vector3f ray       = new Vector3f();
+    Vector3f ray       = new Vector3f();
     
     private final Vector3f tempVec1 = new Vector3f();
     private final Vector3f tempVec2 = new Vector3f();
-    private final Vector4f tempVec3 = new Vector4f();
     
     private final Matrix4f view    = new Matrix4f();
     private final Matrix4f proj    = new Matrix4f();
@@ -92,10 +91,14 @@ public final class Camera {
         position.add(direction.mul(speed * 18, tempVec1));
     }
     
-    private FrustumRayBuilder rb = new FrustumRayBuilder();
+    FrustumRayBuilder rb = new FrustumRayBuilder();
     
     public void castRay(float x, float y) {
+        Vector4f eyeCoords = toEyeCoords(new Vector4f(x, y, -1f, 1f));
+        ray = toWorldCoords(eyeCoords);
         
+        //System.out.println(worldRay.x + ", " + worldRay.y + ", " + worldRay.z);
+        /*
         tempVec3.set(x, y, -1f, 1f);
             
         proj.invert(tempMat);
@@ -105,13 +108,39 @@ public final class Camera {
         ray.set(tempVec3.mul(tempMat).x, tempVec3.mul(tempMat).y, tempVec3.mul(tempMat).z);
         ray.normalize();
         
+        System.out.println(ray.x + ", " + ray.y + ", " + ray.z);
+        */
+        
         /*
         tempMat.set(view);
         tempVec1.set(position);
         
         rb.set(tempMat);
         rb.origin(tempVec1);
-        rb.dir(x, y, ray);*/
+        rb.dir(x, y, ray);
+        */
+        
+        //System.out.println(ray.x + ", " + ray.y + ", " + ray.z);
+    }
+    
+    private Vector4f toEyeCoords(Vector4f clipCoords) {
+        Vector4f eyeCoords = new Vector4f();
+        
+        proj.invert(tempMat);
+        tempMat.transform(clipCoords, eyeCoords);
+        
+        return new Vector4f(eyeCoords.x, eyeCoords.y, -1f, 0f);
+    }
+    
+    private Vector3f toWorldCoords(Vector4f eyeCoords) {
+        Vector4f worldCoords = new Vector4f();
+        
+        view.invert(tempMat);
+        tempMat.transform(eyeCoords, worldCoords);
+        
+        Vector3f result = new Vector3f(worldCoords.x, worldCoords.y, worldCoords.z);
+        
+        return result.normalize();
     }
     
 }

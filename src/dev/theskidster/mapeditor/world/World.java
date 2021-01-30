@@ -5,6 +5,7 @@ import dev.theskidster.mapeditor.main.ShaderProgram;
 import java.util.HashMap;
 import java.util.Map;
 import org.joml.Intersectionf;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 /**
@@ -29,6 +30,8 @@ public class World {
     private static Map<Integer, Shape> shapes;
     private Origin origin;
     
+    private static TestObject test;
+    
     /**
      * Constructs a new scene instance and initializes any objects that will be present in it.
      */
@@ -46,27 +49,45 @@ public class World {
         }};
         
         origin = new Origin(width, height, depth);
+        
+        test = new TestObject(new Vector3f(), shapes.get(0).verts);
     }
     
     public void update() {
         shapes.forEach((id, shape) -> shape.update());
+        
+        //test.position.set(shapes.get(0).position);
+        test.update();
     }
     
     public void render(ShaderProgram program) {
         shapes.forEach((id, shape) -> shape.render(program));
         
+        test.render(program);
+        
         origin.render(program);
     }
     
-    static Vector3f origin2 = new Vector3f();
     static int count = 0;
     
     public static void selectShape(Vector3f position, Vector3f ray) {
+        Vector2f nearFar = new Vector2f();
+        
         for(int s = 0; s < shapes.size(); s++) {
-            if(Intersectionf.testRayTriangle(position, ray, shapes.get(s).verts[0], shapes.get(s).verts[1], shapes.get(s).verts[2], 1)) {
-                System.out.println(count);
-                count++;
+            Shape shape = shapes.get(s);
+            
+            if(Intersectionf.testRayTriangle(
+                    position, 
+                    ray, 
+                    shape.verts[0], 
+                    shape.verts[1], 
+                    shape.verts[2], 
+                    0.000001f)) {
+                shape.selected = true;
+            } else {
+                shape.selected = false;
             }
+            
         }
     }
 

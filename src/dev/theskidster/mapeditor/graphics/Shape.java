@@ -65,6 +65,18 @@ public final class Shape {
     
     public void update() {
         modelMatrix.translation(position);
+        
+        verts[0].x = position.x - HCS;
+        verts[0].y = position.y + HCS;
+        verts[0].z = position.z - HCS;
+        
+        verts[1].x = position.x + HCS;
+        verts[1].y = position.y + HCS;
+        verts[1].z = position.z - HCS;
+        
+        verts[2].x = position.x + HCS;
+        verts[2].y = position.y - HCS;
+        verts[2].z = position.z - HCS;
     }
     
     public void render(ShaderProgram program) {

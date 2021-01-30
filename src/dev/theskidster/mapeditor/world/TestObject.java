@@ -14,10 +14,10 @@ import org.lwjgl.system.MemoryStack;
 
 class TestObject {
     
-    private Vector3f position;
+    Vector3f position;
     private Graphics g;
     
-    TestObject(Vector3f position) {
+    TestObject(Vector3f position, Vector3f[] verts) {
         this.position = position;
         
         g = new Graphics();
@@ -26,9 +26,9 @@ class TestObject {
             g.vertices = stack.mallocFloat(18);
             
             //(vec3 position), (vec3 color)
-            g.vertices.put(-8).put(-8).put(0)   .put(1).put(0).put(0);
-            g.vertices .put(0) .put(8).put(0)   .put(0).put(1).put(0);
-            g.vertices .put(8).put(-8).put(0)   .put(0).put(0).put(1);
+            g.vertices.put(verts[0].x).put(verts[0].y).put(verts[0].z)   .put(0).put(0).put(1);
+            g.vertices.put(verts[1].x).put(verts[1].y).put(verts[1].z)   .put(0).put(0).put(1);
+            g.vertices.put(verts[2].x).put(verts[2].y).put(verts[2].z)   .put(0).put(0).put(1);
             
             g.vertices.flip();
         }
@@ -49,7 +49,7 @@ class TestObject {
     void render(ShaderProgram program) {
         glBindVertexArray(g.vao);
         
-        program.setUniform("uType", 0);
+        program.setUniform("uType", 2);
         program.setUniform("uModel", false, g.modelMatrix);
         
         glDrawArrays(GL_TRIANGLES, 0, 3);

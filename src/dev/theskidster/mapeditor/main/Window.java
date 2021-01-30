@@ -6,10 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
-import org.joml.Matrix4f;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
-import org.joml.Vector4f;
 import static org.lwjgl.glfw.GLFW.*;
 import org.lwjgl.glfw.GLFWImage;
 import static org.lwjgl.opengl.GL11.glViewport;
@@ -126,10 +124,6 @@ public final class Window {
         
         glfwSetKeyCallback(handle, (window, key, scancode, action, mods) -> {
             ui.enterText(key, action);
-            
-            if(GLFW_KEY_LEFT == key) {
-                camera.position.x += 0.1f;
-            }
         });
         
         glfwSetCursorPosCallback(handle, (window, xPos, yPos) -> {
