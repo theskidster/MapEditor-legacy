@@ -2,6 +2,7 @@ package dev.theskidster.mapeditor.world;
 
 import dev.theskidster.mapeditor.graphics.Graphics;
 import dev.theskidster.mapeditor.main.ShaderProgram;
+import dev.theskidster.mapeditor.util.Color;
 import static dev.theskidster.mapeditor.world.World.CELL_SIZE;
 import org.joml.Vector3f;
 import static org.lwjgl.opengl.GL30.*;
@@ -50,9 +51,9 @@ class Origin {
         
         for(int i = 0; i < 3; i++) {
             switch(i) {
-                case 0: colorVec.set(1, 0, 0); break;
-                case 1: colorVec.set(0, 1, 0); break;
-                case 2: colorVec.set(0, 0, 1); break;
+                case 0: colorVec.set(Color.RED.r, Color.RED.g, Color.RED.b);       break;
+                case 1: colorVec.set(Color.GREEN.r, Color.GREEN.g, Color.GREEN.b); break;
+                case 2: colorVec.set(Color.BLUE.r, Color.BLUE.g, Color.BLUE.b);    break;
             }
             
             program.setUniform("uType", 0);

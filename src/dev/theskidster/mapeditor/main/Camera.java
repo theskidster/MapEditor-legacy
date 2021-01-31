@@ -35,7 +35,7 @@ public final class Camera {
     
     void update(int width, int height) {
         //TODO: control FOV with prefrences
-        proj.setPerspective((float) Math.toRadians(90), (float) width / height, 0.1f, Float.POSITIVE_INFINITY);
+        proj.setPerspective((float) Math.toRadians(65), (float) width / height, 0.1f, Float.POSITIVE_INFINITY);
     }
     
     void render(ShaderProgram program) {
@@ -51,8 +51,8 @@ public final class Camera {
     
     public void setDirection(double xPos, double yPos) {
         if(xPos != prevX || yPos != prevY) {
-            yaw   += getChangeIntensity(xPos, prevX, 0.5f);
-            pitch += getChangeIntensity(yPos, prevY, 0.5f);
+            yaw   += getChangeIntensity(xPos, prevX, 0.35f);
+            pitch += getChangeIntensity(yPos, prevY, 0.35f);
             //TODO: import sensitivity from prefrences file
             
             if(pitch > 89f)  pitch = 89;
@@ -69,8 +69,8 @@ public final class Camera {
     
     public void setPosition(double xPos, double yPos) {
         if(xPos != prevX || yPos != prevY) {
-            float speedX = getChangeIntensity(-xPos, -prevX, 0.015f);
-            float speedY = getChangeIntensity(-yPos, -prevY, 0.015f);
+            float speedX = getChangeIntensity(-xPos, -prevX, 0.017f);
+            float speedY = getChangeIntensity(-yPos, -prevY, 0.017f);
             //TODO: import inverted controls from prefrences file
             
             position.add(direction.cross(up, tempVec1).normalize().mul(speedX));

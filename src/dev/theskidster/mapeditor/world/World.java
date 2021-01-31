@@ -44,7 +44,7 @@ public class World {
         //TODO: implement map resizing
         
         shapes = new HashMap<>() {{
-            put(0, new Shape(new Vector3f(0, 0, -2)));
+            put(0, new Shape(new Vector3f(0, 0, -1.5f)));
         }};
         
         origin = new Origin(width, height, depth);

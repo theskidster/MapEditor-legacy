@@ -51,7 +51,7 @@ public final class App {
         
         glReady = glInit();
         
-        setClearColor(Color.SLATE);
+        setClearColor(Color.NAVY);
         
         window.show(monitor, ui, camera);
         Logger.printSystemInfo();

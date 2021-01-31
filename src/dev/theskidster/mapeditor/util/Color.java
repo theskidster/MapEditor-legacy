@@ -8,15 +8,14 @@ package dev.theskidster.mapeditor.util;
 public final class Color {
     
     public static final Color WHITE       = new Color(215, 216, 224);
-    public static final Color SILVER      = new Color(161, 162, 179);
-    public static final Color SLATE       = new Color(95, 95, 100);
     public static final Color LIGHT_GRAY  = new Color(83, 87, 116);
     public static final Color MEDIUM_GRAY = new Color(64, 68, 93);
     public static final Color DARK_GRAY   = new Color(41, 45, 62);
-    public static final Color BLACK       = new Color(26, 23, 33);
+    public static final Color BLACK       = new Color(32, 35, 51);
+    public static final Color RED         = new Color(232, 17, 35);
+    public static final Color GREEN       = new Color(4, 168, 0);
     public static final Color BLUE        = new Color(51, 102, 204);
-    public static final Color RED         = new Color(248, 40, 12);
-    public static final Color GREEN       = new Color(0, 255, 0);
+    public static final Color NAVY        = new Color(19, 22, 29);
     
     public final float r;
     public final float g;
