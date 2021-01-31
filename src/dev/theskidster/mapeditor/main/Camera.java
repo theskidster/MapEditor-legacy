@@ -51,8 +51,8 @@ public final class Camera {
     
     public void setDirection(double xPos, double yPos) {
         if(xPos != prevX || yPos != prevY) {
-            yaw   += getChangeIntensity(xPos, prevX, 0.25f) * 2;
-            pitch += getChangeIntensity(yPos, prevY, 0.25f) * 2;
+            yaw   += getChangeIntensity(xPos, prevX, 0.5f);
+            pitch += getChangeIntensity(yPos, prevY, 0.5f);
             //TODO: import sensitivity from prefrences file
             
             if(pitch > 89f)  pitch = 89;
@@ -69,8 +69,8 @@ public final class Camera {
     
     public void setPosition(double xPos, double yPos) {
         if(xPos != prevX || yPos != prevY) {
-            float speedX = getChangeIntensity(-xPos, -prevX, 0.38f);
-            float speedY = getChangeIntensity(-yPos, -prevY, 0.38f);
+            float speedX = getChangeIntensity(-xPos, -prevX, 0.015f);
+            float speedY = getChangeIntensity(-yPos, -prevY, 0.015f);
             //TODO: import inverted controls from prefrences file
             
             position.add(direction.cross(up, tempVec1).normalize().mul(speedX));
@@ -88,7 +88,7 @@ public final class Camera {
     }
     
     public void dolly(float speed) {
-        position.add(direction.mul(speed * 18, tempVec1));
+        position.add(direction.mul(speed, tempVec1));
     }
     
     FrustumRayBuilder rb = new FrustumRayBuilder();
@@ -96,31 +96,6 @@ public final class Camera {
     public void castRay(float x, float y) {
         Vector4f eyeCoords = toEyeCoords(new Vector4f(x, y, -1f, 1f));
         ray = toWorldCoords(eyeCoords);
-        
-        //System.out.println(worldRay.x + ", " + worldRay.y + ", " + worldRay.z);
-        /*
-        tempVec3.set(x, y, -1f, 1f);
-            
-        proj.invert(tempMat);
-        tempVec3.set(tempVec3.mul(tempMat).x, tempVec3.mul(tempMat).y, -1f, 0);
-        view.invert(tempMat);
-
-        ray.set(tempVec3.mul(tempMat).x, tempVec3.mul(tempMat).y, tempVec3.mul(tempMat).z);
-        ray.normalize();
-        
-        System.out.println(ray.x + ", " + ray.y + ", " + ray.z);
-        */
-        
-        /*
-        tempMat.set(view);
-        tempVec1.set(position);
-        
-        rb.set(tempMat);
-        rb.origin(tempVec1);
-        rb.dir(x, y, ray);
-        */
-        
-        //System.out.println(ray.x + ", " + ray.y + ", " + ray.z);
     }
     
     private Vector4f toEyeCoords(Vector4f clipCoords) {

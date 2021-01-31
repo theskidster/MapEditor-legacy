@@ -17,8 +17,8 @@ import org.joml.Vector3f;
  */
 public class World {
     
-    public static final int CELL_SIZE = 16;
-    public static final int HCS       = CELL_SIZE / 2;
+    public static final float CELL_SIZE = 1;
+    public static final float HCS       = CELL_SIZE / 2;
     
     public final int width;
     public final int height;
@@ -44,7 +44,7 @@ public class World {
         //TODO: implement map resizing
         
         shapes = new HashMap<>() {{
-            put(0, new Shape(new Vector3f(0, 0, -50)));
+            put(0, new Shape(new Vector3f(0, 0, -2)));
         }};
         
         origin = new Origin(width, height, depth);
@@ -54,20 +54,6 @@ public class World {
     
     public void update() {
         shapes.forEach((id, shape) -> shape.update());
-        
-        /*
-        TODO: 
-        
-        merge TestObject and Shape classes, probably will require dynamic draw 
-        since the triangle intersection test requires vertices to work right- 
-        
-        Shape -> Face -> Vertex
-        
-        A single shape will exhibit multiple faces- we'll let users define faces 
-        using 3 of the shapes vertices.
-        
-        Vertex data should be mutable so we'll likely need to use dynamic draw
-        */
         
         test.position.set(shapes.get(0).position);
         test.update();

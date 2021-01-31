@@ -18,9 +18,9 @@ class Origin {
     private final Vector3f colorVec = new Vector3f();
     
     Origin(int width, int height, int depth) {
-        int halfWidth  = (width / 2) * CELL_SIZE;
-        int halfHeight = (height / 2) * CELL_SIZE;
-        int halfDepth  = (depth / 2) * CELL_SIZE;
+        float halfWidth  = (width / 2) * CELL_SIZE;
+        float halfHeight = (height / 2) * CELL_SIZE;
+        float halfDepth  = (depth / 2) * CELL_SIZE;
         
         g = new Graphics();
         
