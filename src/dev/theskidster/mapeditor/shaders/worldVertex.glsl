@@ -13,10 +13,8 @@ uniform mat4 uView;
 uniform mat4 uProjection;
 uniform int uType;
 uniform vec3 uColor;
-uniform float uSelected;
 
 out vec3 ioColor;
-out float ioSelected;
 
 void main() {
     switch(uType) {
@@ -25,18 +23,7 @@ void main() {
             gl_Position = uProjection * uView * uModel * vec4(aPosition, 1.0f);
             break;
 
-        case 1:
-            ioColor     = vec3(1);
-            ioSelected  = uSelected;
-            gl_Position = uProjection * uView * uModel * vec4(aPosition, 1.0f);
-            break;
-
-        case 2: //Used for test object
-            ioColor     = aColor;
-            gl_Position = uProjection * uView * uModel * vec4(aPosition, 1.0f);
-            break;
-
-        case 3: //Used for displaying map cells (TEMP)
+        case 1: //Used for displaying tiles
             ioColor     = aColOffset;
             gl_Position = uProjection * uView * uModel * vec4(aPosition + aPosOffset, 1.0f);
             break;

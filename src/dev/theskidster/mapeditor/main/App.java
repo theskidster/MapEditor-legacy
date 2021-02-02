@@ -8,7 +8,6 @@ import dev.theskidster.mapeditor.util.Event;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
-import org.joml.Vector3f;
 import static org.lwjgl.glfw.GLFW.*;
 import org.lwjgl.opengl.GL;
 import static org.lwjgl.opengl.GL20.*;
@@ -149,7 +148,6 @@ public final class App {
             worldProgram.addUniform(ShaderBufferType.MAT4,  "uView");
             worldProgram.addUniform(ShaderBufferType.MAT4,  "uProjection");
             worldProgram.addUniform(ShaderBufferType.VEC3,  "uColor");
-            worldProgram.addUniform(ShaderBufferType.FLOAT, "uSelected");
         }
         
         camera = new Camera();

@@ -98,7 +98,7 @@ class TileRenderer {
         offsetPosition(tiles);
         offsetColor(tiles);
         
-        program.setUniform("uType", 3);
+        program.setUniform("uType", 1);
         
         glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0, tiles.size());
         App.checkGLError();
