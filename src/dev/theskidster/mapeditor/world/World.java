@@ -1,12 +1,11 @@
 package dev.theskidster.mapeditor.world;
 
 import dev.theskidster.mapeditor.main.ShaderProgram;
-import dev.theskidster.mapeditor.util.Color;
 import java.util.HashMap;
 import java.util.Map;
 import org.joml.Vector3f;
-import org.joml.Vector3i;
 import org.joml.RayAabIntersection;
+import org.joml.Vector2i;
 
 /**
  * @author J Hoffman
@@ -24,13 +23,12 @@ public class World {
     public final int height;
     public final int depth;
     
+    private Map<Vector2i, Boolean> tiles;
+    
+    private final TileRenderer tileRenderer  = new TileRenderer();
+    private final RayAabIntersection rayTest = new RayAabIntersection();
+    
     private final Origin origin;
-    private final CellRenderer cellRenderer;
-    static Cell selectedCell;
-    
-    private static RayAabIntersection rayTest;
-    
-    private static Map<Vector3i, Cell> cells;
     
     public World(int width, int height, int depth) {
         this.width  = width;
@@ -39,37 +37,28 @@ public class World {
         
         origin = new Origin(width, height, depth);
         
-        cells = new HashMap<>() {{
+        tiles = new HashMap<>() {{
             for(int w = -(width / 2); w < width / 2; w++) {
                 for(int d = -(depth / 2); d < depth / 2; d++) {
-                    Vector3i location = new Vector3i(w, 0, d);
-                    put(location, new Cell(new Vector3f(location), Color.PURPLE));
+                    put(new Vector2i(w, d), false);
                 }
             }
         }};
-        
-        cellRenderer = new CellRenderer();
-        
-        rayTest = new RayAabIntersection();
     }
     
     public void update() {}
     
     public void render(ShaderProgram program) {
-        cellRenderer.draw(program, cells);
+        tileRenderer.draw(program, tiles);
         origin.render(program);
     }
     
-    public static void selectCell(Vector3f camPos, Vector3f camRay) {
-        cells.forEach((location, cell) -> {
-            rayTest.set(camPos.x, camPos.y, camPos.z, camRay.x, camRay.y, camRay.z);
-            
-            if(rayTest.test(cell.position.x, cell.position.y, cell.position.z, cell.max.x, cell.max.y, cell.max.z)) {
-                cell.hovered = true;
-                selectedCell = cell;
-            } else {
-                cell.hovered = false;
-            }
+    public void selectTile(Vector3f camPos, Vector3f camRay) {
+        rayTest.set(camPos.x, camPos.y, camPos.z, camRay.x, camRay.y, camRay.z);
+        
+        tiles.entrySet().forEach((entry) -> {
+            Vector2i location = entry.getKey();
+            entry.setValue(rayTest.test(location.x, 0, location.y, location.x + CELL_SIZE, 0, location.y + CELL_SIZE));
         });
     }
 

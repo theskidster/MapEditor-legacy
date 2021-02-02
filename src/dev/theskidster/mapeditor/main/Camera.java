@@ -16,6 +16,7 @@ public final class Camera {
     
     private float pitch;
     private float yaw = -90f;
+    float fov         = 60f;
     
     double prevX;
     double prevY;
@@ -23,10 +24,11 @@ public final class Camera {
     final Vector3f position  = new Vector3f();
     final Vector3f direction = new Vector3f(0, 0, -1);
     final Vector3f up        = new Vector3f(0, 1, 0);
-    Vector3f ray       = new Vector3f();
+    Vector3f ray             = new Vector3f();
     
     private final Vector3f tempVec1 = new Vector3f();
     private final Vector3f tempVec2 = new Vector3f();
+    private final Vector4f tempVec3 = new Vector4f();
     
     private final Matrix4f view    = new Matrix4f();
     private final Matrix4f proj    = new Matrix4f();
@@ -34,7 +36,7 @@ public final class Camera {
     
     void update(int width, int height) {
         //TODO: control FOV with prefrences
-        proj.setPerspective((float) Math.toRadians(65), (float) width / height, 0.1f, Float.POSITIVE_INFINITY);
+        proj.setPerspective((float) Math.toRadians(fov), (float) width / height, 0.1f, Float.POSITIVE_INFINITY);
     }
     
     void render(ShaderProgram program) {
@@ -54,8 +56,8 @@ public final class Camera {
             pitch += getChangeIntensity(yPos, prevY, 0.35f);
             //TODO: import sensitivity from prefrences file
             
-            if(pitch > 89f)  pitch = 89;
-            if(pitch < -89f) pitch = -89;
+            if(pitch > 89f)  pitch = 89f;
+            if(pitch < -89f) pitch = -89f;
             
             direction.x = (float) (Math.cos(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch)));
             direction.y = (float) Math.sin(Math.toRadians(pitch)) * -1;
@@ -91,28 +93,18 @@ public final class Camera {
     }
     
     public void castRay(float x, float y) {
-        Vector4f eyeCoords = toEyeCoords(new Vector4f(x, y, -1f, 1f));
-        ray = toWorldCoords(eyeCoords);
-    }
-    
-    private Vector4f toEyeCoords(Vector4f clipCoords) {
-        Vector4f eyeCoords = new Vector4f();
+        tempVec3.set(x, y, -1f, 1f);
         
         proj.invert(tempMat);
-        tempMat.transform(clipCoords, eyeCoords);
+        tempMat.transform(tempVec3);
         
-        return new Vector4f(eyeCoords.x, eyeCoords.y, -1f, 0f);
-    }
-    
-    private Vector3f toWorldCoords(Vector4f eyeCoords) {
-        Vector4f worldCoords = new Vector4f();
+        tempVec3.z = -1f;
+        tempVec3.w = 0;
         
         view.invert(tempMat);
-        tempMat.transform(eyeCoords, worldCoords);
+        tempMat.transform(tempVec3);
         
-        Vector3f result = new Vector3f(worldCoords.x, worldCoords.y, worldCoords.z);
-        
-        return result.normalize();
+        ray.set(tempVec3.x, tempVec3.y, tempVec3.z);
     }
     
 }

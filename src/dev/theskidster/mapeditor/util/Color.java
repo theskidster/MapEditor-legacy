@@ -16,8 +16,8 @@ public final class Color {
     public static final Color GREEN       = new Color(4, 168, 0);
     public static final Color BLUE        = new Color(51, 102, 204);
     public static final Color NAVY        = new Color(19, 22, 29);
-    public static final Color PINK        = new Color(152, 96, 170);
-    public static final Color PURPLE      = new Color(100, 32, 100);
+    public static final Color PINK        = new Color(130, 83, 140);
+    public static final Color PURPLE      = new Color(83, 51, 89);
     
     public final float r;
     public final float g;

@@ -95,7 +95,7 @@ public final class Window {
      * 
      * @param monitor the monitor to display this window on
      */
-    void show(Monitor monitor, UI ui, Camera camera) {
+    void show(Monitor monitor, UI ui, Camera camera, World world) {
         setWindowIcon("img_logo.png");
         
         glfwSetWindowMonitor(handle, NULL, position.x, position.y, width, height, monitor.refreshRate);
@@ -137,7 +137,7 @@ public final class Window {
             }
             
             camera.castRay((float) ((2f * xPos) / width - 1f), (float) (1f - (2f * yPos) / height));
-            World.selectCell(camera.position, camera.ray);
+            world.selectTile(camera.position, camera.ray);
             //World.selectShape(camera.position, camera.ray);
         });
         

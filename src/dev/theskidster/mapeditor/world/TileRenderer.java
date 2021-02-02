@@ -7,7 +7,8 @@ import dev.theskidster.mapeditor.util.Color;
 import static dev.theskidster.mapeditor.world.World.CELL_SIZE;
 import java.nio.FloatBuffer;
 import java.util.Map;
-import org.joml.Vector3i;
+import static javax.swing.Spring.width;
+import org.joml.Vector2i;
 import static org.lwjgl.opengl.GL33C.*;
 import org.lwjgl.system.MemoryStack;
 
@@ -16,14 +17,14 @@ import org.lwjgl.system.MemoryStack;
  * Created: Feb 1, 2021
  */
 
-class CellRenderer {
+class TileRenderer {
 
     private final int vboPosOffset;
     private final int vboColOffset;
     
     private Graphics g;
     
-    CellRenderer() {
+    TileRenderer() {
         vboPosOffset = glGenBuffers();
         vboColOffset = glGenBuffers();
         
@@ -52,12 +53,12 @@ class CellRenderer {
         glEnableVertexAttribArray(0);
     }
     
-    private void offsetPosition(Map<Vector3i, Cell> cells) {
+    private void offsetPosition(Map<Vector2i, Boolean> tiles) {
         try(MemoryStack stack = MemoryStack.stackPush()) {
-            FloatBuffer positions = stack.mallocFloat(cells.size() * Float.BYTES);
+            FloatBuffer positions = stack.mallocFloat(tiles.size() * Float.BYTES);
             
-            cells.forEach((location, cell) -> {
-                positions.put(cell.position.x).put(cell.position.y).put(cell.position.z);
+            tiles.forEach((location, hovered) -> {
+                positions.put(location.x).put(0).put(location.y);
             });
             
             positions.flip();
@@ -71,13 +72,13 @@ class CellRenderer {
         glVertexAttribDivisor(2, 1);
     }
     
-    private void offsetColor(Map<Vector3i, Cell> cells) {
+    private void offsetColor(Map<Vector2i, Boolean> tiles) {
         try(MemoryStack stack = MemoryStack.stackPush()) {
-            FloatBuffer colors = stack.mallocFloat(cells.size() * Float.BYTES);
+            FloatBuffer colors = stack.mallocFloat(tiles.size() * Float.BYTES);
             
-            cells.forEach((location, cell) -> {
-                if(cell.hovered) colors.put(Color.PINK.r).put(Color.PINK.g).put(Color.PINK.b);
-                else             colors.put(cell.color.x).put(cell.color.y).put(cell.color.z);
+            tiles.forEach((location, hovered) -> {
+                if(hovered) colors.put(Color.PINK.r).put(Color.PINK.g).put(Color.PINK.b);
+                else        colors.put(Color.PURPLE.r).put(Color.PURPLE.g).put(Color.PURPLE.b);
             });
             
             colors.flip();
@@ -91,15 +92,15 @@ class CellRenderer {
         glVertexAttribDivisor(3, 1);
     }
     
-    void draw(ShaderProgram program, Map<Vector3i, Cell> cells) {
+    void draw(ShaderProgram program, Map<Vector2i, Boolean> tiles) {
         glBindVertexArray(g.vao);
         
-        offsetPosition(cells);
-        offsetColor(cells);
+        offsetPosition(tiles);
+        offsetColor(tiles);
         
         program.setUniform("uType", 3);
         
-        glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0, cells.size());
+        glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0, tiles.size());
         App.checkGLError();
     }
     

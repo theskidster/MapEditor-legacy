@@ -8,7 +8,7 @@ import dev.theskidster.mapeditor.util.Event;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
-import org.joml.Vector4f;
+import org.joml.Vector3f;
 import static org.lwjgl.glfw.GLFW.*;
 import org.lwjgl.opengl.GL;
 import static org.lwjgl.opengl.GL20.*;
@@ -53,7 +53,7 @@ public final class App {
         
         setClearColor(Color.NAVY);
         
-        window.show(monitor, ui, camera);
+        window.show(monitor, ui, camera, world);
         Logger.printSystemInfo();
         
         final double TARGET_DELTA = 1 / 60.0;
@@ -155,6 +155,9 @@ public final class App {
         camera = new Camera();
         world  = new World(64, 32, 64);
         ui     = new UI();
+        
+        camera.update(window.width, window.height);
+        camera.render(worldProgram);
         
         return true;
     }
