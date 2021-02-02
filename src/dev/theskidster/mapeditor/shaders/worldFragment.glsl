@@ -13,7 +13,7 @@ void main() {
             break;
 
         case 2: //Used for level geometry
-            
+            ioResult = vec4(ioColor, 0);
             break;
     }
 }

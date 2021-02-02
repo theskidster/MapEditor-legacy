@@ -29,7 +29,8 @@ void main() {
             break;
 
         case 2: //Used for level geometry
-            
+            ioColor     = vec3(1);
+            gl_Position = uProjection * uView * uModel * vec4(aPosition, 1.0f);
             break;
     }
 }

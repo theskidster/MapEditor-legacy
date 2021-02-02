@@ -23,15 +23,17 @@ public class World {
     public final int width;
     public final int height;
     public final int depth;
+    private int currIndex;
     
     private final Floor floor                = new Floor();
     private final RayAabIntersection rayTest = new RayAabIntersection();
     private final Vector3i cursorLocation    = new Vector3i();
+    private final GeometryBatch geomBatch    = new GeometryBatch();
     
     private final Origin origin;
     
     private final Map<Vector2i, Boolean> tiles;
-    private Map<Integer, Geometry> geometry = new HashMap<>();
+    private final Map<Integer, Geometry> shapes = new HashMap<>();
     
     public World(int width, int height, int depth) {
         this.width  = width;
@@ -54,7 +56,9 @@ public class World {
     public void render(ShaderProgram program) {
         floor.draw(program, tiles);
         
-        //TODO: geometry batch rendering
+        geomBatch.batchStart(shapes.size());
+            shapes.forEach((id, shape) -> geomBatch.drawGeometry(shape));
+        geomBatch.batchEnd(program);
         
         origin.render(program);
     }
@@ -72,15 +76,23 @@ public class World {
         if(tiles.containsValue(true)) {
             Vector2i tileLocation = tiles.entrySet().stream().filter(entry -> entry.getValue()).findAny().get().getKey();
             cursorLocation.set(tileLocation.x, 0, tileLocation.y);
-            
         } else {
             //TODO: find cell with a y position above the floor
         }
+        
+        currIndex = shapes.size() + 1;
+        shapes.put(currIndex, new Geometry(cursorLocation));
         
         System.out.println("add");
     }
     
     public void stretchGeometry(boolean shiftHeld) {
+        if(shiftHeld) {
+            
+        } else {
+            
+        }
+        
         System.out.println("stretch");
     }
     

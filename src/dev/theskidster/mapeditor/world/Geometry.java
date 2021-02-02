@@ -16,12 +16,7 @@ class Geometry {
     
     Geometry(Vector3i position) {
         vertices = new HashMap<>() {{
-            put(0, new Vector3f());
-            put(1, new Vector3f());
-            put(2, new Vector3f());
-            put(3, new Vector3f());
-            put(4, new Vector3f());
-            put(5, new Vector3f());
+            put(0, new Vector3f(position.x, position.y, position.z));
         }};
     }
     
