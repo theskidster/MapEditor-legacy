@@ -79,19 +79,19 @@ final class ElementFolderButton extends Element implements PropertyChangeListene
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         switch(evt.getPropertyName()) {
-            case "parentX":
+            case "parentX" -> {
                 int parentX = (Integer) evt.getNewValue();
 
                 rectangle.xPos  = (parentX + xOffset);
                 icon.position.x = (parentX + xOffset);
-                break;
+            }
 
-            case "parentY":
+            case "parentY" -> {
                 int parentY = (Integer) evt.getNewValue();
 
                 rectangle.yPos  = (parentY + yOffset - 20);
                 icon.position.y = (parentY + yOffset);
-                break;
+            }
         }
     }
     

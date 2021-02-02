@@ -66,36 +66,34 @@ final class FocusableTextArea extends Focusable {
             });
             
             switch(key) {
-                case GLFW_KEY_BACKSPACE:
+                case GLFW_KEY_BACKSPACE -> {
                     if(getIndex() > 0) {
                         setIndex(getIndex() - 1);
                         typed.deleteCharAt(getIndex());
                         scroll();
                     }
-                    break;
+                }
                     
-                case GLFW_KEY_RIGHT:
+                case GLFW_KEY_RIGHT -> {
                     setIndex((getIndex() > typed.length() - 1) ? typed.length() : getIndex() + 1);
                     scroll();
-                    break;
+                }
                     
-                case GLFW_KEY_LEFT:
+                case GLFW_KEY_LEFT -> {
                     setIndex((getIndex() <= 0) ? 0 : getIndex() - 1);
                     scroll();
-                    break;
+                }
                     
-                case GLFW_KEY_TAB:
+                case GLFW_KEY_TAB -> {
                     //TODO: add observable to skip to next component in widget?
-                    break;
+                }
             }
         } else {
             timer.start();
         }
         
         switch(key) {
-            case GLFW_KEY_LEFT_SHIFT: case GLFW_KEY_RIGHT_SHIFT:
-                shiftHeld = action == GLFW_PRESS;
-                break;
+            case GLFW_KEY_LEFT_SHIFT, GLFW_KEY_RIGHT_SHIFT -> shiftHeld = action == GLFW_PRESS;
         }
     }
     
@@ -146,27 +144,25 @@ final class FocusableTextArea extends Focusable {
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         switch(evt.getPropertyName()) {
-            case "finished": //Used for cursor timer
-                caratIdle = (Boolean) evt.getNewValue();
-                break;
+            case "finished" -> caratIdle = (Boolean) evt.getNewValue(); //Used for cursor timer
                 
-            case "parentX":
+            case "parentX" -> {
                 parentX = (Integer) evt.getNewValue();
                 
                 updatePosX();
                 
                 iconLeft.position.x  = parentX + xOffset;
                 iconRight.position.x = parentX + (xOffset + (width - 15));
-                break;
+            }
                 
-            case "parentY":
+            case "parentY" -> {
                 parentY = (Integer) evt.getNewValue();
                 
                 updatePosY();
                 
                 iconLeft.position.y  = parentY + yOffset + FOCUSABLE_HEIGHT;
                 iconRight.position.y = parentY + yOffset + FOCUSABLE_HEIGHT;
-                break;
+            }
         }
     }
     

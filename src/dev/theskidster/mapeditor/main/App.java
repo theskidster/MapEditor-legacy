@@ -168,10 +168,10 @@ public final class App {
             
             if(!event.resolved) {
                 switch(event.type) {
-                    case Event.WIDGET_NEW_MAP:
+                    case Event.WIDGET_NEW_MAP -> {
                         ui.addWidget("New Map", new FrameNewMap(window.width, window.height));
                         event.resolved = true;
-                        break;
+                    }
                 }
             } else {
                 events.poll();
@@ -189,12 +189,12 @@ public final class App {
             String desc = "";
             
             switch(glError) {
-                case GL_INVALID_ENUM:      desc = "invalid enum";      break;
-                case GL_INVALID_VALUE:     desc = "invalid value";     break;
-                case GL_INVALID_OPERATION: desc = "invalid operation"; break;
-                case GL_STACK_OVERFLOW:    desc = "stack overflow";    break;
-                case GL_STACK_UNDERFLOW:   desc = "stack underflow";   break;
-                case GL_OUT_OF_MEMORY:     desc = "out of memory";     break;
+                case GL_INVALID_ENUM      -> desc = "invalid enum";
+                case GL_INVALID_VALUE     -> desc = "invalid value";
+                case GL_INVALID_OPERATION -> desc = "invalid operation";
+                case GL_STACK_OVERFLOW    -> desc = "stack overflow";
+                case GL_STACK_UNDERFLOW   -> desc = "stack underflow";
+                case GL_OUT_OF_MEMORY     -> desc = "out of memory";
             }
             
             Logger.log(LogLevel.SEVERE, "OpenGL Error: (" + glError + ") " + desc);

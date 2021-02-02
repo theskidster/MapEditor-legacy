@@ -93,7 +93,7 @@ final class ElementLabelButton extends Element implements PropertyChangeListener
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         switch(evt.getPropertyName()) {
-            case "parentX":
+            case "parentX" -> {
                 int parentX = (Integer) evt.getNewValue();
                 
                 int textSize = TrueTypeFont.getLengthInPixels(text, 1) / 2;
@@ -103,9 +103,9 @@ final class ElementLabelButton extends Element implements PropertyChangeListener
                 aabb.xPos            = (parentX + xOffset);
                 iconLeft.position.x  = (parentX + xOffset);
                 iconRight.position.x = (parentX + xOffset + width + 15);
-                break;
+            }
 
-            case "parentY":
+            case "parentY" -> {
                 int parentY = (Integer) evt.getNewValue();
                 
                 textPos.y = (parentY + yOffset + 20);
@@ -114,7 +114,7 @@ final class ElementLabelButton extends Element implements PropertyChangeListener
                 aabb.yPos            = (parentY + yOffset);
                 iconLeft.position.y  = (parentY + yOffset + 30);
                 iconRight.position.y = (parentY + yOffset + 30);
-                break;
+            }
         }
     }
 

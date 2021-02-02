@@ -78,21 +78,10 @@ public final class ShaderProgram {
          */
         try(MemoryStack stack = MemoryStack.stackPush()) {
             switch(type) {
-                case INT:
-                    uniforms.put(name, createUniform(name, stack.mallocInt(1)));
-                    break;
-
-                case FLOAT:
-                    uniforms.put(name, createUniform(name, stack.mallocFloat(1)));
-                    break;
-
-                case VEC2: case VEC3:
-                    uniforms.put(name, createUniform(name, stack.mallocFloat(bufferSizes.get(type))));
-                    break;
-
-                case MAT3: case MAT4:
-                    uniforms.put(name, createUniform(name, stack.mallocFloat(bufferSizes.get(type) * Float.BYTES)));
-                    break;
+                case INT        -> uniforms.put(name, createUniform(name, stack.mallocInt(1)));
+                case FLOAT      -> uniforms.put(name, createUniform(name, stack.mallocFloat(1)));
+                case VEC2, VEC3 -> uniforms.put(name, createUniform(name, stack.mallocFloat(bufferSizes.get(type))));
+                case MAT3, MAT4 -> uniforms.put(name, createUniform(name, stack.mallocFloat(bufferSizes.get(type) * Float.BYTES)));
             }
         }
     }

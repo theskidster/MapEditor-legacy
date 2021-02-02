@@ -129,22 +129,22 @@ public final class FrameNewMap extends Frame implements PropertyChangeListener {
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         switch(evt.getPropertyName()) {
-            case "labelButtonClicked":
+            case "labelButtonClicked" -> {
                 switch(((ElementLabelButton) evt.getSource()).text) {
-                    case "Save As...":
+                    case "Save As..." -> {
                         if((Boolean) evt.getNewValue()) {
                             //TODO: create map using data parsed from elements
                         }
-                        break;
+                    }
                         
-                    case "Cancel":
+                    case "Cancel" -> {
                         if((Boolean) evt.getNewValue()) {
                             removeRequest = true;
                             close();
                         }
-                        break;
+                    }
                 }
-                break;
+            }
         }
     }
     

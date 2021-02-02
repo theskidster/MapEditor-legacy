@@ -143,13 +143,8 @@ public class WidgetMenuBar extends Widget {
             subMenus.get(currMenuIndex).buttons.forEach((button -> {
                 if(button.clicked) {
                     switch(button.text) {
-                        case "New Map...": 
-                            App.addEvent(new Event(WIDGET_NEW_MAP)); 
-                            break;
-                            
-                        case "Quit":
-                            App.end();
-                            break;
+                        case "New Map..." -> App.addEvent(new Event(WIDGET_NEW_MAP));    
+                        case "Quit"       -> App.end();
                     }
                     
                     resetState();
@@ -169,9 +164,9 @@ public class WidgetMenuBar extends Widget {
             subMenus.get(currMenuIndex).render(program, font);
             
             switch(currMenuIndex) {
-                case 0:
+                case 0 -> {
                     for(int i = 0; i < 5; i++) icons[i].render(program);
-                    break;
+                }
             }
         }
         

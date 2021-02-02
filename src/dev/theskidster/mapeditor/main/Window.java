@@ -146,13 +146,8 @@ public final class Window {
             if(action == GLFW_PRESS && !ui.getMenuBarActive()) ui.resetMenuBar();
             
             switch(button) {
-                case GLFW_MOUSE_BUTTON_MIDDLE:
-                    middleHeld = action == GLFW_PRESS;
-                    break;
-                
-                case GLFW_MOUSE_BUTTON_RIGHT:
-                    rightHeld = action == GLFW_PRESS;
-                    break;
+                case GLFW_MOUSE_BUTTON_MIDDLE -> middleHeld = action == GLFW_PRESS;
+                case GLFW_MOUSE_BUTTON_RIGHT  -> rightHeld = action == GLFW_PRESS;
             }
         });
     }

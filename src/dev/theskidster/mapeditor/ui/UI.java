@@ -77,9 +77,9 @@ public class UI {
     
     public void setMouseAction(int button, int action) {
         switch(button) {
-            case GLFW_MOUSE_BUTTON_RIGHT:  mouse.button = "right";  break;
-            case GLFW_MOUSE_BUTTON_MIDDLE: mouse.button = "middle"; break;
-            default:                       mouse.button = "left";   break;
+            case GLFW_MOUSE_BUTTON_RIGHT  -> mouse.button = "right";
+            case GLFW_MOUSE_BUTTON_MIDDLE -> mouse.button = "middle";
+            default -> mouse.button = "left";
         }
         
         mouse.clicked = (action == GLFW_PRESS);

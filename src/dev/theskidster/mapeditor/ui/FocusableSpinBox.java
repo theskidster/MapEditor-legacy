@@ -101,28 +101,28 @@ final class FocusableSpinBox extends Focusable implements PropertyChangeListener
             });
             
             switch(key) {
-                case GLFW_KEY_BACKSPACE:
+                case GLFW_KEY_BACKSPACE -> {
                     if(getIndex() > 0) {
                         setIndex(getIndex() - 1);
                         typed.deleteCharAt(getIndex());
                         parseValue();
                         scroll();
                     }
-                    break;
+                }
                     
-                case GLFW_KEY_RIGHT:
+                case GLFW_KEY_RIGHT -> {
                     setIndex((getIndex() > typed.length() - 1) ? typed.length() : getIndex() + 1);
                     scroll();
-                    break;
+                }
                     
-                case GLFW_KEY_LEFT:
+                case GLFW_KEY_LEFT -> {
                     setIndex((getIndex() <= 0) ? 0 : getIndex() - 1);
                     scroll();
-                    break;
+                }
                     
-                case GLFW_KEY_TAB:
+                case GLFW_KEY_TAB -> {
                     //TODO: add observable to skip to next component in widget?
-                    break;
+                }
             }
         } else {
             timer.start();
@@ -186,11 +186,9 @@ final class FocusableSpinBox extends Focusable implements PropertyChangeListener
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         switch(evt.getPropertyName()) {
-            case "finished": //Used for cursor timer
-                caratIdle = (Boolean) evt.getNewValue();
-                break;
+            case "finished" -> caratIdle = (Boolean) evt.getNewValue(); //Used for cursor timer
                 
-            case "parentX":
+            case "parentX" -> {
                 parentX = (Integer) evt.getNewValue();
                 
                 updatePosX();
@@ -201,9 +199,9 @@ final class FocusableSpinBox extends Focusable implements PropertyChangeListener
                 iconLeft.position.x   = parentX + xOffset;
                 iconMiddle.position.x = parentX + (xOffset + (width - 6));
                 iconRight.position.x  = parentX + (xOffset + (width + 9));
-                break;
+            }
                 
-            case "parentY":
+            case "parentY" -> {
                 parentY = (Integer) evt.getNewValue();
                 
                 updatePosY();
@@ -216,23 +214,23 @@ final class FocusableSpinBox extends Focusable implements PropertyChangeListener
                 iconLeft.position.y   = iconPosY;
                 iconMiddle.position.y = iconPosY;
                 iconRight.position.y  = iconPosY;
-                break;
+            }
                 
-            case "clickedUp":
+            case "clickedUp" -> {
                 if((Boolean) evt.getNewValue()) {
                     value++;
                     validateInput();
                     setText(value + "");
                 }
-                break;
+            }
                 
-            case "clickedDown":
+            case "clickedDown" -> {
                 if((Boolean) evt.getNewValue()) {
                     value--;
                     validateInput();
                     setText(value + "");
                 }
-                break;
+            }
         }
     }
     

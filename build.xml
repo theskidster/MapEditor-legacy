@@ -10,6 +10,13 @@
 <project name="MapEditor" default="default" basedir=".">
     <description>Builds, tests, and runs the project MapEditor.</description>
     <import file="nbproject/build-impl.xml"/>
+	
+	<target name="compile">
+		<javac srcdir="${src.dir}">
+			<compilerarg value="-Xlint:unchecked" />
+		</javac>
+	</target>
+	
     <!--
 
     There exist several targets which are by default empty and which can be 

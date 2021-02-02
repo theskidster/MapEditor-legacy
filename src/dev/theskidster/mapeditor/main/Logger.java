@@ -75,13 +75,13 @@ public final class Logger {
         String timestamp = new SimpleDateFormat("MM-dd-yyyy h:mma").format(new Date());
         
         switch(level) {
-            case INFO:
+            case INFO -> {
                 message = "INFO: " + desc;
                 System.out.println(message);
                 writer.println(message);
-                break;
+            }
                 
-            case WARNING:
+            case WARNING -> {
                 message = "WARNING: " + desc;
                 System.out.println(System.lineSeparator() + timestamp);
                 System.out.println(message + System.lineSeparator());
@@ -100,9 +100,9 @@ public final class Logger {
                     writer.println();
                     ex = null;
                 }
-                break;
+            }
                 
-            case SEVERE:
+            case SEVERE -> {
                 message = "ERROR: " + desc;
                 System.err.println(System.lineSeparator() + timestamp);
                 System.err.println(message + System.lineSeparator());
@@ -118,6 +118,7 @@ public final class Logger {
                 }
                 writer.close();
                 throw new RuntimeException();
+            }
         }
     }
     
