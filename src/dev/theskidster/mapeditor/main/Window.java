@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import org.joml.Vector2i;
-import org.joml.Vector3f;
 import static org.lwjgl.glfw.GLFW.*;
 import org.lwjgl.glfw.GLFWImage;
 import static org.lwjgl.opengl.GL11.glViewport;
@@ -138,7 +137,8 @@ public final class Window {
             }
             
             camera.castRay((float) ((2f * xPos) / width - 1f), (float) (1f - (2f * yPos) / height));
-            World.selectShape(camera.position, camera.ray);
+            World.selectCell(camera.position, camera.ray);
+            //World.selectShape(camera.position, camera.ray);
         });
         
         glfwSetMouseButtonCallback(handle, (window, button, action, mods) -> {

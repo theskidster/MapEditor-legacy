@@ -1,6 +1,5 @@
 package dev.theskidster.mapeditor.main;
 
-import org.joml.FrustumRayBuilder;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
@@ -90,8 +89,6 @@ public final class Camera {
     public void dolly(float speed) {
         position.add(direction.mul(speed, tempVec1));
     }
-    
-    FrustumRayBuilder rb = new FrustumRayBuilder();
     
     public void castRay(float x, float y) {
         Vector4f eyeCoords = toEyeCoords(new Vector4f(x, y, -1f, 1f));

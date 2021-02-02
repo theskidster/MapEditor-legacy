@@ -3,7 +3,6 @@ package dev.theskidster.mapeditor.world;
 import dev.theskidster.mapeditor.graphics.Graphics;
 import dev.theskidster.mapeditor.main.ShaderProgram;
 import dev.theskidster.mapeditor.util.Color;
-import static dev.theskidster.mapeditor.world.World.CELL_SIZE;
 import org.joml.Vector3f;
 import static org.lwjgl.opengl.GL30.*;
 import org.lwjgl.system.MemoryStack;
@@ -18,23 +17,19 @@ class Origin {
     private final Graphics g;
     private final Vector3f colorVec = new Vector3f();
     
-    Origin(int width, int height, int depth) {
-        float halfWidth  = (width / 2) * CELL_SIZE;
-        float halfHeight = (height / 2) * CELL_SIZE;
-        float halfDepth  = (depth / 2) * CELL_SIZE;
-        
+    Origin(int width, int height, int depth) {        
         g = new Graphics();
         
         try(MemoryStack stack = MemoryStack.stackPush()) {
             g.vertices = stack.mallocFloat(6 * 3);
             
             //(vec3 position)
-            g.vertices.put(-halfWidth).put(0)          .put(0);
-            g.vertices.put(halfWidth) .put(0)          .put(0);
-            g.vertices.put(0)         .put(0)          .put(-halfDepth);
-            g.vertices.put(0)         .put(0)          .put(halfDepth);
-            g.vertices.put(0)         .put(-halfHeight).put(0);
-            g.vertices.put(0)         .put(halfHeight) .put(0);
+            g.vertices.put(-(width / 2))    .put(0)     .put(0);
+            g.vertices.put(width / 2).put(0)     .put(0);
+            g.vertices.put(0)    .put(0)     .put(0);
+            g.vertices.put(0)    .put(height).put(0);
+            g.vertices.put(0)    .put(0)     .put(-(depth / 2));
+            g.vertices.put(0)    .put(0)     .put(depth / 2);
             
             g.vertices.flip();
         }
@@ -52,8 +47,8 @@ class Origin {
         for(int i = 0; i < 3; i++) {
             switch(i) {
                 case 0: colorVec.set(Color.RED.r, Color.RED.g, Color.RED.b);       break;
-                case 1: colorVec.set(Color.GREEN.r, Color.GREEN.g, Color.GREEN.b); break;
-                case 2: colorVec.set(Color.BLUE.r, Color.BLUE.g, Color.BLUE.b);    break;
+                case 1: colorVec.set(Color.BLUE.r, Color.BLUE.g, Color.BLUE.b);    break;
+                case 2: colorVec.set(Color.GREEN.r, Color.GREEN.g, Color.GREEN.b); break;
             }
             
             program.setUniform("uType", 0);

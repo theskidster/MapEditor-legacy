@@ -9,7 +9,7 @@ out vec4 ioResult;
 
 void main() {
     switch(uType) {
-        case 0: case 2:
+        case 0: case 2: case 3:
             ioResult = vec4(ioColor, 0);
             break;
 
