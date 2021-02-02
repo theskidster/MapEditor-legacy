@@ -7,7 +7,6 @@ import dev.theskidster.mapeditor.util.Color;
 import static dev.theskidster.mapeditor.world.World.CELL_SIZE;
 import java.nio.FloatBuffer;
 import java.util.Map;
-import static javax.swing.Spring.width;
 import org.joml.Vector2i;
 import static org.lwjgl.opengl.GL33C.*;
 import org.lwjgl.system.MemoryStack;
@@ -17,14 +16,14 @@ import org.lwjgl.system.MemoryStack;
  * Created: Feb 1, 2021
  */
 
-class TileRenderer {
+class Floor {
 
     private final int vboPosOffset;
     private final int vboColOffset;
     
     private Graphics g;
     
-    TileRenderer() {
+    Floor() {
         vboPosOffset = glGenBuffers();
         vboColOffset = glGenBuffers();
         
@@ -92,7 +91,7 @@ class TileRenderer {
         glVertexAttribDivisor(3, 1);
     }
     
-    void draw(ShaderProgram program, Map<Vector2i, Boolean> tiles) {
+    public void draw(ShaderProgram program, Map<Vector2i, Boolean> tiles) {
         glBindVertexArray(g.vao);
         
         offsetPosition(tiles);

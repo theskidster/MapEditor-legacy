@@ -6,6 +6,7 @@ import java.util.Map;
 import org.joml.Vector3f;
 import org.joml.RayAabIntersection;
 import org.joml.Vector2i;
+import org.joml.Vector3i;
 
 /**
  * @author J Hoffman
@@ -23,12 +24,14 @@ public class World {
     public final int height;
     public final int depth;
     
-    private Map<Vector2i, Boolean> tiles;
-    
-    private final TileRenderer tileRenderer  = new TileRenderer();
+    private final Floor floor                = new Floor();
     private final RayAabIntersection rayTest = new RayAabIntersection();
+    private final Vector3i cursorLocation    = new Vector3i();
     
     private final Origin origin;
+    
+    private final Map<Vector2i, Boolean> tiles;
+    private Map<Integer, Geometry> geometry = new HashMap<>();
     
     public World(int width, int height, int depth) {
         this.width  = width;
@@ -49,7 +52,10 @@ public class World {
     public void update() {}
     
     public void render(ShaderProgram program) {
-        tileRenderer.draw(program, tiles);
+        floor.draw(program, tiles);
+        
+        //TODO: geometry batch rendering
+        
         origin.render(program);
     }
     
@@ -60,6 +66,26 @@ public class World {
             Vector2i location = entry.getKey();
             entry.setValue(rayTest.test(location.x, 0, location.y, location.x + CELL_SIZE, 0, location.y + CELL_SIZE));
         });
+    }
+    
+    public void addGeometry(Vector3f camPos, Vector3f camRay, boolean shiftHeld) {
+        if(tiles.containsValue(true)) {
+            Vector2i tileLocation = tiles.entrySet().stream().filter(entry -> entry.getValue()).findAny().get().getKey();
+            cursorLocation.set(tileLocation.x, 0, tileLocation.y);
+            
+        } else {
+            //TODO: find cell with a y position above the floor
+        }
+        
+        System.out.println("add");
+    }
+    
+    public void stretchGeometry(boolean shiftHeld) {
+        System.out.println("stretch");
+    }
+    
+    public void finalizeGeometry() {
+        System.out.println("finalize");
     }
 
 }

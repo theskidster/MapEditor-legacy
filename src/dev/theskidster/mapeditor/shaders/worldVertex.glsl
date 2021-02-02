@@ -23,9 +23,13 @@ void main() {
             gl_Position = uProjection * uView * uModel * vec4(aPosition, 1.0f);
             break;
 
-        case 1: //Used for displaying tiles
+        case 1: //Used for displaying floor tiles
             ioColor     = aColOffset;
             gl_Position = uProjection * uView * uModel * vec4(aPosition + aPosOffset, 1.0f);
+            break;
+
+        case 2: //Used for level geometry
+            
             break;
     }
 }

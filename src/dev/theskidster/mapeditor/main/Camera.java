@@ -50,24 +50,6 @@ public final class Camera {
         return (float) (currValue - prevValue) * sensitivity;
     }
     
-    public void setDirection(double xPos, double yPos) {
-        if(xPos != prevX || yPos != prevY) {
-            yaw   += getChangeIntensity(xPos, prevX, 0.35f);
-            pitch += getChangeIntensity(yPos, prevY, 0.35f);
-            //TODO: import sensitivity from prefrences file
-            
-            if(pitch > 89f)  pitch = 89f;
-            if(pitch < -89f) pitch = -89f;
-            
-            direction.x = (float) (Math.cos(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch)));
-            direction.y = (float) Math.sin(Math.toRadians(pitch)) * -1;
-            direction.z = (float) (Math.sin(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch)));
-            
-            prevX = xPos;
-            prevY = yPos;
-        }
-    }
-    
     public void setPosition(double xPos, double yPos) {
         if(xPos != prevX || yPos != prevY) {
             float speedX = getChangeIntensity(-xPos, -prevX, 0.017f);
@@ -82,6 +64,24 @@ public final class Camera {
                     (float) (Math.sin(Math.toRadians(yaw + 90)) * Math.cos(Math.toRadians(pitch))));
             
             position.add(0, direction.cross(tempVec1, tempVec2).normalize().mul(speedY).y, 0);
+            
+            prevX = xPos;
+            prevY = yPos;
+        }
+    }
+    
+    public void setDirection(double xPos, double yPos) {
+        if(xPos != prevX || yPos != prevY) {
+            yaw   += getChangeIntensity(xPos, prevX, 0.35f);
+            pitch += getChangeIntensity(yPos, prevY, 0.35f);
+            //TODO: import sensitivity from prefrences file
+            
+            if(pitch > 89f)  pitch = 89f;
+            if(pitch < -89f) pitch = -89f;
+            
+            direction.x = (float) (Math.cos(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch)));
+            direction.y = (float) Math.sin(Math.toRadians(pitch)) * -1;
+            direction.z = (float) (Math.sin(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch)));
             
             prevX = xPos;
             prevY = yPos;

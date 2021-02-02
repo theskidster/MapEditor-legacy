@@ -26,8 +26,10 @@ public final class Window {
     
     public final long handle;
     
-    private boolean rightHeld;
+    private boolean leftHeld;
     private boolean middleHeld;
+    private boolean rightHeld;
+    private boolean shiftHeld;
     
     String title;
     Vector2i position;
@@ -123,21 +125,23 @@ public final class Window {
         
         glfwSetKeyCallback(handle, (window, key, scancode, action, mods) -> {
             ui.enterText(key, action);
+            shiftHeld = (key == GLFW_KEY_LEFT_SHIFT && action == GLFW_PRESS);
         });
         
         glfwSetCursorPosCallback(handle, (window, xPos, yPos) -> {
             ui.setMousePosition(xPos, yPos);
             
-            if(rightHeld ^ middleHeld) {
-                if(rightHeld) camera.setDirection(xPos, yPos);
+            camera.castRay((float) ((2f * xPos) / width - 1f), (float) (1f - (2f * yPos) / height));
+            world.selectTile(camera.position, camera.ray);
+            
+            if(leftHeld ^ middleHeld ^ rightHeld) {
+                if(leftHeld)   world.stretchGeometry(shiftHeld);
                 if(middleHeld) camera.setPosition(xPos, yPos);
+                if(rightHeld)  camera.setDirection(xPos, yPos);
             } else {
                 camera.prevX = xPos;
                 camera.prevY = yPos;
             }
-            
-            camera.castRay((float) ((2f * xPos) / width - 1f), (float) (1f - (2f * yPos) / height));
-            world.selectTile(camera.position, camera.ray);
         });
         
         glfwSetMouseButtonCallback(handle, (window, button, action, mods) -> {
@@ -145,6 +149,13 @@ public final class Window {
             if(action == GLFW_PRESS && !ui.getMenuBarActive()) ui.resetMenuBar();
             
             switch(button) {
+                case GLFW_MOUSE_BUTTON_LEFT   -> {
+                    leftHeld = action == GLFW_PRESS;
+                    
+                    if(leftHeld) world.addGeometry(camera.direction, camera.ray, shiftHeld);
+                    else         world.finalizeGeometry();
+                }
+                
                 case GLFW_MOUSE_BUTTON_MIDDLE -> middleHeld = action == GLFW_PRESS;
                 case GLFW_MOUSE_BUTTON_RIGHT  -> rightHeld = action == GLFW_PRESS;
             }
