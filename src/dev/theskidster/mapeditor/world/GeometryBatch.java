@@ -13,7 +13,7 @@ import org.lwjgl.system.MemoryUtil;
 
 class GeometryBatch {
     
-    private final int vertexSize = 3;
+    private final int numFloats = 24;
     private int numVertices;
     private int prevNumShapes;
     
@@ -29,7 +29,7 @@ class GeometryBatch {
         
         program.setUniform("uType", 2);
         
-        glDrawArrays(GL_POINTS, 0, prevNumShapes);
+        glDrawArrays(GL_POINTS, 0, prevNumShapes * numFloats);
         
         glPointSize(1);
         App.checkGLError();
@@ -37,7 +37,7 @@ class GeometryBatch {
     
     void batchStart(int numShapes) {
         if(numShapes != prevNumShapes) {
-            g.vertices = MemoryUtil.memAllocFloat(vertexSize * numShapes * Float.BYTES);
+            g.vertices = MemoryUtil.memAllocFloat(numFloats * numShapes * Float.BYTES);
         
             glBindVertexArray(g.vao);
             
@@ -67,9 +67,11 @@ class GeometryBatch {
     }
     
     void drawGeometry(Geometry shape) {
-        g.vertices.put(shape.vertices.get(0).x).put(shape.vertices.get(0).y).put(shape.vertices.get(0).z);
+        for(int i = 0; i < 8; i++) {
+            g.vertices.put(shape.vertices.get(i).x).put(shape.vertices.get(i).y).put(shape.vertices.get(i).z);
+        }
         
-        numVertices += vertexSize;
+        numVertices += numFloats;
     }
     
 }

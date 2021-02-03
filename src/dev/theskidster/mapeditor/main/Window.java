@@ -149,7 +149,7 @@ public final class Window {
             if(action == GLFW_PRESS && !ui.getMenuBarActive()) ui.resetMenuBar();
             
             switch(button) {
-                case GLFW_MOUSE_BUTTON_LEFT   -> {
+                case GLFW_MOUSE_BUTTON_LEFT -> {
                     leftHeld = action == GLFW_PRESS;
                     
                     if(leftHeld) world.addGeometry(camera.direction, camera.ray, shiftHeld);
