@@ -14,6 +14,7 @@ import org.lwjgl.system.MemoryUtil;
 class GeometryBatch {
     
     private final int numFloats = 24;
+    private final int numFloatsPerVertex = 3;
     private int numVertices;
     private int prevNumShapes;
     
@@ -29,7 +30,7 @@ class GeometryBatch {
         
         program.setUniform("uType", 2);
         
-        glDrawArrays(GL_POINTS, 0, prevNumShapes * numFloats);
+        glDrawArrays(GL_POINTS, 0, numVertices / numFloatsPerVertex);
         
         glPointSize(1);
         App.checkGLError();
