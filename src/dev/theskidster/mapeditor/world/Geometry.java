@@ -13,6 +13,8 @@ import org.joml.Vector3i;
 
 final class Geometry {
     
+    int height;
+    
     Map<Integer, Vector3f> vertices;
     private final Vector3f[] defaultState;
     
@@ -47,7 +49,8 @@ final class Geometry {
             vertices.clear();
             
             for(int v = 0; v < defaultState.length; v++) {
-                vertices.put(v, new Vector3f(defaultState[v]));
+                float yPos = (defaultState[v].y == CELL_SIZE) ? height : defaultState[v].y;
+                vertices.put(v, new Vector3f(defaultState[v].x, yPos, defaultState[v].z));
             }
         }
     }

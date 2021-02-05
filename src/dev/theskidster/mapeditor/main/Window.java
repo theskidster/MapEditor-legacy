@@ -30,6 +30,7 @@ public final class Window {
     private boolean middleHeld;
     private boolean rightHeld;
     private boolean shiftHeld;
+    private boolean ctrlHeld;
     
     String title;
     Vector2i position;
@@ -126,6 +127,7 @@ public final class Window {
         glfwSetKeyCallback(handle, (window, key, scancode, action, mods) -> {
             ui.enterText(key, action);
             shiftHeld = (key == GLFW_KEY_LEFT_SHIFT && action == GLFW_PRESS);
+            ctrlHeld  = (key == GLFW_KEY_LEFT_CONTROL && action == GLFW_PRESS);
         });
         
         glfwSetCursorPosCallback(handle, (window, xPos, yPos) -> {
@@ -135,7 +137,7 @@ public final class Window {
             world.selectTile(camera.position, camera.ray);
             
             if(leftHeld ^ middleHeld ^ rightHeld) {
-                if(leftHeld)   world.stretchGeometry(shiftHeld);
+                if(leftHeld)   world.stretchGeometry(camera.rayVerticalChange, ctrlHeld);
                 if(middleHeld) camera.setPosition(xPos, yPos);
                 if(rightHeld)  camera.setDirection(xPos, yPos);
             } else {
@@ -152,7 +154,7 @@ public final class Window {
                 case GLFW_MOUSE_BUTTON_LEFT -> {
                     leftHeld = action == GLFW_PRESS;
                     
-                    if(leftHeld) world.addGeometry(camera.direction, camera.ray, shiftHeld);
+                    if(leftHeld) world.addGeometry();
                     else         world.finalizeGeometry();
                 }
                 

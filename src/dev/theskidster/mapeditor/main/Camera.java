@@ -14,9 +14,12 @@ import org.joml.Vector4f;
  */
 public final class Camera {
     
+    private float prevRayY;
+    float rayVerticalChange;
+    
     private float pitch;
     private float yaw = -90f;
-    float fov         = 60f;
+    private float fov = 60f;
     
     double prevX;
     double prevY;
@@ -24,7 +27,7 @@ public final class Camera {
     final Vector3f position  = new Vector3f();
     final Vector3f direction = new Vector3f(0, 0, -1);
     final Vector3f up        = new Vector3f(0, 1, 0);
-    Vector3f ray             = new Vector3f();
+    final Vector3f ray       = new Vector3f();
     
     private final Vector3f tempVec1 = new Vector3f();
     private final Vector3f tempVec2 = new Vector3f();
@@ -93,6 +96,8 @@ public final class Camera {
     }
     
     public void castRay(float x, float y) {
+        prevRayY = ray.y; //Store the previous value of the rays Y component.
+        
         tempVec3.set(x, y, -1f, 1f);
         
         proj.invert(tempMat);
@@ -105,6 +110,8 @@ public final class Camera {
         tempMat.transform(tempVec3);
         
         ray.set(tempVec3.x, tempVec3.y, tempVec3.z);
+        
+        rayVerticalChange = getChangeIntensity(ray.y, prevRayY, 35f);
     }
     
 }

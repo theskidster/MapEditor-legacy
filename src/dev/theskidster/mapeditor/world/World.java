@@ -25,6 +25,8 @@ public class World {
     public final int depth;
     private int currIndex;
     
+    private float shapeHeight;
+    
     private final Floor floor                = new Floor();
     private final GeometryBatch geomBatch    = new GeometryBatch();
     private final RayAabIntersection rayTest = new RayAabIntersection();
@@ -74,7 +76,7 @@ public class World {
         });
     }
     
-    public void addGeometry(Vector3f camPos, Vector3f camRay, boolean shiftHeld) {
+    public void addGeometry() {
         if(tiles.containsValue(true)) {
             Vector2i tileLocation = tiles.entrySet().stream().filter(entry -> entry.getValue()).findAny().get().getKey();
             cursorLocation.set(tileLocation.x, 0, tileLocation.y);
@@ -85,15 +87,24 @@ public class World {
         
         currIndex = shapes.size() + 1;
         shapes.put(currIndex, new Geometry(cursorLocation));
-        
-        //System.out.println("add");
     }
     
-    public void stretchGeometry(boolean shiftHeld) {
+    public void stretchGeometry(float verticalChange, boolean ctrlHeld) {
         Geometry shape = shapes.get(currIndex);
         
-        if(shiftHeld) {
+        if(ctrlHeld) {
+            shapeHeight += verticalChange;
             
+            if(tiles.containsValue(true)) {
+                if((int) shapeHeight > 0) {
+                    shape.height = (int) shapeHeight;
+
+                    shape.vertices.get(1).y = shape.height;
+                    shape.vertices.get(2).y = shape.height;
+                    shape.vertices.get(6).y = shape.height;
+                    shape.vertices.get(7).y = shape.height;
+                }
+            }
         } else {
             if(tiles.containsValue(true)) {
                 Vector2i tileLocation = tiles.entrySet().stream().filter(entry -> entry.getValue()).findAny().get().getKey();
@@ -110,58 +121,58 @@ public class World {
                         if(locationDiff.z > 0) {
                             shape.resetVertexAxis(0, "z");
                             shape.resetVertexAxis(1, "z");
-                            shape.vertices.get(2).set(cursorLocation.x + CELL_SIZE, CELL_SIZE, initialLocation.z);
-                            shape.vertices.get(3).set(cursorLocation.x + CELL_SIZE, 0,         initialLocation.z);
-                            shape.vertices.get(4).set(cursorLocation.x + CELL_SIZE, 0,         cursorLocation.z + CELL_SIZE);
-                            shape.vertices.get(5).set(initialLocation.x,            0,         cursorLocation.z + CELL_SIZE);
-                            shape.vertices.get(6).set(initialLocation.x,            CELL_SIZE, cursorLocation.z + CELL_SIZE);
-                            shape.vertices.get(7).set(cursorLocation.x + CELL_SIZE, CELL_SIZE, cursorLocation.z + CELL_SIZE);
+                            shape.vertices.get(2).set(cursorLocation.x + CELL_SIZE, shape.vertices.get(2).y, initialLocation.z);
+                            shape.vertices.get(3).set(cursorLocation.x + CELL_SIZE, shape.vertices.get(3).y, initialLocation.z);
+                            shape.vertices.get(4).set(cursorLocation.x + CELL_SIZE, shape.vertices.get(4).y, cursorLocation.z + CELL_SIZE);
+                            shape.vertices.get(5).set(initialLocation.x,            shape.vertices.get(5).y, cursorLocation.z + CELL_SIZE);
+                            shape.vertices.get(6).set(initialLocation.x,            shape.vertices.get(6).y, cursorLocation.z + CELL_SIZE);
+                            shape.vertices.get(7).set(cursorLocation.x + CELL_SIZE, shape.vertices.get(7).y, cursorLocation.z + CELL_SIZE);
                         } else if(locationDiff.z < 0) {
-                            shape.vertices.get(0).set(initialLocation.x,            0,         cursorLocation.z);
-                            shape.vertices.get(1).set(initialLocation.x,            CELL_SIZE, cursorLocation.z);
-                            shape.vertices.get(2).set(cursorLocation.x + CELL_SIZE, CELL_SIZE, cursorLocation.z);
-                            shape.vertices.get(3).set(cursorLocation.x + CELL_SIZE, 0,         cursorLocation.z);
-                            shape.vertices.get(4).set(cursorLocation.x + CELL_SIZE, 0,         initialLocation.z + CELL_SIZE);
+                            shape.vertices.get(0).set(initialLocation.x,            shape.vertices.get(0).y, cursorLocation.z);
+                            shape.vertices.get(1).set(initialLocation.x,            shape.vertices.get(1).y, cursorLocation.z);
+                            shape.vertices.get(2).set(cursorLocation.x + CELL_SIZE, shape.vertices.get(2).y, cursorLocation.z);
+                            shape.vertices.get(3).set(cursorLocation.x + CELL_SIZE, shape.vertices.get(3).y, cursorLocation.z);
+                            shape.vertices.get(4).set(cursorLocation.x + CELL_SIZE, shape.vertices.get(4).y, initialLocation.z + CELL_SIZE);
                             shape.resetVertexAxis(5, "z");
                             shape.resetVertexAxis(6, "z");
-                            shape.vertices.get(7).set(cursorLocation.x + CELL_SIZE, CELL_SIZE, initialLocation.z + CELL_SIZE);
+                            shape.vertices.get(7).set(cursorLocation.x + CELL_SIZE, shape.vertices.get(7).y, initialLocation.z + CELL_SIZE);
                         } else {
                             shape.resetVertexAxis(0, "z");
                             shape.resetVertexAxis(1, "z");
-                            shape.vertices.get(2).set(cursorLocation.x + CELL_SIZE, CELL_SIZE, initialLocation.z);
-                            shape.vertices.get(3).set(cursorLocation.x + CELL_SIZE, 0,         initialLocation.z);
-                            shape.vertices.get(4).set(cursorLocation.x + CELL_SIZE, 0,         initialLocation.z + CELL_SIZE);
+                            shape.vertices.get(2).set(cursorLocation.x + CELL_SIZE, shape.vertices.get(2).y, initialLocation.z);
+                            shape.vertices.get(3).set(cursorLocation.x + CELL_SIZE, shape.vertices.get(3).y, initialLocation.z);
+                            shape.vertices.get(4).set(cursorLocation.x + CELL_SIZE, shape.vertices.get(4).y, initialLocation.z + CELL_SIZE);
                             shape.resetVertexAxis(5, "z");
                             shape.resetVertexAxis(6, "z");
-                            shape.vertices.get(7).set(cursorLocation.x + CELL_SIZE, CELL_SIZE, initialLocation.z + CELL_SIZE);
+                            shape.vertices.get(7).set(cursorLocation.x + CELL_SIZE, shape.vertices.get(7).y, initialLocation.z + CELL_SIZE);
                         }
                     } else if(locationDiff.x < 0) {
                         if(locationDiff.z > 0) {
-                            shape.vertices.get(0).set(cursorLocation.x, 0,         initialLocation.z);
-                            shape.vertices.get(1).set(cursorLocation.x, CELL_SIZE, initialLocation.z);
+                            shape.vertices.get(0).set(cursorLocation.x, shape.vertices.get(0).y,         initialLocation.z);
+                            shape.vertices.get(1).set(cursorLocation.x, shape.vertices.get(1).y, initialLocation.z);
                             shape.resetVertexAxis(2, "z");
                             shape.resetVertexAxis(3, "z");
-                            shape.vertices.get(4).set(initialLocation.x + CELL_SIZE, 0,         cursorLocation.z + CELL_SIZE);
-                            shape.vertices.get(5).set(cursorLocation.x,              0,         cursorLocation.z + CELL_SIZE);
-                            shape.vertices.get(6).set(cursorLocation.x,              CELL_SIZE, cursorLocation.z + CELL_SIZE);
-                            shape.vertices.get(7).set(initialLocation.x + CELL_SIZE, CELL_SIZE, cursorLocation.z + CELL_SIZE);
+                            shape.vertices.get(4).set(initialLocation.x + CELL_SIZE, shape.vertices.get(4).y, cursorLocation.z + CELL_SIZE);
+                            shape.vertices.get(5).set(cursorLocation.x,              shape.vertices.get(5).y, cursorLocation.z + CELL_SIZE);
+                            shape.vertices.get(6).set(cursorLocation.x,              shape.vertices.get(6).y, cursorLocation.z + CELL_SIZE);
+                            shape.vertices.get(7).set(initialLocation.x + CELL_SIZE, shape.vertices.get(7).y, cursorLocation.z + CELL_SIZE);
                         } else if(locationDiff.z < 0) {
-                            shape.vertices.get(0).set(cursorLocation.x,              0,         cursorLocation.z);
-                            shape.vertices.get(1).set(cursorLocation.x,              CELL_SIZE, cursorLocation.z);
-                            shape.vertices.get(2).set(initialLocation.x + CELL_SIZE, CELL_SIZE, cursorLocation.z);
-                            shape.vertices.get(3).set(initialLocation.x + CELL_SIZE, 0,         cursorLocation.z);
+                            shape.vertices.get(0).set(cursorLocation.x,              shape.vertices.get(0).y, cursorLocation.z);
+                            shape.vertices.get(1).set(cursorLocation.x,              shape.vertices.get(1).y, cursorLocation.z);
+                            shape.vertices.get(2).set(initialLocation.x + CELL_SIZE, shape.vertices.get(2).y, cursorLocation.z);
+                            shape.vertices.get(3).set(initialLocation.x + CELL_SIZE, shape.vertices.get(3).y, cursorLocation.z);
                             shape.resetVertexAxis(4, "z");
-                            shape.vertices.get(5).set(cursorLocation.x,              0,         initialLocation.z + CELL_SIZE);
-                            shape.vertices.get(6).set(cursorLocation.x,              CELL_SIZE, initialLocation.z + CELL_SIZE);
+                            shape.vertices.get(5).set(cursorLocation.x,              shape.vertices.get(5).y, initialLocation.z + CELL_SIZE);
+                            shape.vertices.get(6).set(cursorLocation.x,              shape.vertices.get(6).y, initialLocation.z + CELL_SIZE);
                             shape.resetVertexAxis(7, "z");
                         } else {
-                            shape.vertices.get(0).set(cursorLocation.x, 0,         initialLocation.z);
-                            shape.vertices.get(1).set(cursorLocation.x, CELL_SIZE, initialLocation.z);
+                            shape.vertices.get(0).set(cursorLocation.x, shape.vertices.get(0).y, initialLocation.z);
+                            shape.vertices.get(1).set(cursorLocation.x, shape.vertices.get(1).y, initialLocation.z);
                             shape.resetVertexAxis(2, "z");
                             shape.resetVertexAxis(3, "z");
                             shape.resetVertexAxis(4, "z");
-                            shape.vertices.get(5).set(cursorLocation.x, 0,         initialLocation.z + CELL_SIZE);
-                            shape.vertices.get(6).set(cursorLocation.x, CELL_SIZE, initialLocation.z + CELL_SIZE);
+                            shape.vertices.get(5).set(cursorLocation.x, shape.vertices.get(5).y, initialLocation.z + CELL_SIZE);
+                            shape.vertices.get(6).set(cursorLocation.x, shape.vertices.get(6).y, initialLocation.z + CELL_SIZE);
                             shape.resetVertexAxis(7, "z");
                         }
                     } else {
@@ -170,15 +181,15 @@ public class World {
                             shape.resetVertexAxis(1, "x");
                             shape.resetVertexAxis(2, "x");
                             shape.resetVertexAxis(3, "x");
-                            shape.vertices.get(4).set(initialLocation.x + CELL_SIZE, 0,         cursorLocation.z + CELL_SIZE);
-                            shape.vertices.get(5).set(initialLocation.x,             0,         cursorLocation.z + CELL_SIZE);
-                            shape.vertices.get(6).set(initialLocation.x,             CELL_SIZE, cursorLocation.z + CELL_SIZE);
-                            shape.vertices.get(7).set(initialLocation.x + CELL_SIZE, CELL_SIZE, cursorLocation.z + CELL_SIZE);
+                            shape.vertices.get(4).set(initialLocation.x + CELL_SIZE, shape.vertices.get(4).y, cursorLocation.z + CELL_SIZE);
+                            shape.vertices.get(5).set(initialLocation.x,             shape.vertices.get(5).y, cursorLocation.z + CELL_SIZE);
+                            shape.vertices.get(6).set(initialLocation.x,             shape.vertices.get(6).y, cursorLocation.z + CELL_SIZE);
+                            shape.vertices.get(7).set(initialLocation.x + CELL_SIZE, shape.vertices.get(7).y, cursorLocation.z + CELL_SIZE);
                         } else if(locationDiff.z < 0) {
-                            shape.vertices.get(0).set(initialLocation.x,             0, cursorLocation.z);
-                            shape.vertices.get(1).set(initialLocation.x,             CELL_SIZE, cursorLocation.z);
-                            shape.vertices.get(2).set(initialLocation.x + CELL_SIZE, CELL_SIZE, cursorLocation.z);
-                            shape.vertices.get(3).set(initialLocation.x + CELL_SIZE, 0, cursorLocation.z);
+                            shape.vertices.get(0).set(initialLocation.x,             shape.vertices.get(0).y, cursorLocation.z);
+                            shape.vertices.get(1).set(initialLocation.x,             shape.vertices.get(1).y, cursorLocation.z);
+                            shape.vertices.get(2).set(initialLocation.x + CELL_SIZE, shape.vertices.get(2).y, cursorLocation.z);
+                            shape.vertices.get(3).set(initialLocation.x + CELL_SIZE, shape.vertices.get(3).y, cursorLocation.z);
                             shape.resetVertexAxis(4, "x");
                             shape.resetVertexAxis(5, "x");
                             shape.resetVertexAxis(6, "x");
@@ -192,12 +203,10 @@ public class World {
                 //TODO: find cell with a y position above the floor
             }
         }
-        
-        //System.out.println("stretch");
     }
     
     public void finalizeGeometry() {
-        //System.out.println("finalize");
+        shapeHeight = 0;
     }
 
 }
