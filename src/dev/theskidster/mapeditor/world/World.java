@@ -20,9 +20,9 @@ public class World {
     
     public static final float CELL_SIZE = 1f;
     
-    public final int width;
-    public final int height;
-    public final int depth;
+    private final int width;
+    private final int height;
+    private final int depth;
     private int currIndex;
     
     private float shapeHeight;
@@ -94,16 +94,15 @@ public class World {
         
         if(ctrlHeld) {
             shapeHeight += verticalChange;
+            shapeHeight = (shapeHeight > height) ? height : shapeHeight;
             
-            if(tiles.containsValue(true)) {
-                if((int) shapeHeight > 0) {
-                    shape.height = (int) shapeHeight;
+            if((int) shapeHeight > 0) {
+                shape.height = (int) shapeHeight;
 
-                    shape.vertices.get(1).y = shape.height;
-                    shape.vertices.get(2).y = shape.height;
-                    shape.vertices.get(6).y = shape.height;
-                    shape.vertices.get(7).y = shape.height;
-                }
+                shape.vertices.get(1).y = shape.height;
+                shape.vertices.get(2).y = shape.height;
+                shape.vertices.get(6).y = shape.height;
+                shape.vertices.get(7).y = shape.height;
             }
         } else {
             if(tiles.containsValue(true)) {
@@ -148,7 +147,7 @@ public class World {
                         }
                     } else if(locationDiff.x < 0) {
                         if(locationDiff.z > 0) {
-                            shape.vertices.get(0).set(cursorLocation.x, shape.vertices.get(0).y,         initialLocation.z);
+                            shape.vertices.get(0).set(cursorLocation.x, shape.vertices.get(0).y, initialLocation.z);
                             shape.vertices.get(1).set(cursorLocation.x, shape.vertices.get(1).y, initialLocation.z);
                             shape.resetVertexAxis(2, "z");
                             shape.resetVertexAxis(3, "z");
