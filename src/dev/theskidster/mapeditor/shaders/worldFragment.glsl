@@ -15,5 +15,9 @@ void main() {
         case 2: //Used for level geometry
             ioResult = vec4(ioColor, 0);
             break;
+
+        case 3: //Used for temp cube object
+            ioResult = vec4(ioColor, 0);
+            break;
     }
 }

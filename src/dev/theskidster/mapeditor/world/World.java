@@ -34,6 +34,8 @@ public class World {
     private final Vector3i cursorLocation    = new Vector3i();
     private final Vector3i locationDiff      = new Vector3i();
     
+    private final Cube cube;
+    
     private final Origin origin;
     
     private final Map<Vector2i, Boolean> tiles;
@@ -43,6 +45,8 @@ public class World {
         this.width  = width;
         this.height = height;
         this.depth  = depth;
+        
+        cube = new Cube(new Vector3f());
         
         origin = new Origin(width, height, depth);
         
@@ -55,7 +59,9 @@ public class World {
         }};
     }
     
-    public void update() {}
+    public void update() {
+        cube.update();
+    }
     
     public void render(ShaderProgram program) {
         floor.draw(program, tiles);
@@ -63,6 +69,8 @@ public class World {
         geomBatch.batchStart(shapes.size());
             shapes.forEach((id, shape) -> geomBatch.drawGeometry(shape));
         geomBatch.batchEnd(program);
+        
+        cube.render(program);
         
         origin.render(program);
     }

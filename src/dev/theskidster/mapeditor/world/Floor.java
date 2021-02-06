@@ -66,9 +66,9 @@ class Floor {
             glBufferData(GL_ARRAY_BUFFER, positions, GL_STATIC_DRAW);
         }
         
-        glVertexAttribPointer(2, 3, GL_FLOAT, false, (3 * Float.BYTES), 0);
-        glEnableVertexAttribArray(2);
-        glVertexAttribDivisor(2, 1);
+        glVertexAttribPointer(3, 3, GL_FLOAT, false, (3 * Float.BYTES), 0);
+        glEnableVertexAttribArray(3);
+        glVertexAttribDivisor(3, 1);
     }
     
     private void offsetColor(Map<Vector2i, Boolean> tiles) {
@@ -86,9 +86,9 @@ class Floor {
             glBufferData(GL_ARRAY_BUFFER, colors, GL_STATIC_DRAW);
         }
         
-        glVertexAttribPointer(3, 3, GL_FLOAT, false, (3 * Float.BYTES), 0);
-        glEnableVertexAttribArray(3);
-        glVertexAttribDivisor(3, 1);
+        glVertexAttribPointer(4, 3, GL_FLOAT, false, (3 * Float.BYTES), 0);
+        glEnableVertexAttribArray(4);
+        glVertexAttribDivisor(4, 1);
     }
     
     public void draw(ShaderProgram program, Map<Vector2i, Boolean> tiles) {
