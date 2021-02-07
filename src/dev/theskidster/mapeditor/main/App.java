@@ -151,7 +151,7 @@ public final class App {
         }
         
         camera = new Camera();
-        world  = new World(64, 32, 64);
+        world  = new World(16, 32, 16);
         ui     = new UI();
         
         camera.update(window.width, window.height);

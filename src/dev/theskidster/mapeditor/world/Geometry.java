@@ -1,65 +1,140 @@
 package dev.theskidster.mapeditor.world;
 
+import dev.theskidster.mapeditor.main.LogLevel;
+import dev.theskidster.mapeditor.main.Logger;
 import static dev.theskidster.mapeditor.world.World.CELL_SIZE;
 import java.util.HashMap;
 import java.util.Map;
 import org.joml.Vector3f;
-import org.joml.Vector3i;
 
 /**
  * @author J Hoffman
- * Created: Feb 2, 2021
+ * Created: Feb 6, 2021
  */
 
 final class Geometry {
     
-    int height;
+    int height = 1;
     
-    Map<Integer, Vector3f> vertices;
-    private final Vector3f[] defaultState;
+    Map<Integer, Vertex> vertices;
+    Map<Integer, Face> faces;
     
-    Geometry(Vector3i position) {
+    private final Vector3f[] initialVertexPositions;
+    
+    Geometry(float xLoc, float zLoc) {
         vertices = new HashMap<>() {{
-            put(0, new Vector3f(position.x,             position.y,             position.z));
-            put(1, new Vector3f(position.x,             position.y + CELL_SIZE, position.z));
-            put(2, new Vector3f(position.x + CELL_SIZE, position.y + CELL_SIZE, position.z));
-            put(3, new Vector3f(position.x + CELL_SIZE, position.y,             position.z));
-            put(4, new Vector3f(position.x + CELL_SIZE, position.y,             position.z + CELL_SIZE));
-            put(5, new Vector3f(position.x,             position.y,             position.z + CELL_SIZE));
-            put(6, new Vector3f(position.x,             position.y + CELL_SIZE, position.z + CELL_SIZE));
-            put(7, new Vector3f(position.x + CELL_SIZE, position.y + CELL_SIZE, position.z + CELL_SIZE));
+            //FRONT:
+            put(0, new Vertex(xLoc,             0,         zLoc + CELL_SIZE, 0, 0));
+            put(1, new Vertex(xLoc + CELL_SIZE, 0,         zLoc + CELL_SIZE, 0, 0));
+            put(2, new Vertex(xLoc + CELL_SIZE, CELL_SIZE, zLoc + CELL_SIZE, 0, 0));
+            put(3, new Vertex(xLoc,             CELL_SIZE, zLoc + CELL_SIZE, 0, 0));
+            //BACK:
+            put(4, new Vertex(xLoc,             0,         zLoc, 0, 0));
+            put(5, new Vertex(xLoc + CELL_SIZE, 0,         zLoc, 0, 0));
+            put(6, new Vertex(xLoc + CELL_SIZE, CELL_SIZE, zLoc, 0, 0));
+            put(7, new Vertex(xLoc,             CELL_SIZE, zLoc, 0, 0));
         }};
         
-        defaultState = new Vector3f[vertices.size()];
+        faces = new HashMap<>() {{
+            //FRONT:
+            put(0, new Face(0, 1, 2));
+            put(1, new Face(2, 3, 0));
+            //RIGHT:
+            put(2, new Face(1, 5, 6));
+            put(3, new Face(6, 2, 1));
+            //BACK:
+            put(4, new Face(7, 6, 5));
+            put(5, new Face(5, 4, 7));
+            //LEFT:
+            put(6, new Face(4, 0, 3));
+            put(7, new Face(3, 7, 4));
+            //BOTTOM:
+            put(8, new Face(4, 5, 1));
+            put(9, new Face(1, 0, 4));
+            //TOP:
+            put(10, new Face(3, 2, 6));
+            put(11, new Face(6, 7, 3));
+        }};
+        
+        initialVertexPositions = new Vector3f[vertices.size()];
         
         for(int v = 0; v < vertices.size(); v++) {
-            defaultState[v] = new Vector3f(vertices.get(v));
+            initialVertexPositions[v] = new Vector3f(vertices.get(v).position);
         }
     }
     
-    void resetVertices() {
-        boolean alreadyReset = true;
-        
-        for(int v = 0; v < defaultState.length; v++) {
-            alreadyReset = defaultState[v].equals(vertices.get(v));
-            if(!alreadyReset) break;
+    float getVertexPos(int index, String axis) {
+        if(!vertices.containsKey(index)) {
+            Logger.log(LogLevel.WARNING, "No vertex with an ID of: (" + index + ") exists in this shape.");
+            return 0;
         }
         
-        if(!alreadyReset) {
-            vertices.clear();
+        switch(axis) {
+            case "x", "X" -> { return vertices.get(index).position.x; }
+            case "y", "Y" -> { return vertices.get(index).position.y; }
+            case "z", "Z" -> { return vertices.get(index).position.z; }
             
-            for(int v = 0; v < defaultState.length; v++) {
-                float yPos = (defaultState[v].y == CELL_SIZE) ? height : defaultState[v].y;
-                vertices.put(v, new Vector3f(defaultState[v].x, yPos, defaultState[v].z));
+            default -> { 
+                Logger.log(LogLevel.WARNING, "Invalid axis: \"" + axis + "\" value specified, must be one of X, Y, or Z.");
+                return 0; 
             }
         }
     }
     
-    void resetVertexAxis(int index, String axis) {
+    void setVertexPos(int index, String axis, float value) {
+        if(!vertices.containsKey(index)) {
+            Logger.log(LogLevel.WARNING, "No vertex with an ID of: (" + index + ") exists in this shape.");
+        }
+        
         switch(axis) {
-            case "x" -> vertices.get(index).x = defaultState[index].x;
-            case "y" -> vertices.get(index).y = defaultState[index].y;
-            case "z" -> vertices.get(index).z = defaultState[index].z;
+            case "x", "X" -> { vertices.get(index).position.x = value; }
+            case "y", "Y" -> { vertices.get(index).position.y = value; }
+            case "z", "Z" -> { vertices.get(index).position.z = value; }
+            
+            default -> {
+                Logger.log(LogLevel.WARNING, "Invalid axis: \"" + axis + "\" value specified, must be one of X, Y, or Z.");
+            }
+        }
+    }
+    
+    void setVertexPos(int index, float x, float y, float z) {
+        if(vertices.containsKey(index)) {
+            vertices.get(index).position.set(x, y, z);
+        } else {
+            Logger.log(LogLevel.WARNING, "No vertex with an ID of: (" + index + ") exists in this shape.");
+        }
+    }
+    
+    void resetVertexPos(int index, String axis) {
+        float value;
+        
+        switch(axis) {
+            case "x", "X" -> { value = initialVertexPositions[index].x; }
+            case "y", "Y" -> { value = initialVertexPositions[index].y; }
+            case "z", "Z" -> { value = initialVertexPositions[index].z; }
+            
+            default -> {
+                Logger.log(LogLevel.WARNING, "Invalid axis: \"" + axis + "\" value specified, must be one of X, Y, or Z.");
+                return;
+            }
+        }
+        
+        setVertexPos(index, axis, value);
+    }
+    
+    void resetVertexPos() {
+        boolean alreadyReset = true;
+        
+        for(int v = 0; v < initialVertexPositions.length; v++) {
+            alreadyReset = initialVertexPositions[v].equals(vertices.get(v).position);
+            if(!alreadyReset) break;
+        }
+        
+        if(!alreadyReset) {
+            for(int v = 0; v < initialVertexPositions.length; v++) {
+                float yPos = (initialVertexPositions[v].y == CELL_SIZE) ? height : initialVertexPositions[v].y;
+                vertices.get(v).position = new Vector3f(initialVertexPositions[v].x, yPos, initialVertexPositions[v].z);
+            }
         }
     }
     

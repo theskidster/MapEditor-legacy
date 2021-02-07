@@ -3,6 +3,7 @@ package dev.theskidster.mapeditor.world;
 import dev.theskidster.mapeditor.graphics.Graphics;
 import dev.theskidster.mapeditor.main.App;
 import dev.theskidster.mapeditor.main.ShaderProgram;
+import org.joml.Vector3f;
 import static org.lwjgl.opengl.GL30.*;
 import org.lwjgl.system.MemoryUtil;
 
@@ -69,7 +70,8 @@ class GeometryBatch {
     
     void drawGeometry(Geometry shape) {
         for(int i = 0; i < 8; i++) {
-            g.vertices.put(shape.vertices.get(i).x).put(shape.vertices.get(i).y).put(shape.vertices.get(i).z);
+            Vector3f vertexPos = shape.vertices.get(i).position;
+            g.vertices.put(vertexPos.x).put(vertexPos.y).put(vertexPos.z);
         }
         
         numVertices += numFloats;

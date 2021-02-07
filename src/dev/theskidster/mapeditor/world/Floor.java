@@ -36,7 +36,7 @@ class Floor {
             g.vertices.put(0)        .put(0).put(CELL_SIZE);
             g.vertices.put(CELL_SIZE).put(0).put(CELL_SIZE);
             g.vertices.put(CELL_SIZE).put(0).put(0);
-            g.vertices.put(0).put(0).put(0);
+            g.vertices.put(0)        .put(0).put(0);
             
             g.indices.put(0).put(1).put(2);
             g.indices.put(2).put(3).put(0);

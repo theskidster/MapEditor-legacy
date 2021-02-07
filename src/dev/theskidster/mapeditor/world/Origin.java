@@ -23,13 +23,16 @@ class Origin {
         try(MemoryStack stack = MemoryStack.stackPush()) {
             g.vertices = stack.mallocFloat(6 * 3);
             
+            float halfWidth = (width / 2);
+            float halfDepth = (depth / 2);
+            
             //(vec3 position)
-            g.vertices.put(-(width / 2))    .put(0)     .put(0);
-            g.vertices.put(width / 2).put(0)     .put(0);
-            g.vertices.put(0)    .put(0)     .put(0);
-            g.vertices.put(0)    .put(height).put(0);
-            g.vertices.put(0)    .put(0)     .put(-(depth / 2));
-            g.vertices.put(0)    .put(0)     .put(depth / 2);
+            g.vertices.put(-halfWidth).put(0)     .put(0);
+            g.vertices.put( halfWidth).put(0)     .put(0);
+            g.vertices.put(0)         .put(0)     .put(0);
+            g.vertices.put(0)         .put(height).put(0);
+            g.vertices.put(0)         .put(0)     .put(-halfDepth);
+            g.vertices.put(0)         .put(0)     .put( halfDepth);
             
             g.vertices.flip();
         }
