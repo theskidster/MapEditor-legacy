@@ -1,12 +1,13 @@
 package dev.theskidster.mapeditor.world;
 
-import dev.theskidster.mapeditor.graphics.Graphics;
 import dev.theskidster.mapeditor.main.App;
 import dev.theskidster.mapeditor.main.LogLevel;
 import dev.theskidster.mapeditor.main.Logger;
 import dev.theskidster.mapeditor.main.ShaderProgram;
 import static dev.theskidster.mapeditor.world.World.CELL_SIZE;
 import java.nio.BufferOverflowException;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.util.HashMap;
 import java.util.Map;
 import org.joml.Vector2f;
@@ -28,13 +29,19 @@ final class Cube {
     
     private boolean dataChanged;
     
-    private Graphics g = new Graphics();
+    private FloatBuffer vertexBuf;
+    private IntBuffer indexBuf;
     
     Map<Integer, Vertex> vertices;
     Map<Integer, Face> faces;
     
     Cube(float xLoc, float zLoc) {
-        //TODO: refactor this class, rename to geometry, delete old geometry and batch classes
+        /*
+        TODO:
+        - Make sure the data is updated only when it is changed
+        - re-implement getter/setters from geometry class
+        - rename to Geometry and delete the old geometry/buffer classes
+        */
         
         vertices = new HashMap<>() {{
             //FRONT:
@@ -74,16 +81,16 @@ final class Cube {
     void update() {}
     
     void render(ShaderProgram program) {
-        g.vertices = MemoryUtil.memAllocFloat(40 * Float.BYTES);
-        g.indices  = MemoryUtil.memAllocInt(36 * Float.BYTES);
+        vertexBuf = MemoryUtil.memAllocFloat(40 * Float.BYTES);
+        indexBuf  = MemoryUtil.memAllocInt(36 * Float.BYTES);
 
-        glBindVertexArray(g.vao);
+        glBindVertexArray(vao);
 
-        glBindBuffer(GL_ARRAY_BUFFER, g.vbo);
-        glBufferData(GL_ARRAY_BUFFER, g.vertices.capacity(), GL_DYNAMIC_DRAW);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glBufferData(GL_ARRAY_BUFFER, vertexBuf.capacity(), GL_DYNAMIC_DRAW);
 
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, g.ibo);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, g.indices.capacity(), GL_DYNAMIC_DRAW);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexBuf.capacity(), GL_DYNAMIC_DRAW);
 
         glVertexAttribPointer(0, 3, GL_FLOAT, false, (5 * Float.BYTES), 0);
         glVertexAttribPointer(1, 2, GL_FLOAT, false, (5 * Float.BYTES), (3 * Float.BYTES));
@@ -96,36 +103,36 @@ final class Cube {
                 Vector3f vertexPos = vertices.get(v).position;
                 Vector2f texCoords = vertices.get(v).texCoords;
 
-                g.vertices.put(vertexPos.x).put(vertexPos.y).put(vertexPos.z).put(texCoords.x).put(texCoords.y);
+                vertexBuf.put(vertexPos.x).put(vertexPos.y).put(vertexPos.z).put(texCoords.x).put(texCoords.y);
             }
             
             faces.forEach((index, face) -> {
-                g.indices.put(face.indices[0]).put(face.indices[1]).put(face.indices[2]);
+                indexBuf.put(face.indices[0]).put(face.indices[1]).put(face.indices[2]);
             });
         } catch(BufferOverflowException e) {
             Logger.setStackTrace(e);
             Logger.log(LogLevel.SEVERE, "Geometry buffer experienced overflow");
         }
         
-        g.vertices.flip();
-        g.indices.flip();
+        vertexBuf.flip();
+        indexBuf.flip();
         
-        glBindVertexArray(g.vao);
+        glBindVertexArray(vao);
         
-        glBindBuffer(GL_ARRAY_BUFFER, g.vbo);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, g.vertices);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, vertexBuf);
         
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, g.ibo);        
-        glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, g.indices);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);        
+        glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, indexBuf);
         
         program.setUniform("uType", 2);
         
-        glDrawElements(GL_TRIANGLES, g.indices.limit(), GL_UNSIGNED_INT, NULL);
+        glDrawElements(GL_TRIANGLES, indexBuf.limit(), GL_UNSIGNED_INT, NULL);
         
         App.checkGLError();
         
-        g.vertices.clear();
-        g.indices.clear();
+        vertexBuf.clear();
+        indexBuf.clear();
     }
     
     public void test() {
