@@ -23,11 +23,14 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 
 final class Cube {
 
+    private final int FLOATS_PER_VERTEX = 5;
+    private final int FLOATS_PER_FACE   = 3;
+    
     private final int vao = glGenVertexArrays();
     private final int vbo = glGenBuffers();
     private final int ibo = glGenBuffers();
     
-    private boolean dataChanged;
+    private boolean updateData = true;
     
     private FloatBuffer vertexBuf;
     private IntBuffer indexBuf;
@@ -38,7 +41,6 @@ final class Cube {
     Cube(float xLoc, float zLoc) {
         /*
         TODO:
-        - Make sure the data is updated only when it is changed
         - re-implement getter/setters from geometry class
         - rename to Geometry and delete the old geometry/buffer classes
         */
@@ -78,45 +80,49 @@ final class Cube {
         }};
     }
     
-    void update() {}
-    
-    void render(ShaderProgram program) {
-        vertexBuf = MemoryUtil.memAllocFloat(40 * Float.BYTES);
-        indexBuf  = MemoryUtil.memAllocInt(36 * Float.BYTES);
+    void update() {
+        if(updateData) {
+            vertexBuf = MemoryUtil.memAllocFloat((vertices.size() * FLOATS_PER_VERTEX) * Float.BYTES);
+            indexBuf  = MemoryUtil.memAllocInt((faces.size() * FLOATS_PER_FACE) * Float.BYTES);
 
-        glBindVertexArray(vao);
+            glBindVertexArray(vao);
 
-        glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        glBufferData(GL_ARRAY_BUFFER, vertexBuf.capacity(), GL_DYNAMIC_DRAW);
+            glBindBuffer(GL_ARRAY_BUFFER, vbo);
+            glBufferData(GL_ARRAY_BUFFER, vertexBuf.capacity(), GL_DYNAMIC_DRAW);
 
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexBuf.capacity(), GL_DYNAMIC_DRAW);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexBuf.capacity(), GL_DYNAMIC_DRAW);
 
-        glVertexAttribPointer(0, 3, GL_FLOAT, false, (5 * Float.BYTES), 0);
-        glVertexAttribPointer(1, 2, GL_FLOAT, false, (5 * Float.BYTES), (3 * Float.BYTES));
-        
-        glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
-            
-        try {
-            for(int v = 0; v < 8; v++) {
-                Vector3f vertexPos = vertices.get(v).position;
-                Vector2f texCoords = vertices.get(v).texCoords;
+            glVertexAttribPointer(0, 3, GL_FLOAT, false, (FLOATS_PER_VERTEX * Float.BYTES), 0);
+            glVertexAttribPointer(1, 2, GL_FLOAT, false, (FLOATS_PER_VERTEX * Float.BYTES), (3 * Float.BYTES));
 
-                vertexBuf.put(vertexPos.x).put(vertexPos.y).put(vertexPos.z).put(texCoords.x).put(texCoords.y);
+            glEnableVertexAttribArray(0);
+            glEnableVertexAttribArray(1);
+
+            try {
+                for(int v = 0; v < 8; v++) {
+                    Vector3f vertexPos = vertices.get(v).position;
+                    Vector2f texCoords = vertices.get(v).texCoords;
+
+                    vertexBuf.put(vertexPos.x).put(vertexPos.y).put(vertexPos.z).put(texCoords.x).put(texCoords.y);
+                }
+
+                faces.forEach((index, face) -> {
+                    indexBuf.put(face.indices[0]).put(face.indices[1]).put(face.indices[2]);
+                });
+            } catch(BufferOverflowException e) {
+                Logger.setStackTrace(e);
+                Logger.log(LogLevel.SEVERE, "Geometry buffer experienced overflow");
             }
             
-            faces.forEach((index, face) -> {
-                indexBuf.put(face.indices[0]).put(face.indices[1]).put(face.indices[2]);
-            });
-        } catch(BufferOverflowException e) {
-            Logger.setStackTrace(e);
-            Logger.log(LogLevel.SEVERE, "Geometry buffer experienced overflow");
+            vertexBuf.flip();
+            indexBuf.flip();
+            
+            updateData = false;
         }
-        
-        vertexBuf.flip();
-        indexBuf.flip();
-        
+    }
+    
+    void render(ShaderProgram program) {
         glBindVertexArray(vao);
         
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -127,17 +133,14 @@ final class Cube {
         
         program.setUniform("uType", 2);
         
-        glDrawElements(GL_TRIANGLES, indexBuf.limit(), GL_UNSIGNED_INT, NULL);
+        glDrawElements(GL_TRIANGLES, indexBuf.capacity(), GL_UNSIGNED_INT, NULL);
         
         App.checkGLError();
-        
-        vertexBuf.clear();
-        indexBuf.clear();
     }
     
     public void test() {
         vertices.put(0, new Vertex(0, 3, 0, 0, 0));
-        dataChanged = true;
+        updateData = true;
     }
     
 }
