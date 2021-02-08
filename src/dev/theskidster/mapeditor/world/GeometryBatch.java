@@ -37,7 +37,7 @@ class GeometryBatch {
         
         program.setUniform("uType", 2);
         
-        glDrawElements(GL_TRIANGLES, g.indices.limit() * (numVertices / numFloatsPerVertex), GL_UNSIGNED_INT, NULL);
+        glDrawElements(GL_TRIANGLES, g.indices.limit(), GL_UNSIGNED_INT, NULL);
         
         App.checkGLError();
     }

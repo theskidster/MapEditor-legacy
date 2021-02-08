@@ -7,6 +7,7 @@ import org.joml.Vector3f;
 import org.joml.RayAabIntersection;
 import org.joml.Vector2i;
 import org.joml.Vector3i;
+import static org.lwjgl.opengl.GL11.*;
 
 /**
  * @author J Hoffman
@@ -34,7 +35,7 @@ public class World {
     private final Vector3i cursorLocation    = new Vector3i();
     private final Vector3i locationDiff      = new Vector3i();
     
-    //private final Cube cube;
+    private static final Cube cube = new Cube(1, 1);
     
     private final Origin origin;
     
@@ -45,8 +46,6 @@ public class World {
         this.width  = width;
         this.height = height;
         this.depth  = depth;
-        
-        //cube = new Cube(new Vector3f());
         
         origin = new Origin(width, height, depth);
         
@@ -60,19 +59,21 @@ public class World {
     }
     
     public void update() {
-        //cube.update();
+        cube.update();
     }
     
     public void render(ShaderProgram program) {
         floor.draw(program, tiles);
         
-        geomBatch.batchStart(shapes.size());
-            shapes.forEach((id, shape) -> geomBatch.drawGeometry(shape));
-        geomBatch.batchEnd(program);
-        
-        //cube.render(program);
+        glEnable(GL_DEPTH_TEST);
+        cube.render(program);
+        glDisable(GL_DEPTH_TEST);
         
         origin.render(program);
+    }
+    
+    public static void testCube() {
+        cube.test();
     }
     
     public void selectTile(Vector3f camPos, Vector3f camRay) {

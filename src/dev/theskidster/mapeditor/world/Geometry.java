@@ -1,7 +1,9 @@
 package dev.theskidster.mapeditor.world;
 
+import dev.theskidster.mapeditor.graphics.Graphics;
 import dev.theskidster.mapeditor.main.LogLevel;
 import dev.theskidster.mapeditor.main.Logger;
+import dev.theskidster.mapeditor.main.ShaderProgram;
 import static dev.theskidster.mapeditor.world.World.CELL_SIZE;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,6 +17,11 @@ import org.joml.Vector3f;
 final class Geometry {
     
     int height = 1;
+    private int prevNumVertices;
+    
+    private boolean vertexDataChanged;
+    
+    private Graphics g = new Graphics();
     
     Map<Integer, Vertex> vertices;
     Map<Integer, Face> faces;
