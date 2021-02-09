@@ -36,7 +36,7 @@ class SubMenu {
     
     void render(ShaderProgram program, TrueTypeFont text) {
         background.batchStart();
-            background.drawRectangle(rectangle, Color.LIGHT_GRAY);
+            background.drawRectangle(rectangle, Color.RGM_LIGHT_GRAY);
             buttons.forEach(button -> button.renderBackground(background));
         background.batchEnd(program);
 

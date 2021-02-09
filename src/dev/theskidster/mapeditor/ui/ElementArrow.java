@@ -72,9 +72,9 @@ class ElementArrow extends Element {
             
             observable.notifyObservers(propertyName, prevPressed != currPressed && !prevPressed);
             
-            color = (currPressed) ? Color.BLUE : Color.MEDIUM_GRAY;
+            color = (currPressed) ? Color.RGM_BLUE : Color.RGM_MEDIUM_GRAY;
         } else {
-            color = Color.DARK_GRAY;
+            color = Color.RGM_DARK_GRAY;
         }
     }
     

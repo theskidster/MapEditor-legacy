@@ -49,9 +49,9 @@ class Origin {
         
         for(int i = 0; i < 3; i++) {
             switch(i) {
-                case 0 -> colorVec.set(Color.RED.r, Color.RED.g, Color.RED.b);
-                case 1 -> colorVec.set(Color.BLUE.r, Color.BLUE.g, Color.BLUE.b);
-                case 2 -> colorVec.set(Color.GREEN.r, Color.GREEN.g, Color.GREEN.b);
+                case 0 -> colorVec.set(Color.RGM_RED.r, Color.RGM_RED.g, Color.RGM_RED.b);
+                case 1 -> colorVec.set(Color.RGM_BLUE.r, Color.RGM_BLUE.g, Color.RGM_BLUE.b);
+                case 2 -> colorVec.set(Color.RGM_GREEN.r, Color.RGM_GREEN.g, Color.RGM_GREEN.b);
             }
             
             program.setUniform("uType", 0);

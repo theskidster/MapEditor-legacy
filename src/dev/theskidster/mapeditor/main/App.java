@@ -22,6 +22,7 @@ import static org.lwjgl.opengl.GL20.*;
  */
 public final class App {
     
+    public static final int MAX_LIGHTS = 32;
     private static int tickCount = 0;
     
     private static boolean vSync = true; //TODO: pull these values in from prefrences file
@@ -50,7 +51,7 @@ public final class App {
         
         glReady = glInit();
         
-        setClearColor(Color.NAVY);
+        setClearColor(Color.RGM_NAVY);
         
         window.show(monitor, ui, camera, world);
         Logger.printSystemInfo();
@@ -87,7 +88,7 @@ public final class App {
             
             worldProgram.use();
             camera.render(worldProgram);
-            world.render(worldProgram);
+            world.render(worldProgram, camera.position, camera.up);
             
             uiProgram.use();
             ui.render(uiProgram);

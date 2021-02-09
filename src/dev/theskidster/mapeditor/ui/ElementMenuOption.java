@@ -44,17 +44,17 @@ final class ElementMenuOption extends Element {
                 if(!menubar.openSubMenus) menubar.resetState();
             }
 
-            color = (currPressed || menubar.openSubMenus) ? Color.BLUE : Color.MEDIUM_GRAY;
+            color = (currPressed || menubar.openSubMenus) ? Color.RGM_BLUE : Color.RGM_MEDIUM_GRAY;
         } else {
             hovered = false;
-            color   = (active) ? Color.BLUE : Color.DARK_GRAY;
+            color   = (active) ? Color.RGM_BLUE : Color.RGM_DARK_GRAY;
         }
     }
 
     @Override
     void update(Mouse mouse) {
         hovered = rectangle.intersects(mouse.cursorPos);
-        color   = (hovered) ? Color.BLUE : Color.DARK_GRAY;
+        color   = (hovered) ? Color.RGM_BLUE : Color.RGM_DARK_GRAY;
         clicked = (hovered && mouse.clicked);
     }
 
@@ -71,7 +71,7 @@ final class ElementMenuOption extends Element {
         int xOffset = rectangle.xPos + padding.x;
         int yOffset = rectangle.yPos + padding.y + TrueTypeFont.FONT_HEIGHT;
 
-        font.drawString(program, text, xOffset, yOffset, 1, Color.WHITE);
+        font.drawString(program, text, xOffset, yOffset, 1, Color.RGM_WHITE);
     }
 
 }

@@ -104,14 +104,14 @@ final class Geometry {
     void update() {
         if(updateData) {
             try {
-                for(int v = 0; v < 8; v++) {
-                    Vector3f vertexPos = vertices.get(v).position;
-                    Vector2f texCoords = vertices.get(v).texCoords;
-
+                vertices.forEach((id, vertex) -> {
+                    Vector3f vertexPos = vertex.position;
+                    Vector2f texCoords = vertex.texCoords;
+                    
                     vertexBuf.put(vertexPos.x).put(vertexPos.y).put(vertexPos.z).put(texCoords.x).put(texCoords.y);
-                }
+                });
 
-                faces.forEach((index, face) -> {
+                faces.forEach((id, face) -> {
                     indexBuf.put(face.indices[0]).put(face.indices[1]).put(face.indices[2]);
                 });
             } catch(BufferOverflowException e) {
@@ -122,18 +122,18 @@ final class Geometry {
             vertexBuf.flip();
             indexBuf.flip();
             
+            glBindBuffer(GL_ARRAY_BUFFER, vbo);
+            glBufferSubData(GL_ARRAY_BUFFER, 0, vertexBuf);
+
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);        
+            glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, indexBuf);
+            
             updateData = false;
         }
     }
     
     void render(ShaderProgram program) {
         glBindVertexArray(vao);
-        
-        glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, vertexBuf);
-        
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);        
-        glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, indexBuf);
         
         program.setUniform("uType", 2);
         

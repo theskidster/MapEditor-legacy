@@ -156,7 +156,7 @@ public class WidgetMenuBar extends Widget {
     @Override
     void render(ShaderProgram program, TrueTypeFont font) {        
         background.batchStart();
-            background.drawRectangle(rectangle, Color.DARK_GRAY);
+            background.drawRectangle(rectangle, Color.RGM_DARK_GRAY);
             buttons.forEach(button -> button.renderBackground(background));
         background.batchEnd(program);
         

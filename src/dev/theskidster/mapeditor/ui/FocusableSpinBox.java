@@ -159,8 +159,8 @@ final class FocusableSpinBox extends Focusable implements PropertyChangeListener
 
     @Override
     void renderBackground(Background background) {
-        background.drawRectangle(rectBack, Color.LIGHT_GRAY);
-        background.drawRectangle(rectFront, Color.MEDIUM_GRAY);
+        background.drawRectangle(rectBack, Color.RGM_LIGHT_GRAY);
+        background.drawRectangle(rectFront, Color.RGM_MEDIUM_GRAY);
         
         upArr.renderBackground(background);
         downArr.renderBackground(background);
@@ -180,7 +180,7 @@ final class FocusableSpinBox extends Focusable implements PropertyChangeListener
     
     @Override
     void renderText(ShaderProgram program, TrueTypeFont font) {
-        font.drawString(scissorBox, program, typed + " " + unit, textPos.x + getTextOffset(), textPos.y, 1, Color.WHITE);
+        font.drawString(scissorBox, program, typed + " " + unit, textPos.x + getTextOffset(), textPos.y, 1, Color.RGM_WHITE);
     }
 
     @Override

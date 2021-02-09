@@ -78,12 +78,12 @@ public final class FrameNewMap extends Frame implements PropertyChangeListener {
     @Override
     void render(ShaderProgram program, TrueTypeFont font) {
         background.batchStart();
-            background.drawRectangle(titleBar, Color.BLACK);
-            background.drawRectangle(content, Color.DARK_GRAY);
-            background.drawRectangle(xPos + 13, yPos + 38, 462, 58, Color.LIGHT_GRAY);
-            background.drawRectangle(xPos + 14, yPos + 39, 460, 56, Color.DARK_GRAY);
-            background.drawRectangle(xPos + 13, yPos + 148, 337, 144, Color.LIGHT_GRAY);
-            background.drawRectangle(xPos + 14, yPos + 149, 335, 142, Color.DARK_GRAY);
+            background.drawRectangle(titleBar, Color.RGM_BLACK);
+            background.drawRectangle(content, Color.RGM_DARK_GRAY);
+            background.drawRectangle(xPos + 13, yPos + 38, 462, 58, Color.RGM_LIGHT_GRAY);
+            background.drawRectangle(xPos + 14, yPos + 39, 460, 56, Color.RGM_DARK_GRAY);
+            background.drawRectangle(xPos + 13, yPos + 148, 337, 144, Color.RGM_LIGHT_GRAY);
+            background.drawRectangle(xPos + 14, yPos + 149, 335, 142, Color.RGM_DARK_GRAY);
             closeButton.renderBackground(background);
             textArea.renderBackground(background);
             spinBox1.renderBackground(background);
@@ -103,13 +103,13 @@ public final class FrameNewMap extends Frame implements PropertyChangeListener {
         lButton1.renderIcon(program);
         lButton2.renderIcon(program);
         
-        font.drawString(program, "New Map", xPos + 45, yPos - (TITLE_BAR_HEIGHT / 3), 1, Color.WHITE);
-        font.drawString(program, "Skybox:", xPos + 12, yPos + 24, 1, Color.WHITE);
-        font.drawString(program, "Source:", xPos + 26, yPos + 73, 1, Color.WHITE);
-        font.drawString(program, "Dimensions:", xPos + 12, yPos + 134, 1, Color.WHITE);
-        font.drawString(program, "Width:", xPos + 26, yPos + 183, 1, Color.WHITE);
-        font.drawString(program, "Height:", xPos + 26, yPos + 226, 1, Color.WHITE);
-        font.drawString(program, "Depth:", xPos + 26, yPos + 269, 1, Color.WHITE);
+        font.drawString(program, "New Map", xPos + 45, yPos - (TITLE_BAR_HEIGHT / 3), 1, Color.RGM_WHITE);
+        font.drawString(program, "Skybox:", xPos + 12, yPos + 24, 1, Color.RGM_WHITE);
+        font.drawString(program, "Source:", xPos + 26, yPos + 73, 1, Color.RGM_WHITE);
+        font.drawString(program, "Dimensions:", xPos + 12, yPos + 134, 1, Color.RGM_WHITE);
+        font.drawString(program, "Width:", xPos + 26, yPos + 183, 1, Color.RGM_WHITE);
+        font.drawString(program, "Height:", xPos + 26, yPos + 226, 1, Color.RGM_WHITE);
+        font.drawString(program, "Depth:", xPos + 26, yPos + 269, 1, Color.RGM_WHITE);
         textArea.renderText(program, font);
         spinBox1.renderText(program, font);
         spinBox2.renderText(program, font);

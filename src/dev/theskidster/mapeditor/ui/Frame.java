@@ -47,13 +47,13 @@ abstract class Frame extends Widget {
         
         void update(Mouse mouse) {
             if(rectangle.intersects(mouse.cursorPos)) {
-                color = Color.RED;
+                color = Color.RGM_RED;
                 if(mouse.clicked) {
                     close();
                     removeRequest = true;
                 }
             } else {
-                color = Color.BLACK;
+                color = Color.RGM_BLACK;
             }
             
             rectangle.xPos = xPos + (width - TITLE_BAR_HEIGHT);

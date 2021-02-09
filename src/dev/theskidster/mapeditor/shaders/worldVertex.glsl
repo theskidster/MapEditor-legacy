@@ -15,6 +15,7 @@ uniform mat4 uProjection;
 uniform int uType;
 uniform vec3 uColor;
 
+out vec2 ioTexCoords;
 out vec3 ioColor;
 
 void main() {
@@ -34,8 +35,9 @@ void main() {
             gl_Position = uProjection * uView * uModel * vec4(aPosition, 1.0f);
             break;
 
-        case 3: //Used for temp cube object
-            ioColor     = aColor;
+        case 3: //Used for light source icons
+            ioTexCoords = aTexCoords;
+            ioColor     = uColor;
             gl_Position = uProjection * uView * uModel * vec4(aPosition, 1.0f);
             break;
     }

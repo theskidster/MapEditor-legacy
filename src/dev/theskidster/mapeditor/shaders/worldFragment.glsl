@@ -1,10 +1,16 @@
 #version 330 core
 
+in vec2 ioTexCoords;
 in vec3 ioColor;
 
 uniform int uType;
+uniform sampler2D uTexture;
 
 out vec4 ioResult;
+
+void makeTransparent(float a) {
+    if(a == 0) discard;
+}
 
 void main() {
     switch(uType) {
@@ -16,8 +22,9 @@ void main() {
             ioResult = vec4(ioColor, 0);
             break;
 
-        case 3: //Used for temp cube object
-            ioResult = vec4(ioColor, 0);
+        case 3: //Used for light source icons
+            makeTransparent(texture(uTexture, ioTexCoords).a);
+            ioResult = texture(uTexture, ioTexCoords) * vec4(ioColor, 1);
             break;
     }
 }

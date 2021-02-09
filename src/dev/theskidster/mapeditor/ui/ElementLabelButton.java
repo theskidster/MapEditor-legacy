@@ -64,11 +64,11 @@ final class ElementLabelButton extends Element implements PropertyChangeListener
             
             observable.notifyObservers("labelButtonClicked", prevPressed != currPressed && !prevPressed);
             
-            color = Color.BLUE;
+            color = Color.RGM_BLUE;
             iconLeft.setSprite(4, 1);
             iconRight.setSprite(5, 1);
         } else {
-            color = Color.MEDIUM_GRAY;
+            color = Color.RGM_MEDIUM_GRAY;
             iconLeft.setSprite(4, 0);
             iconRight.setSprite(5, 0);
         }
@@ -87,7 +87,7 @@ final class ElementLabelButton extends Element implements PropertyChangeListener
 
     @Override
     void renderText(ShaderProgram program, TrueTypeFont font) {
-        font.drawString(program, text, textPos.x, textPos.y, 1, Color.WHITE);
+        font.drawString(program, text, textPos.x, textPos.y, 1, Color.RGM_WHITE);
     }
 
     @Override
