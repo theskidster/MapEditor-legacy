@@ -83,8 +83,6 @@ public class World {
             Vector2i tileLocation = tiles.entrySet().stream().filter(entry -> entry.getValue()).findAny().get().getKey();
             cursorLocation.set(tileLocation.x, 0, tileLocation.y);
             initialLocation.set(cursorLocation);
-        } else {
-            //TODO: find cell with a y position above the floor
         }
         
         currIndex = shapes.size() + 1;
@@ -200,8 +198,6 @@ public class World {
                 } else {
                     shape.resetVertexPos();
                 }
-            } else {
-                //TODO: find cell with a y position above the floor
             }
         }
     }
