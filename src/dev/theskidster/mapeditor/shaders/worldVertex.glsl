@@ -4,19 +4,22 @@
 layout (location = 0) in vec3 aPosition;
 layout (location = 1) in vec2 aTexCoords;
 layout (location = 2) in vec3 aColor;
+layout (location = 3) in vec3 aNormal;
 
 //Instanced attributes
-layout (location = 3) in vec3 aPosOffset;
-layout (location = 4) in vec3 aColOffset;
+layout (location = 4) in vec3 aPosOffset;
+layout (location = 5) in vec3 aColOffset;
 
+uniform int uType;
 uniform mat4 uModel;
 uniform mat4 uView;
 uniform mat4 uProjection;
-uniform int uType;
 uniform vec3 uColor;
 
 out vec2 ioTexCoords;
 out vec3 ioColor;
+out vec3 ioNormal;
+out vec3 ioFragPos;
 
 void main() {
     switch(uType) {
@@ -32,6 +35,8 @@ void main() {
 
         case 2: //Used for level geometry
             ioColor     = vec3(1);
+            ioNormal    = aNormal;
+            ioFragPos   = vec3(uModel * vec4(aPosition, 1));
             gl_Position = uProjection * uView * uModel * vec4(aPosition, 1.0f);
             break;
 

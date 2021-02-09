@@ -1,5 +1,6 @@
 package dev.theskidster.mapeditor.world;
 
+import dev.theskidster.mapeditor.graphics.Texture;
 import dev.theskidster.mapeditor.main.App;
 import dev.theskidster.mapeditor.main.LogLevel;
 import dev.theskidster.mapeditor.main.Logger;
@@ -42,18 +43,20 @@ final class Geometry {
     
     private final Vector3f[] initialVertexPositions;
     
+    private Texture texture;
+    
     Geometry(float xLoc, float zLoc) {        
         vertices = new HashMap<>() {{
             //FRONT:
             put(0, new Vertex(xLoc,             0,         zLoc + CELL_SIZE, 0, 0));
-            put(1, new Vertex(xLoc + CELL_SIZE, 0,         zLoc + CELL_SIZE, 0, 0));
-            put(2, new Vertex(xLoc + CELL_SIZE, CELL_SIZE, zLoc + CELL_SIZE, 0, 0));
-            put(3, new Vertex(xLoc,             CELL_SIZE, zLoc + CELL_SIZE, 0, 0));
+            put(1, new Vertex(xLoc + CELL_SIZE, 0,         zLoc + CELL_SIZE, 1, 0));
+            put(2, new Vertex(xLoc + CELL_SIZE, CELL_SIZE, zLoc + CELL_SIZE, 1, 1));
+            put(3, new Vertex(xLoc,             CELL_SIZE, zLoc + CELL_SIZE, 0, 1));
             //BACK:
             put(4, new Vertex(xLoc,             0,         zLoc, 0, 0));
-            put(5, new Vertex(xLoc + CELL_SIZE, 0,         zLoc, 0, 0));
-            put(6, new Vertex(xLoc + CELL_SIZE, CELL_SIZE, zLoc, 0, 0));
-            put(7, new Vertex(xLoc,             CELL_SIZE, zLoc, 0, 0));
+            put(5, new Vertex(xLoc + CELL_SIZE, 0,         zLoc, 1, 0));
+            put(6, new Vertex(xLoc + CELL_SIZE, CELL_SIZE, zLoc, 1, 1));
+            put(7, new Vertex(xLoc,             CELL_SIZE, zLoc, 0, 1));
         }};
         
         faces = new HashMap<>() {{
@@ -99,6 +102,10 @@ final class Geometry {
 
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
+        
+        texture = new Texture("img_terrain.png");
+        
+        glBindTexture(GL_TEXTURE_2D, 0);
     }
     
     void update() {

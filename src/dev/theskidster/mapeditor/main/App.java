@@ -144,11 +144,20 @@ public final class App {
             worldProgram = new ShaderProgram(shaderSourceFiles);
             worldProgram.use();
             
-            worldProgram.addUniform(ShaderBufferType.INT,   "uType");
-            worldProgram.addUniform(ShaderBufferType.MAT4,  "uModel");
-            worldProgram.addUniform(ShaderBufferType.MAT4,  "uView");
-            worldProgram.addUniform(ShaderBufferType.MAT4,  "uProjection");
-            worldProgram.addUniform(ShaderBufferType.VEC3,  "uColor");
+            worldProgram.addUniform(ShaderBufferType.INT, "uType");
+            worldProgram.addUniform(ShaderBufferType.INT, "uNumLights");
+            worldProgram.addUniform(ShaderBufferType.MAT4,"uModel");
+            worldProgram.addUniform(ShaderBufferType.MAT4,"uView");
+            worldProgram.addUniform(ShaderBufferType.MAT4,"uProjection");
+            worldProgram.addUniform(ShaderBufferType.VEC3,"uColor");
+            
+            for(int i = 0; i < MAX_LIGHTS; i++) {
+                worldProgram.addUniform(ShaderBufferType.FLOAT, "uLights[" + i + "].brightness");
+                worldProgram.addUniform(ShaderBufferType.FLOAT, "uLights[" + i + "].contrast");
+                worldProgram.addUniform(ShaderBufferType.VEC3,  "uLights[" + i + "].position");
+                worldProgram.addUniform(ShaderBufferType.VEC3,  "uLights[" + i + "].ambient");
+                worldProgram.addUniform(ShaderBufferType.VEC3,  "uLights[" + i + "].diffuse");
+            }
         }
         
         camera = new Camera();
