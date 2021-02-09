@@ -10,9 +10,7 @@ import static dev.theskidster.mapeditor.world.World.CELL_SIZE;
 import java.nio.BufferOverflowException;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import org.joml.Vector2f;
@@ -47,7 +45,7 @@ final class Geometry {
     Map<Integer, Point> points;
     Map<Integer, Face> faces;
     
-    private final Vector3f[] initialPointPositions;
+    private final Point[] initialPoints;
     
     private Texture texture;
     
@@ -69,51 +67,51 @@ final class Geometry {
             switch(p) {
                 case 0 -> {
                     pointPos.set(xLoc, 0, zLoc + CELL_SIZE);
-                    vertices.put(p,      new Vertex(0, 0, 0, 0, 0)); //0  FRONT
-                    vertices.put(p + 8,  new Vertex(1, 0, 0, 0, 0)); //8  LEFT
+                    vertices.put(p,      new Vertex(0, 1, 0, 0, 0)); //0  FRONT
+                    vertices.put(p + 8,  new Vertex(1, 1, 0, 0, 0)); //8  LEFT
                     vertices.put(p + 16, new Vertex(0, 0, 0, 0, 0)); //16 BOTTOM
                 }
                 case 1 -> {
                     pointPos.set(xLoc + CELL_SIZE, 0, zLoc + CELL_SIZE);
-                    vertices.put(p,      new Vertex(1, 0, 0, 0, 0)); //1  FRONT
-                    vertices.put(p + 8,  new Vertex(0, 0, 0, 0, 0)); //9  RIGHT
-                    vertices.put(p + 16, new Vertex(1, 1, 0, 0, 0)); //17 BOTTOM
+                    vertices.put(p,      new Vertex(1, 1, 0, 0, 0)); //1  FRONT
+                    vertices.put(p + 8,  new Vertex(0, 1, 0, 0, 0)); //9  RIGHT
+                    vertices.put(p + 16, new Vertex(1, 0, 0, 0, 0)); //17 BOTTOM
                 }
                 case 2 -> {
                     pointPos.set(xLoc + CELL_SIZE, CELL_SIZE, zLoc + CELL_SIZE);
-                    vertices.put(p,      new Vertex(1, 1, 0, 0, 0)); //2  FRONT
-                    vertices.put(p + 8,  new Vertex(0, 1, 0, 0, 0)); //10 RIGHT
-                    vertices.put(p + 16, new Vertex(1, 0, 0, 0, 0)); //18 TOP
+                    vertices.put(p,      new Vertex(1, 0, 0, 0, 0)); //2  FRONT
+                    vertices.put(p + 8,  new Vertex(0, 0, 0, 0, 0)); //10 RIGHT
+                    vertices.put(p + 16, new Vertex(1, 1, 0, 0, 0)); //18 TOP
                 }
                 case 3 -> {
                     pointPos.set(xLoc, CELL_SIZE, zLoc + CELL_SIZE);
-                    vertices.put(p,      new Vertex(0, 1, 0, 0, 0)); //3  FRONT
-                    vertices.put(p + 8,  new Vertex(1, 1, 0, 0, 0)); //11 LEFT
-                    vertices.put(p + 16, new Vertex(0, 0, 0, 0, 0)); //19 TOP
+                    vertices.put(p,      new Vertex(0, 0, 0, 0, 0)); //3  FRONT
+                    vertices.put(p + 8,  new Vertex(1, 0, 0, 0, 0)); //11 LEFT
+                    vertices.put(p + 16, new Vertex(0, 1, 0, 0, 0)); //19 TOP
                 }
                 case 4 -> {
                     pointPos.set(xLoc, 0, zLoc);
-                    vertices.put(p,      new Vertex(0, 0, 0, 0, 0)); //4  LEFT
-                    vertices.put(p + 8,  new Vertex(0, 0, 0, 0, 0)); //12 BOTTOM
-                    vertices.put(p + 16, new Vertex(0, 1, 0, 0, 0)); //20 BACK
+                    vertices.put(p,      new Vertex(0, 1, 0, 0, 0)); //4  LEFT
+                    vertices.put(p + 8,  new Vertex(0, 1, 0, 0, 0)); //12 BOTTOM
+                    vertices.put(p + 16, new Vertex(1, 1, 0, 0, 0)); //20 BACK
                 }
                 case 5 -> {
                     pointPos.set(xLoc + CELL_SIZE, 0, zLoc);
-                    vertices.put(p,      new Vertex(1, 0, 0, 0, 0)); //5  BOTTOM
-                    vertices.put(p + 8,  new Vertex(1, 0, 0, 0, 0)); //13 RIGHT
-                    vertices.put(p + 16, new Vertex(1, 1, 0, 0, 0)); //21 BACK
+                    vertices.put(p,      new Vertex(1, 1, 0, 0, 0)); //5  BOTTOM
+                    vertices.put(p + 8,  new Vertex(1, 1, 0, 0, 0)); //13 RIGHT
+                    vertices.put(p + 16, new Vertex(0, 1, 0, 0, 0)); //21 BACK
                 }
                 case 6 -> {
                     pointPos.set(xLoc + CELL_SIZE, CELL_SIZE, zLoc);
-                    vertices.put(p,      new Vertex(1, 1, 0, 0, 0)); //6 TOP
-                    vertices.put(p + 8,  new Vertex(1, 1, 0, 0, 0)); //14 RIGHT
-                    vertices.put(p + 16, new Vertex(1, 0, 0, 0, 0)); //22 BACK
+                    vertices.put(p,      new Vertex(1, 0, 0, 0, 0)); //6 TOP
+                    vertices.put(p + 8,  new Vertex(1, 0, 0, 0, 0)); //14 RIGHT
+                    vertices.put(p + 16, new Vertex(0, 0, 0, 0, 0)); //22 BACK
                 }
                 case 7 -> {
                     pointPos.set(xLoc, CELL_SIZE, zLoc);
-                    vertices.put(p,      new Vertex(0, 1, 0, 0, 0)); //7  LEFT
-                    vertices.put(p + 8,  new Vertex(0, 1, 0, 0, 0)); //15 TOP
-                    vertices.put(p + 16, new Vertex(0, 0, 0, 0, 0)); //23 BACK
+                    vertices.put(p,      new Vertex(0, 0, 0, 0, 0)); //7  LEFT
+                    vertices.put(p + 8,  new Vertex(0, 0, 0, 0, 0)); //15 TOP
+                    vertices.put(p + 16, new Vertex(1, 0, 0, 0, 0)); //23 BACK
                 }
             }
             
@@ -141,12 +139,13 @@ final class Geometry {
             put(11, new Face(6, 15, 19));
         }};
         
-        initialPointPositions = new Vector3f[points.size()];
+        initialPoints = new Point[points.size()];
         
         for(int v = 0; v < points.size(); v++) {
-            initialPointPositions[v] = new Vector3f(points.get(v).position);
+            initialPoints[v] = new Point(points.get(v));
         }
         
+        //TODO: add dynamic memory allocation for vertices added after this shapes creation
         vertexBuf = MemoryUtil.memAllocFloat((points.size() * 3) * FLOATS_PER_VERTEX);
         indexBuf  = MemoryUtil.memAllocInt(faces.size() * FLOATS_PER_FACE);
         
@@ -164,11 +163,11 @@ final class Geometry {
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
         
-        texture = new Texture("img_terrain.png");
+        texture = new Texture("img_null.png");
         
         glBindTexture(GL_TEXTURE_2D, texture.handle);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glBindTexture(GL_TEXTURE_2D, 0);
@@ -301,9 +300,9 @@ final class Geometry {
         float value;
         
         switch(axis) {
-            case "x", "X" -> { value = initialPointPositions[index].x; }
-            case "y", "Y" -> { value = initialPointPositions[index].y; }
-            case "z", "Z" -> { value = initialPointPositions[index].z; }
+            case "x", "X" -> { value = initialPoints[index].position.x; }
+            case "y", "Y" -> { value = initialPoints[index].position.y; }
+            case "z", "Z" -> { value = initialPoints[index].position.z; }
             
             default -> {
                 Logger.log(LogLevel.WARNING, "Invalid axis: \"" + axis + "\" value specified, must be one of X, Y, or Z.");
@@ -317,19 +316,60 @@ final class Geometry {
     void resetPointPos() {
         boolean alreadyReset = true;
         
-        for(int v = 0; v < initialPointPositions.length; v++) {
-            alreadyReset = initialPointPositions[v].equals(points.get(v).position);
+        for(int p = 0; p < initialPoints.length; p++) {
+            alreadyReset = initialPoints[p].position.equals(points.get(p).position);
             if(!alreadyReset) break;
         }
         
         if(!alreadyReset) {
-            for(int v = 0; v < initialPointPositions.length; v++) {
-                float yPos = (initialPointPositions[v].y == CELL_SIZE) ? height : initialPointPositions[v].y;
-                points.get(v).position = new Vector3f(initialPointPositions[v].x, yPos, initialPointPositions[v].z);
+            for(int p = 0; p < initialPoints.length; p++) {
+                float yPos = (initialPoints[p].position.y == CELL_SIZE) ? height : initialPoints[p].position.y;
+                points.get(p).position = new Vector3f(initialPoints[p].position.x, yPos, initialPoints[p].position.z);
             }
             
             updateData = true;
         }
     }
+    
+    /*
+    void updateTexCoords() {
+        for(int p = 0; p < initialPointPositions.length; p++) {
+            Point point         = points.get(p);
+            Vector3f initialPos = initialPointPositions[p]; 
+            
+            if(!point.position.equals(initialPos)) {
+                float x = point.position.x - initialPos.x;
+                float y = point.position.y - initialPos.y;
+                float z = point.position.z - initialPos.z;
+                
+                System.out.println(x);
+                
+                switch(p) {
+                    case 1 -> {
+                        point.vertices.forEach((id, vertex) -> {
+                            if(id == 1) {
+                                if(x == 1) {
+                                    
+                                } else {
+                                    
+                                }
+                                vertex.texCoords.x = x + 1;
+                            }
+                            //if(x > 0 && id == 17) vertex.texCoords.x = x + 1;
+                            //if(z >= 0 && id == 17) vertex.texCoords.y = z + 1;
+                        });
+                    }
+                    
+                    case 2 -> {
+                        point.vertices.forEach((id, vertex) -> {
+                            if(id == 2) {
+                                //vertex.texCoords.x = (x > 0) ? x + 1 : 1;
+                            }
+                        });
+                    }
+                }
+            }
+        }
+    }*/
     
 }
