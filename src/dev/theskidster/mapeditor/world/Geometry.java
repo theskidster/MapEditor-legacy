@@ -10,8 +10,11 @@ import static dev.theskidster.mapeditor.world.World.CELL_SIZE;
 import java.nio.BufferOverflowException;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import static org.lwjgl.opengl.GL30.*;
@@ -51,64 +54,93 @@ final class Geometry {
     Geometry(float xLoc, float zLoc) {
         points = new HashMap<>();
         
-        for(int i = 0; i < 24; i++) {
-            Map<Integer, Vertex> verts = new HashMap<>();
-            
-            switch(i) {
-                case 0  -> verts.put(i, new Vertex(0, 0, 0, 0, 0));
-                case 1  -> verts.put(i, new Vertex(0, 0, 0, 0, 0));
-                case 2  -> verts.put(i, new Vertex(0, 0, 0, 0, 0));
-                case 3  -> verts.put(i, new Vertex(0, 0, 0, 0, 0));
-                case 4  -> verts.put(i, new Vertex(0, 0, 0, 0, 0));
-                case 5  -> verts.put(i, new Vertex(0, 0, 0, 0, 0));
-                case 6  -> verts.put(i, new Vertex(0, 0, 0, 0, 0));
-                case 7  -> verts.put(i, new Vertex(0, 0, 0, 0, 0));
-                case 8  -> verts.put(i, new Vertex(0, 0, 0, 0, 0));
-                case 9  -> verts.put(i, new Vertex(0, 0, 0, 0, 0));
-                case 10 -> verts.put(i, new Vertex(0, 0, 0, 0, 0));
-                case 11 -> verts.put(i, new Vertex(0, 0, 0, 0, 0));
-                case 12 -> verts.put(i, new Vertex(0, 0, 0, 0, 0));
-                case 13 -> verts.put(i, new Vertex(0, 0, 0, 0, 0));
-                case 14 -> verts.put(i, new Vertex(0, 0, 0, 0, 0));
-                case 15 -> verts.put(i, new Vertex(0, 0, 0, 0, 0));
-                case 16 -> verts.put(i, new Vertex(0, 0, 0, 0, 0));
-                case 17 -> verts.put(i, new Vertex(0, 0, 0, 0, 0));
-                case 18 -> verts.put(i, new Vertex(0, 0, 0, 0, 0));
-                case 19 -> verts.put(i, new Vertex(0, 0, 0, 0, 0));
-                case 20 -> verts.put(i, new Vertex(0, 0, 0, 0, 0));
-                case 21 -> verts.put(i, new Vertex(0, 0, 0, 0, 0));
-                case 22 -> verts.put(i, new Vertex(0, 0, 0, 0, 0));
-                case 23 -> verts.put(i, new Vertex(0, 0, 0, 0, 0));
-            }
-            
-            if(i % 3 == 0) {
-                Vector3f pointPos = new Vector3f();
-                
-                switch(i / 3) {
-                    case 0 -> pointPos.set(xLoc,             0,         zLoc + CELL_SIZE);
-                    case 1 -> pointPos.set(xLoc + CELL_SIZE, 0,         zLoc + CELL_SIZE);
-                    case 2 -> pointPos.set(xLoc + CELL_SIZE, CELL_SIZE, zLoc + CELL_SIZE);
-                    case 3 -> pointPos.set(xLoc,             CELL_SIZE, zLoc + CELL_SIZE);
-                    case 4 -> pointPos.set(xLoc,             0,         zLoc);
-                    case 5 -> pointPos.set(xLoc + CELL_SIZE, 0,         zLoc);
-                    case 6 -> pointPos.set(xLoc + CELL_SIZE, CELL_SIZE, zLoc);
-                    case 7 -> pointPos.set(xLoc,             CELL_SIZE, zLoc);
-                }
-                
-                points.put(i / 3, new Point(pointPos, verts));
-            }
-        }
-        
         /*
         Point != Vertex
         
         A point on a shape defines a 3D location that multiple vertices may be 
         attached to. That is, two vertices with different texture coordinates 
         may be attached to a single point.
-        
         */
         
+        for(int p = 0; p < 8; p++) {
+            Vector3f pointPos             = new Vector3f();
+            Map<Integer, Vertex> vertices = new TreeMap<>();
+            
+            switch(p) {
+                case 0 -> {
+                    pointPos.set(xLoc, 0, zLoc + CELL_SIZE);
+                    vertices.put(p,      new Vertex(0, 0, 0, 0, 0)); //0
+                    vertices.put(p + 8,  new Vertex(0, 0, 0, 0, 0)); //8
+                    vertices.put(p + 16, new Vertex(0, 0, 0, 0, 0)); //16
+                }
+                case 1 -> {
+                    pointPos.set(xLoc + CELL_SIZE, 0, zLoc + CELL_SIZE);
+                    vertices.put(p,      new Vertex(0, 0, 0, 0, 0)); //1
+                    vertices.put(p + 8,  new Vertex(0, 0, 0, 0, 0)); //9
+                    vertices.put(p + 16, new Vertex(0, 0, 0, 0, 0)); //17
+                }
+                case 2 -> {
+                    pointPos.set(xLoc + CELL_SIZE, CELL_SIZE, zLoc + CELL_SIZE);
+                    vertices.put(p,      new Vertex(0, 0, 0, 0, 0)); //2
+                    vertices.put(p + 8,  new Vertex(0, 0, 0, 0, 0)); //10
+                    vertices.put(p + 16, new Vertex(0, 0, 0, 0, 0)); //18
+                }
+                case 3 -> {
+                    pointPos.set(xLoc, CELL_SIZE, zLoc + CELL_SIZE);
+                    vertices.put(p,      new Vertex(0, 0, 0, 0, 0)); //3
+                    vertices.put(p + 8,  new Vertex(0, 0, 0, 0, 0)); //11
+                    vertices.put(p + 16, new Vertex(0, 0, 0, 0, 0)); //19
+                }
+                case 4 -> {
+                    pointPos.set(xLoc, 0, zLoc);
+                    vertices.put(p,      new Vertex(0, 0, 0, 0, 0)); //4
+                    vertices.put(p + 8,  new Vertex(0, 0, 0, 0, 0)); //12
+                    vertices.put(p + 16, new Vertex(0, 0, 0, 0, 0)); //20
+                }
+                case 5 -> {
+                    pointPos.set(xLoc + CELL_SIZE, 0, zLoc);
+                    vertices.put(p,      new Vertex(0, 0, 0, 0, 0)); //5
+                    vertices.put(p + 8,  new Vertex(0, 0, 0, 0, 0)); //13
+                    vertices.put(p + 16, new Vertex(0, 0, 0, 0, 0)); //21
+                }
+                case 6 -> {
+                    pointPos.set(xLoc + CELL_SIZE, CELL_SIZE, zLoc);
+                    vertices.put(p,      new Vertex(0, 0, 0, 0, 0)); //6
+                    vertices.put(p + 8,  new Vertex(0, 0, 0, 0, 0)); //14
+                    vertices.put(p + 16, new Vertex(0, 0, 0, 0, 0)); //22
+                }
+                case 7 -> {
+                    pointPos.set(xLoc, CELL_SIZE, zLoc);
+                    vertices.put(p,      new Vertex(0, 0, 0, 0, 0)); //7
+                    vertices.put(p + 8,  new Vertex(0, 0, 0, 0, 0)); //15
+                    vertices.put(p + 16, new Vertex(0, 0, 0, 0, 0)); //23
+                }
+            }
+            
+            points.put(p, new Point(pointPos, vertices));
+        }
+        
         faces = new HashMap<>() {{
+            /*
+            put(0, new Face(0, 1, 2));
+            put(1, new Face(2, 1, 3));
+            
+            put(2, new Face(4, 5, 6));
+            put(3, new Face(6, 5, 7));
+            
+            put(4, new Face(8, 9, 10));
+            put(5, new Face(10, 9, 11));
+            
+            put(6, new Face(12, 13, 14));
+            put(7, new Face(14, 13, 15));
+            
+            put(8, new Face(16, 17, 18));
+            put(9, new Face(18, 17, 19));
+            
+            put(10, new Face(20, 21, 22));
+            put(11, new Face(22, 21, 23));
+            */
+            
             //FRONT:
             put(0, new Face(0, 1, 2));
             put(1, new Face(2, 3, 0));
@@ -135,7 +167,7 @@ final class Geometry {
             initialPointPositions[v] = new Vector3f(points.get(v).position);
         }
         
-        vertexBuf = MemoryUtil.memAllocFloat(points.size() * FLOATS_PER_VERTEX);
+        vertexBuf = MemoryUtil.memAllocFloat((points.size() * 3) * FLOATS_PER_VERTEX);
         indexBuf  = MemoryUtil.memAllocInt(faces.size() * FLOATS_PER_FACE);
         
         glBindVertexArray(vao);
@@ -165,13 +197,19 @@ final class Geometry {
     void update() {
         if(updateData) {
             try {
+                Map<Integer, Vertex> vertices = new TreeMap<>();
+                
                 points.forEach((pointID, point) -> {
                     point.vertices.forEach((vertID, vertex) -> {
-                        Vector3f vertexPos = point.position;
-                        Vector2f texCoords = vertex.texCoords;
-                        
-                        vertexBuf.put(vertexPos.x).put(vertexPos.y).put(vertexPos.z).put(texCoords.x).put(texCoords.y);
+                        vertices.put(vertID, vertex);
                     });
+                });
+                
+                vertices.forEach((vertID, vertex) -> {
+                    Vector3f vertexPos = vertex.point.position;
+                    Vector2f texCoords = vertex.texCoords;
+                    
+                    vertexBuf.put(vertexPos.x).put(vertexPos.y).put(vertexPos.z).put(texCoords.x).put(texCoords.y);
                 });
 
                 faces.forEach((id, face) -> {

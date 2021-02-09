@@ -16,6 +16,8 @@ class Point {
     Point(Vector3f position, Map<Integer, Vertex> vertices) {
         this.position = position;
         this.vertices = vertices;
+        
+        this.vertices.forEach((id, vertex) -> vertex.point = this);
     }
     
 }
