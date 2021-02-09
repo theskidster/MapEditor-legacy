@@ -69,51 +69,51 @@ final class Geometry {
             switch(p) {
                 case 0 -> {
                     pointPos.set(xLoc, 0, zLoc + CELL_SIZE);
-                    vertices.put(p,      new Vertex(0, 0, 0, 0, 0)); //0
-                    vertices.put(p + 8,  new Vertex(0, 0, 0, 0, 0)); //8
-                    vertices.put(p + 16, new Vertex(0, 0, 0, 0, 0)); //16
+                    vertices.put(p,      new Vertex(0, 0, 0, 0, 0)); //0  FRONT
+                    vertices.put(p + 8,  new Vertex(1, 0, 0, 0, 0)); //8  LEFT
+                    vertices.put(p + 16, new Vertex(0, 0, 0, 0, 0)); //16 BOTTOM
                 }
                 case 1 -> {
                     pointPos.set(xLoc + CELL_SIZE, 0, zLoc + CELL_SIZE);
-                    vertices.put(p,      new Vertex(0, 0, 0, 0, 0)); //1
-                    vertices.put(p + 8,  new Vertex(0, 0, 0, 0, 0)); //9
-                    vertices.put(p + 16, new Vertex(0, 0, 0, 0, 0)); //17
+                    vertices.put(p,      new Vertex(1, 0, 0, 0, 0)); //1  FRONT
+                    vertices.put(p + 8,  new Vertex(0, 0, 0, 0, 0)); //9  RIGHT
+                    vertices.put(p + 16, new Vertex(1, 1, 0, 0, 0)); //17 BOTTOM
                 }
                 case 2 -> {
                     pointPos.set(xLoc + CELL_SIZE, CELL_SIZE, zLoc + CELL_SIZE);
-                    vertices.put(p,      new Vertex(0, 0, 0, 0, 0)); //2
-                    vertices.put(p + 8,  new Vertex(0, 0, 0, 0, 0)); //10
-                    vertices.put(p + 16, new Vertex(0, 0, 0, 0, 0)); //18
+                    vertices.put(p,      new Vertex(1, 1, 0, 0, 0)); //2  FRONT
+                    vertices.put(p + 8,  new Vertex(0, 1, 0, 0, 0)); //10 RIGHT
+                    vertices.put(p + 16, new Vertex(1, 0, 0, 0, 0)); //18 TOP
                 }
                 case 3 -> {
                     pointPos.set(xLoc, CELL_SIZE, zLoc + CELL_SIZE);
-                    vertices.put(p,      new Vertex(0, 0, 0, 0, 0)); //3
-                    vertices.put(p + 8,  new Vertex(0, 0, 0, 0, 0)); //11
-                    vertices.put(p + 16, new Vertex(0, 0, 0, 0, 0)); //19
+                    vertices.put(p,      new Vertex(0, 1, 0, 0, 0)); //3  FRONT
+                    vertices.put(p + 8,  new Vertex(1, 1, 0, 0, 0)); //11 LEFT
+                    vertices.put(p + 16, new Vertex(0, 0, 0, 0, 0)); //19 TOP
                 }
                 case 4 -> {
                     pointPos.set(xLoc, 0, zLoc);
-                    vertices.put(p,      new Vertex(0, 0, 0, 0, 0)); //4
-                    vertices.put(p + 8,  new Vertex(0, 0, 0, 0, 0)); //12
-                    vertices.put(p + 16, new Vertex(0, 0, 0, 0, 0)); //20
+                    vertices.put(p,      new Vertex(0, 0, 0, 0, 0)); //4  LEFT
+                    vertices.put(p + 8,  new Vertex(0, 0, 0, 0, 0)); //12 BOTTOM
+                    vertices.put(p + 16, new Vertex(0, 1, 0, 0, 0)); //20 BACK
                 }
                 case 5 -> {
                     pointPos.set(xLoc + CELL_SIZE, 0, zLoc);
-                    vertices.put(p,      new Vertex(0, 0, 0, 0, 0)); //5
-                    vertices.put(p + 8,  new Vertex(0, 0, 0, 0, 0)); //13
-                    vertices.put(p + 16, new Vertex(0, 0, 0, 0, 0)); //21
+                    vertices.put(p,      new Vertex(1, 0, 0, 0, 0)); //5  BOTTOM
+                    vertices.put(p + 8,  new Vertex(1, 0, 0, 0, 0)); //13 RIGHT
+                    vertices.put(p + 16, new Vertex(1, 1, 0, 0, 0)); //21 BACK
                 }
                 case 6 -> {
                     pointPos.set(xLoc + CELL_SIZE, CELL_SIZE, zLoc);
-                    vertices.put(p,      new Vertex(0, 0, 0, 0, 0)); //6
-                    vertices.put(p + 8,  new Vertex(0, 0, 0, 0, 0)); //14
-                    vertices.put(p + 16, new Vertex(0, 0, 0, 0, 0)); //22
+                    vertices.put(p,      new Vertex(1, 1, 0, 0, 0)); //6 TOP
+                    vertices.put(p + 8,  new Vertex(1, 1, 0, 0, 0)); //14 RIGHT
+                    vertices.put(p + 16, new Vertex(1, 0, 0, 0, 0)); //22 BACK
                 }
                 case 7 -> {
                     pointPos.set(xLoc, CELL_SIZE, zLoc);
-                    vertices.put(p,      new Vertex(0, 0, 0, 0, 0)); //7
-                    vertices.put(p + 8,  new Vertex(0, 0, 0, 0, 0)); //15
-                    vertices.put(p + 16, new Vertex(0, 0, 0, 0, 0)); //23
+                    vertices.put(p,      new Vertex(0, 1, 0, 0, 0)); //7  LEFT
+                    vertices.put(p + 8,  new Vertex(0, 1, 0, 0, 0)); //15 TOP
+                    vertices.put(p + 16, new Vertex(0, 0, 0, 0, 0)); //23 BACK
                 }
             }
             
@@ -121,44 +121,24 @@ final class Geometry {
         }
         
         faces = new HashMap<>() {{
-            /*
-            put(0, new Face(0, 1, 2));
-            put(1, new Face(2, 1, 3));
-            
-            put(2, new Face(4, 5, 6));
-            put(3, new Face(6, 5, 7));
-            
-            put(4, new Face(8, 9, 10));
-            put(5, new Face(10, 9, 11));
-            
-            put(6, new Face(12, 13, 14));
-            put(7, new Face(14, 13, 15));
-            
-            put(8, new Face(16, 17, 18));
-            put(9, new Face(18, 17, 19));
-            
-            put(10, new Face(20, 21, 22));
-            put(11, new Face(22, 21, 23));
-            */
-            
             //FRONT:
             put(0, new Face(0, 1, 2));
             put(1, new Face(2, 3, 0));
             //RIGHT:
-            put(2, new Face(1, 5, 6));
-            put(3, new Face(6, 2, 1));
+            put(2, new Face(9, 13, 14));
+            put(3, new Face(14, 10, 9));
             //BACK:
-            put(4, new Face(7, 6, 5));
-            put(5, new Face(5, 4, 7));
+            put(4, new Face(23, 22, 21));
+            put(5, new Face(21, 20, 23));
             //LEFT:
-            put(6, new Face(4, 0, 3));
-            put(7, new Face(3, 7, 4));
+            put(6, new Face(4, 8, 11));
+            put(7, new Face(11, 7, 4));
             //BOTTOM:
-            put(8, new Face(4, 5, 1));
-            put(9, new Face(1, 0, 4));
+            put(8, new Face(12, 5, 17));
+            put(9, new Face(17, 16, 12));
             //TOP:
-            put(10, new Face(3, 2, 6));
-            put(11, new Face(6, 7, 3));
+            put(10, new Face(19, 18, 6));
+            put(11, new Face(6, 15, 19));
         }};
         
         initialPointPositions = new Vector3f[points.size()];
