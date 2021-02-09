@@ -74,7 +74,7 @@ void main() {
             }
             
             makeTransparent(texture(uTexture, ioTexCoords).a);
-            ioResult = texture(uTexture, ioTexCoords) * vec4(result * ioColor, 1.0);
+            ioResult = texture(uTexture, ioTexCoords) * vec4(result, 1.0);
             break;
 
         case 3: //Used for light source icons

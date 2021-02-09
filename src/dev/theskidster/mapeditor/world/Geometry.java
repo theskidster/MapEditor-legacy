@@ -30,7 +30,7 @@ final class Geometry {
     
     int height = 1;
     
-    private final int FLOATS_PER_VERTEX = 5;
+    private final int FLOATS_PER_VERTEX = 8;
     private final int FLOATS_PER_FACE   = 3;
     
     private final int vao = glGenVertexArrays();
@@ -67,25 +67,25 @@ final class Geometry {
             switch(p) {
                 case 0 -> {
                     pointPos.set(xLoc, 0, zLoc + CELL_SIZE);
-                    vertices.put(p,      new Vertex(0, 1, 0, 0, 0)); //0  FRONT
+                    vertices.put(p,      new Vertex(0, 1, 0, 0, 1)); //0  FRONT
                     vertices.put(p + 8,  new Vertex(1, 1, 0, 0, 0)); //8  LEFT
                     vertices.put(p + 16, new Vertex(0, 0, 0, 0, 0)); //16 BOTTOM
                 }
                 case 1 -> {
                     pointPos.set(xLoc + CELL_SIZE, 0, zLoc + CELL_SIZE);
-                    vertices.put(p,      new Vertex(1, 1, 0, 0, 0)); //1  FRONT
+                    vertices.put(p,      new Vertex(1, 1, 0, 0, 1)); //1  FRONT
                     vertices.put(p + 8,  new Vertex(0, 1, 0, 0, 0)); //9  RIGHT
                     vertices.put(p + 16, new Vertex(1, 0, 0, 0, 0)); //17 BOTTOM
                 }
                 case 2 -> {
                     pointPos.set(xLoc + CELL_SIZE, CELL_SIZE, zLoc + CELL_SIZE);
-                    vertices.put(p,      new Vertex(1, 0, 0, 0, 0)); //2  FRONT
+                    vertices.put(p,      new Vertex(1, 0, 0, 0, 1)); //2  FRONT
                     vertices.put(p + 8,  new Vertex(0, 0, 0, 0, 0)); //10 RIGHT
                     vertices.put(p + 16, new Vertex(1, 1, 0, 0, 0)); //18 TOP
                 }
                 case 3 -> {
                     pointPos.set(xLoc, CELL_SIZE, zLoc + CELL_SIZE);
-                    vertices.put(p,      new Vertex(0, 0, 0, 0, 0)); //3  FRONT
+                    vertices.put(p,      new Vertex(0, 0, 0, 0, 1)); //3  FRONT
                     vertices.put(p + 8,  new Vertex(1, 0, 0, 0, 0)); //11 LEFT
                     vertices.put(p + 16, new Vertex(0, 1, 0, 0, 0)); //19 TOP
                 }
@@ -159,9 +159,11 @@ final class Geometry {
         
         glVertexAttribPointer(0, 3, GL_FLOAT, false, (FLOATS_PER_VERTEX * Float.BYTES), 0);
         glVertexAttribPointer(1, 2, GL_FLOAT, false, (FLOATS_PER_VERTEX * Float.BYTES), (3 * Float.BYTES));
+        glVertexAttribPointer(3, 2, GL_FLOAT, false, (FLOATS_PER_VERTEX * Float.BYTES), (5 * Float.BYTES));
         
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
+        glEnableVertexAttribArray(3);
         
         texture = new Texture("img_null.png");
         
@@ -187,8 +189,11 @@ final class Geometry {
                 vertices.forEach((vertID, vertex) -> {
                     Vector3f vertexPos = vertex.point.position;
                     Vector2f texCoords = vertex.texCoords;
+                    Vector3f normal    = vertex.normal;
                     
-                    vertexBuf.put(vertexPos.x).put(vertexPos.y).put(vertexPos.z).put(texCoords.x).put(texCoords.y);
+                    vertexBuf.put(vertexPos.x).put(vertexPos.y).put(vertexPos.z)
+                             .put(texCoords.x).put(texCoords.y)
+                             .put(normal.x).put(normal.y).put(normal.z);
                 });
 
                 faces.forEach((id, face) -> {
