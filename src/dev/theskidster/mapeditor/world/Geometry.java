@@ -82,27 +82,27 @@ final class Geometry {
         for(int v = 0; v < vertices.size(); v++) {
             initialVertexPositions[v] = new Vector3f(vertices.get(v).position);
         }
+        
+        vertexBuf = MemoryUtil.memAllocFloat(vertices.size() * FLOATS_PER_VERTEX);
+        indexBuf  = MemoryUtil.memAllocInt(faces.size() * FLOATS_PER_FACE);
+        
+        glBindVertexArray(vao);
+
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glBufferData(GL_ARRAY_BUFFER, vertexBuf.capacity() * Float.BYTES, GL_DYNAMIC_DRAW);
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexBuf.capacity() * Float.BYTES, GL_DYNAMIC_DRAW);
+
+        glVertexAttribPointer(0, 3, GL_FLOAT, false, (FLOATS_PER_VERTEX * Float.BYTES), 0);
+        glVertexAttribPointer(1, 2, GL_FLOAT, false, (FLOATS_PER_VERTEX * Float.BYTES), (3 * Float.BYTES));
+
+        glEnableVertexAttribArray(0);
+        glEnableVertexAttribArray(1);
     }
     
     void update() {
         if(updateData) {
-            vertexBuf = MemoryUtil.memAllocFloat((vertices.size() * FLOATS_PER_VERTEX) * Float.BYTES);
-            indexBuf  = MemoryUtil.memAllocInt((faces.size() * FLOATS_PER_FACE) * Float.BYTES);
-
-            glBindVertexArray(vao);
-
-            glBindBuffer(GL_ARRAY_BUFFER, vbo);
-            glBufferData(GL_ARRAY_BUFFER, vertexBuf.capacity(), GL_DYNAMIC_DRAW);
-
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexBuf.capacity(), GL_DYNAMIC_DRAW);
-
-            glVertexAttribPointer(0, 3, GL_FLOAT, false, (FLOATS_PER_VERTEX * Float.BYTES), 0);
-            glVertexAttribPointer(1, 2, GL_FLOAT, false, (FLOATS_PER_VERTEX * Float.BYTES), (3 * Float.BYTES));
-
-            glEnableVertexAttribArray(0);
-            glEnableVertexAttribArray(1);
-
             try {
                 for(int v = 0; v < 8; v++) {
                     Vector3f vertexPos = vertices.get(v).position;

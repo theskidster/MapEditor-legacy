@@ -83,35 +83,35 @@ public class World {
             Vector2i tileLocation = tiles.entrySet().stream().filter(entry -> entry.getValue()).findAny().get().getKey();
             cursorLocation.set(tileLocation.x, 0, tileLocation.y);
             initialLocation.set(cursorLocation);
+            
+            currIndex = shapes.size() + 1;
+            shapes.put(currIndex, new Geometry(cursorLocation.x, cursorLocation.z));
         }
-        
-        currIndex = shapes.size() + 1;
-        shapes.put(currIndex, new Geometry(cursorLocation.x, cursorLocation.z));
     }
     
     public void stretchGeometry(float verticalChange, boolean ctrlHeld) {
-        Geometry shape = shapes.get(currIndex);
-        
-        if(ctrlHeld) {
-            shapeHeight += verticalChange;
-            shapeHeight = (shapeHeight > height) ? height : shapeHeight;
-            
-            if((int) shapeHeight > 0) {
-                shape.height = (int) shapeHeight;
+        if(tiles.containsValue(true)) {
+            Geometry shape = shapes.get(currIndex);
 
-                shape.setVertexPos(2, "y", shape.height);
-                shape.setVertexPos(3, "y", shape.height);
-                shape.setVertexPos(6, "y", shape.height);
-                shape.setVertexPos(7, "y", shape.height);
-            }
-        } else {
-            if(tiles.containsValue(true)) {
+            if(ctrlHeld) {
+                shapeHeight += verticalChange;
+                shapeHeight = (shapeHeight > height) ? height : shapeHeight;
+
+                if((int) shapeHeight > 0) {
+                    shape.height = (int) shapeHeight;
+
+                    shape.setVertexPos(2, "y", shape.height);
+                    shape.setVertexPos(3, "y", shape.height);
+                    shape.setVertexPos(6, "y", shape.height);
+                    shape.setVertexPos(7, "y", shape.height);
+                }
+            } else {
                 Vector2i tileLocation = tiles.entrySet().stream().filter(entry -> entry.getValue()).findAny().get().getKey();
                 cursorLocation.set(tileLocation.x, 0, tileLocation.y);
-                
+
                 if(!cursorLocation.equals(initialLocation)) {
                     cursorLocation.sub(initialLocation, locationDiff);
-                    
+
                     /*
                     There's probably a more elegant mathematical solution to 
                     this- but I'm too dumb to implement it.
