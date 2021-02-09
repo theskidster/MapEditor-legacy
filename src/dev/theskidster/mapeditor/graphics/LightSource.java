@@ -2,6 +2,7 @@ package dev.theskidster.mapeditor.graphics;
 
 import dev.theskidster.mapeditor.main.App;
 import dev.theskidster.mapeditor.main.ShaderProgram;
+import dev.theskidster.mapeditor.util.Color;
 import org.joml.Vector3f;
 import static org.lwjgl.opengl.GL30.*;
 import org.lwjgl.system.MemoryStack;
@@ -12,6 +13,8 @@ import org.lwjgl.system.MemoryStack;
  */
 
 public class LightSource {
+    
+    public boolean enabled = true;
     
     private Light light;
     private Graphics g;
@@ -66,8 +69,8 @@ public class LightSource {
     public void render(ShaderProgram program, Vector3f camPos, Vector3f camUp) {
         g.modelMatrix.billboardSpherical(light.position, camPos, camUp);
         
-        glBindTexture(GL_TEXTURE_2D, texture.handle);
         glBindVertexArray(g.vao);
+        glBindTexture(GL_TEXTURE_2D, texture.handle);
         
         program.setUniform("uType", 3);
         program.setUniform("uModel", false, g.modelMatrix);
@@ -76,6 +79,34 @@ public class LightSource {
         glDrawElements(GL_TRIANGLES, g.indices.limit(), GL_UNSIGNED_INT, 0);
 
         App.checkGLError();
+    }
+    
+    public float getBrightness()      { return light.brightness; }
+    public float getContrast()        { return light.contrast; }
+    public Vector3f getPosition()     { return light.position; }
+    public Vector3f getAmbientColor() { return light.ambient; }
+    public Vector3f getDiffuseColor() { return light.diffuse; }
+    
+    public void setBrightness(float brightness) {
+        light.brightness = brightness;
+    }
+    
+    public void setContrast(float contrast) {
+        light.contrast = contrast;
+    }
+    
+    public void setPosition(float x, float y, float z) {
+        light.position.set(x, y, z);
+    }
+    
+    public void setAmbientColor(Color color) {
+        light.ambientColor = color;
+        light.ambient      = Color.convert(color);
+    }
+    
+    public void setDiffuseColor(Color color) {
+        light.diffuseColor = color;
+        light.diffuse      = Color.convert(color);
     }
     
 }

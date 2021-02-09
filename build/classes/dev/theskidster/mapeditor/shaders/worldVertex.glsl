@@ -39,7 +39,7 @@ void main() {
             ioFragPos   = vec3(uModel * vec4(aPosition, 1));
             gl_Position = uProjection * uView * uModel * vec4(aPosition, 1.0f);
             break;
-
+            
         case 3: //Used for light source icons
             ioTexCoords = aTexCoords;
             ioColor     = uColor;

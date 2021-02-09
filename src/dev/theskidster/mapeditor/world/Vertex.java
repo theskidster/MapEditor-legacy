@@ -10,12 +10,12 @@ import org.joml.Vector3f;
 
 final class Vertex {
     
-    Vector3f position;
     Vector2f texCoords;
-
-    Vertex(float xPos, float yPos, float zPos, float xTex, float yTex) {
-        position  = new Vector3f(xPos, yPos, zPos);
+    Vector3f normal;
+    
+    Vertex(float xTex, float yTex, float xNrml, float yNrml, float zNrml) {
         texCoords = new Vector2f(xTex, yTex);
+        normal    = new Vector3f(xNrml, yNrml, zNrml);
     }
     
 }
