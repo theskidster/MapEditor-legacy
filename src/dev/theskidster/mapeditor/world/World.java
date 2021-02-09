@@ -29,13 +29,10 @@ public class World {
     private float shapeHeight;
     
     private final Floor floor                = new Floor();
-    private final GeometryBatch geomBatch    = new GeometryBatch();
     private final RayAabIntersection rayTest = new RayAabIntersection();
     private final Vector3i initialLocation   = new Vector3i();
     private final Vector3i cursorLocation    = new Vector3i();
     private final Vector3i locationDiff      = new Vector3i();
-    
-    private static final Cube cube = new Cube(1, 1);
     
     private final Origin origin;
     
@@ -59,21 +56,17 @@ public class World {
     }
     
     public void update() {
-        cube.update();
+        shapes.forEach((id, shape) -> shape.update());
     }
     
     public void render(ShaderProgram program) {
         floor.draw(program, tiles);
         
         glEnable(GL_DEPTH_TEST);
-        cube.render(program);
+        shapes.forEach((id, shape) -> shape.render(program));
         glDisable(GL_DEPTH_TEST);
         
         origin.render(program);
-    }
-    
-    public static void testCube() {
-        cube.test();
     }
     
     public void selectTile(Vector3f camPos, Vector3f camRay) {

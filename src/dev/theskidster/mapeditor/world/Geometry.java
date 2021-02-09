@@ -1,34 +1,48 @@
 package dev.theskidster.mapeditor.world;
 
-import dev.theskidster.mapeditor.graphics.Graphics;
+import dev.theskidster.mapeditor.main.App;
 import dev.theskidster.mapeditor.main.LogLevel;
 import dev.theskidster.mapeditor.main.Logger;
 import dev.theskidster.mapeditor.main.ShaderProgram;
 import static dev.theskidster.mapeditor.world.World.CELL_SIZE;
+import java.nio.BufferOverflowException;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.util.HashMap;
 import java.util.Map;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
+import static org.lwjgl.opengl.GL30.*;
+import org.lwjgl.system.MemoryUtil;
+import static org.lwjgl.system.MemoryUtil.NULL;
 
 /**
  * @author J Hoffman
- * Created: Feb 6, 2021
+ * Created: Feb 5, 2021
  */
 
 final class Geometry {
-    
+
     int height = 1;
-    private int prevNumVertices;
     
-    private boolean vertexDataChanged;
+    private final int FLOATS_PER_VERTEX = 5;
+    private final int FLOATS_PER_FACE   = 3;
     
-    private Graphics g = new Graphics();
+    private final int vao = glGenVertexArrays();
+    private final int vbo = glGenBuffers();
+    private final int ibo = glGenBuffers();
+    
+    private boolean updateData = true;
+    
+    private FloatBuffer vertexBuf;
+    private IntBuffer indexBuf;
     
     Map<Integer, Vertex> vertices;
     Map<Integer, Face> faces;
     
     private final Vector3f[] initialVertexPositions;
     
-    Geometry(float xLoc, float zLoc) {
+    Geometry(float xLoc, float zLoc) {        
         vertices = new HashMap<>() {{
             //FRONT:
             put(0, new Vertex(xLoc,             0,         zLoc + CELL_SIZE, 0, 0));
@@ -70,6 +84,64 @@ final class Geometry {
         }
     }
     
+    void update() {
+        if(updateData) {
+            vertexBuf = MemoryUtil.memAllocFloat((vertices.size() * FLOATS_PER_VERTEX) * Float.BYTES);
+            indexBuf  = MemoryUtil.memAllocInt((faces.size() * FLOATS_PER_FACE) * Float.BYTES);
+
+            glBindVertexArray(vao);
+
+            glBindBuffer(GL_ARRAY_BUFFER, vbo);
+            glBufferData(GL_ARRAY_BUFFER, vertexBuf.capacity(), GL_DYNAMIC_DRAW);
+
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexBuf.capacity(), GL_DYNAMIC_DRAW);
+
+            glVertexAttribPointer(0, 3, GL_FLOAT, false, (FLOATS_PER_VERTEX * Float.BYTES), 0);
+            glVertexAttribPointer(1, 2, GL_FLOAT, false, (FLOATS_PER_VERTEX * Float.BYTES), (3 * Float.BYTES));
+
+            glEnableVertexAttribArray(0);
+            glEnableVertexAttribArray(1);
+
+            try {
+                for(int v = 0; v < 8; v++) {
+                    Vector3f vertexPos = vertices.get(v).position;
+                    Vector2f texCoords = vertices.get(v).texCoords;
+
+                    vertexBuf.put(vertexPos.x).put(vertexPos.y).put(vertexPos.z).put(texCoords.x).put(texCoords.y);
+                }
+
+                faces.forEach((index, face) -> {
+                    indexBuf.put(face.indices[0]).put(face.indices[1]).put(face.indices[2]);
+                });
+            } catch(BufferOverflowException e) {
+                Logger.setStackTrace(e);
+                Logger.log(LogLevel.SEVERE, "Geometry buffer experienced overflow");
+            }
+            
+            vertexBuf.flip();
+            indexBuf.flip();
+            
+            updateData = false;
+        }
+    }
+    
+    void render(ShaderProgram program) {
+        glBindVertexArray(vao);
+        
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, vertexBuf);
+        
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);        
+        glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, indexBuf);
+        
+        program.setUniform("uType", 2);
+        
+        glDrawElements(GL_TRIANGLES, indexBuf.capacity(), GL_UNSIGNED_INT, NULL);
+        
+        App.checkGLError();
+    }
+    
     float getVertexPos(int index, String axis) {
         if(!vertices.containsKey(index)) {
             Logger.log(LogLevel.WARNING, "No vertex with an ID of: (" + index + ") exists in this shape.");
@@ -94,9 +166,20 @@ final class Geometry {
         }
         
         switch(axis) {
-            case "x", "X" -> { vertices.get(index).position.x = value; }
-            case "y", "Y" -> { vertices.get(index).position.y = value; }
-            case "z", "Z" -> { vertices.get(index).position.z = value; }
+            case "x", "X" -> {
+                vertices.get(index).position.x = value; 
+                updateData = true;
+            }
+            
+            case "y", "Y" -> {
+                vertices.get(index).position.y = value;
+                updateData = true;
+            }
+            
+            case "z", "Z" -> {
+                vertices.get(index).position.z = value;
+                updateData = true;
+            }
             
             default -> {
                 Logger.log(LogLevel.WARNING, "Invalid axis: \"" + axis + "\" value specified, must be one of X, Y, or Z.");
@@ -107,6 +190,7 @@ final class Geometry {
     void setVertexPos(int index, float x, float y, float z) {
         if(vertices.containsKey(index)) {
             vertices.get(index).position.set(x, y, z);
+            updateData = true;
         } else {
             Logger.log(LogLevel.WARNING, "No vertex with an ID of: (" + index + ") exists in this shape.");
         }
@@ -142,6 +226,8 @@ final class Geometry {
                 float yPos = (initialVertexPositions[v].y == CELL_SIZE) ? height : initialVertexPositions[v].y;
                 vertices.get(v).position = new Vector3f(initialVertexPositions[v].x, yPos, initialVertexPositions[v].z);
             }
+            
+            updateData = true;
         }
     }
     
