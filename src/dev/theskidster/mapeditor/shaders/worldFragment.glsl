@@ -81,5 +81,9 @@ void main() {
             makeTransparent(texture(uTexture, ioTexCoords).a);
             ioResult = texture(uTexture, ioTexCoords) * vec4(ioColor, 1);
             break;
+
+        case 4: //Used for cube test object
+            ioResult = vec4(ioColor, 0);
+            break;
     }
 }

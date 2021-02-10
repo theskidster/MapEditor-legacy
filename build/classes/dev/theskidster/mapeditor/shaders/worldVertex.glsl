@@ -44,5 +44,10 @@ void main() {
             ioColor     = uColor;
             gl_Position = uProjection * uView * uModel * vec4(aPosition, 1.0f);
             break;
+
+        case 4: //Used for cube test object
+            ioColor     = uColor;
+            gl_Position = uProjection * uView * uModel * vec4(aPosition, 1.0f);
+            break;
     }
 }

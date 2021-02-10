@@ -80,7 +80,7 @@ public final class App {
                 pollEvents();
                 
                 camera.update(window.width, window.height);
-                world.update();
+                world.update(camera.ray);
                 ui.update();
             }
             

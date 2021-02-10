@@ -39,6 +39,8 @@ public class World {
     private final Vector3i cursorLocation    = new Vector3i();
     private final Vector3i locationDiff      = new Vector3i();
     
+    private final Cube cube;
+    
     private final Origin origin;
     
     private final Map<Vector2i, Boolean> tiles;
@@ -62,14 +64,18 @@ public class World {
         }};
         
         lights[0] = new LightSource(Light.NOON);
+        
+        cube = new Cube(new Vector3f(3, 3, -3));
     }
     
-    public void update() {
+    public void update(Vector3f camRay) {
         shapes.forEach((id, shape) -> shape.update());
         
         for(LightSource light : lights) {
             if(light != null) light.update();
         }
+        
+        cube.update();
     }
     
     public void render(ShaderProgram program, Vector3f camPos, Vector3f camUp) {
@@ -80,6 +86,8 @@ public class World {
         shapes.forEach((id, shape) -> shape.render(program, lights, numLights));
         glDisable(GL_DEPTH_TEST);
         glDisable(GL_CULL_FACE);
+        
+        cube.render(program);
         
         for(LightSource light : lights) {
             if(light != null) light.render(program, camPos, camUp);
@@ -229,4 +237,8 @@ public class World {
         prevShapeIndex = currShapeIndex;
     }
 
+    public void changeCube() {
+        cube.change();
+    }
+    
 }
