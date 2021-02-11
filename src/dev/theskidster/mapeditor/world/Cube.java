@@ -27,14 +27,16 @@ final class Cube {
     private final class Face2 {
         int[] vp = new int[3];
         int[] tc = new int[3];
+        int[] n  = new int[3];
         
-        Face2(int[] vp, int[] tc) {
+        Face2(int[] vp, int[] tc, int[] n) {
             this.vp = vp;
             this.tc = tc;
+            this.n  = n;
         }
     }
     
-    private final int FLOATS_PER_VERTEX = 5;
+    private final int FLOATS_PER_VERTEX = 8;
     private int numVertices;
     private int bufferSizeInBytes;
     
@@ -47,7 +49,8 @@ final class Cube {
     private Matrix4f modelMatrix = new Matrix4f();
     
     private Map<Integer, Vector3f> vertexPositions;
-    private Map<Integer, Vector2f> textureCoordinates;
+    private Map<Integer, Vector2f> texCoords;
+    private Map<Integer, Vector3f> normals;
     private Map<Integer, Face2> faces;
     
     Cube(Vector3f position) {
@@ -64,35 +67,56 @@ final class Cube {
             put(7, new Vector3f(0,         CELL_SIZE, 0));
         }};
         
-        textureCoordinates = new HashMap<>() {{
+        texCoords = new HashMap<>() {{
             put(0, new Vector2f(0, 0));
             put(1, new Vector2f(1, 0));
             put(2, new Vector2f(1, 1));
             put(3, new Vector2f(0, 1));
         }};
         
+        normals = new HashMap<>() {{
+            put(0, new Vector3f( 1,  0,  0));
+            put(1, new Vector3f( 0,  1,  0));
+            put(2, new Vector3f( 0,  0,  1));
+            put(3, new Vector3f(-1,  0,  0));
+            put(4, new Vector3f( 0, -1,  0));
+            put(5, new Vector3f( 0,  0, -1));
+        }};
+        
         faces = new TreeMap<>() {{
             //FRONT:
-            put(0,  new Face2(new int[]{0, 1, 2}, new int[]{0, 1, 2}));
-            put(1,  new Face2(new int[]{2, 3, 0}, new int[]{2, 3, 0}));
+            put(0,  new Face2(new int[]{0, 1, 2}, new int[]{0, 0, 0}, new int[]{0, 0, 0}));
+            put(1,  new Face2(new int[]{2, 3, 0}, new int[]{0, 0, 0}, new int[]{0, 0, 0}));
             //RIGHT:
-            put(2,  new Face2(new int[]{1, 5, 6}, new int[]{0, 0, 0}));
-            put(3,  new Face2(new int[]{6, 2, 1}, new int[]{0, 0, 0}));
+            put(2,  new Face2(new int[]{1, 5, 6}, new int[]{0, 0, 0}, new int[]{0, 0, 0}));
+            put(3,  new Face2(new int[]{6, 2, 1}, new int[]{0, 0, 0}, new int[]{0, 0, 0}));
             //BACK:
-            put(4,  new Face2(new int[]{7, 6, 5}, new int[]{0, 0, 0}));
-            put(5,  new Face2(new int[]{5, 4, 7}, new int[]{0, 0, 0}));
+            put(4,  new Face2(new int[]{7, 6, 5}, new int[]{0, 0, 0}, new int[]{0, 0, 0}));
+            put(5,  new Face2(new int[]{5, 4, 7}, new int[]{0, 0, 0}, new int[]{0, 0, 0}));
             //LEFT:
-            put(6,  new Face2(new int[]{4, 0, 3}, new int[]{0, 0, 0}));
-            put(7,  new Face2(new int[]{3, 7, 4}, new int[]{0, 0, 0}));
+            put(6,  new Face2(new int[]{4, 0, 3}, new int[]{0, 0, 0}, new int[]{0, 0, 0}));
+            put(7,  new Face2(new int[]{3, 7, 4}, new int[]{0, 0, 0}, new int[]{0, 0, 0}));
             //BOTTOM:
-            put(8,  new Face2(new int[]{4, 5, 1}, new int[]{0, 0, 0}));
-            put(9,  new Face2(new int[]{1, 0, 4}, new int[]{0, 0, 0}));
+            put(8,  new Face2(new int[]{4, 5, 1}, new int[]{0, 0, 0}, new int[]{0, 0, 0}));
+            put(9,  new Face2(new int[]{1, 0, 4}, new int[]{0, 0, 0}, new int[]{0, 0, 0}));
             //TOP:
-            put(10, new Face2(new int[]{3, 2, 6}, new int[]{0, 0, 0}));
-            put(11, new Face2(new int[]{6, 7, 3}, new int[]{0, 0, 0}));
+            put(10, new Face2(new int[]{3, 2, 6}, new int[]{0, 0, 0}, new int[]{0, 0, 0}));
+            put(11, new Face2(new int[]{6, 7, 3}, new int[]{0, 0, 0}, new int[]{0, 0, 0}));
         }};
         
         findBufferSize();
+        
+        /*
+        TODO:
+        
+        - Add texture
+        - Add setter methods for vertex attributes
+        - Find whether the cube is convex (this will be used to determine collision elegability)
+        - Add face & vertex (position) selection
+        - Add face & vertex (position) creation/deletion
+        - Add texture coordinate manipulation
+        - Add face & vertex (position) manipulation
+        */
         
         glBindVertexArray(vao);
         
@@ -101,9 +125,11 @@ final class Cube {
         
         glVertexAttribPointer(0, 3, GL_FLOAT, false, (FLOATS_PER_VERTEX * Float.BYTES), 0);
         glVertexAttribPointer(1, 2, GL_FLOAT, false, (FLOATS_PER_VERTEX * Float.BYTES), (3 * Float.BYTES));
+        glVertexAttribPointer(2, 2, GL_FLOAT, false, (FLOATS_PER_VERTEX * Float.BYTES), (5 * Float.BYTES));
         
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
+        glEnableVertexAttribArray(2);
         
         /*
         VERTEX POSITIONS:
@@ -170,10 +196,13 @@ final class Cube {
                 
                 faces.forEach((index, face) -> {
                     for(int i = 0; i < 3; i++) {
-                        Vector3f vertexPos = vertexPositions.get(face.vp[i]);
-                        Vector2f texCoords = textureCoordinates.get(face.tc[i]);
+                        Vector3f pos    = vertexPositions.get(face.vp[i]);
+                        Vector2f coords = texCoords.get(face.tc[i]);
+                        Vector3f normal = normals.get(face.n[i]);
                         
-                        vertices.put(vertexPos.x).put(vertexPos.y).put(vertexPos.z).put(texCoords.x).put(texCoords.y);
+                        vertices.put(pos.x).put(pos.y).put(pos.z)
+                                .put(coords.x).put(coords.y)
+                                .put(normal.x).put(normal.y).put(normal.z);
                     }
                 });
                 
@@ -201,11 +230,6 @@ final class Cube {
         glDrawArrays(GL_TRIANGLES, 0, numVertices);
         
         App.checkGLError();
-    }
-    
-    void change() {
-        vertexPositions.get(0).y = 15;
-        updateData = true;
     }
     
 }

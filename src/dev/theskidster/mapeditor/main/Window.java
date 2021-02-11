@@ -128,11 +128,6 @@ public final class Window {
             ui.enterText(key, action);
             shiftHeld = (key == GLFW_KEY_LEFT_SHIFT && action == GLFW_PRESS);
             ctrlHeld  = (key == GLFW_KEY_LEFT_CONTROL && action == GLFW_PRESS);
-            
-            //TODO: remove this test
-            if(key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
-                world.changeCube();
-            }
         });
         
         glfwSetCursorPosCallback(handle, (window, xPos, yPos) -> {

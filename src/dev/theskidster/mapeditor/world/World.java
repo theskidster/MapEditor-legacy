@@ -236,9 +236,5 @@ public class World {
         shapeHeight    = 0;
         prevShapeIndex = currShapeIndex;
     }
-
-    public void changeCube() {
-        cube.change();
-    }
     
 }
