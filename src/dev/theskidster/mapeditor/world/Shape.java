@@ -24,7 +24,7 @@ import org.lwjgl.system.MemoryStack;
  * Created: Feb 9, 2021
  */
 
-final class Cube {
+final class Shape {
     
     private final class Face2 {
         int[] vp = new int[3];
@@ -58,7 +58,7 @@ final class Cube {
     
     private Texture texture;
     
-    Cube(Vector3f position) {
+    Shape(Vector3f position) {
         this.position = position;
         
         vertexPositions = new HashMap<>() {{
@@ -95,20 +95,20 @@ final class Cube {
             put(0,  new Face2(new int[]{0, 1, 2}, new int[]{2, 3, 0}, new int[]{2, 2, 2}));
             put(1,  new Face2(new int[]{2, 3, 0}, new int[]{0, 1, 2}, new int[]{2, 2, 2}));
             //RIGHT:
-            put(2,  new Face2(new int[]{1, 5, 6}, new int[]{0, 0, 0}, new int[]{0, 0, 0}));
-            put(3,  new Face2(new int[]{6, 2, 1}, new int[]{0, 0, 0}, new int[]{0, 0, 0}));
+            put(2,  new Face2(new int[]{1, 5, 6}, new int[]{2, 3, 0}, new int[]{0, 0, 0}));
+            put(3,  new Face2(new int[]{6, 2, 1}, new int[]{0, 1, 2}, new int[]{0, 0, 0}));
             //BACK:
-            put(4,  new Face2(new int[]{7, 6, 5}, new int[]{0, 0, 0}, new int[]{5, 5, 5}));
-            put(5,  new Face2(new int[]{5, 4, 7}, new int[]{0, 0, 0}, new int[]{5, 5, 5}));
+            put(4,  new Face2(new int[]{7, 6, 5}, new int[]{0, 1, 2}, new int[]{5, 5, 5}));
+            put(5,  new Face2(new int[]{5, 4, 7}, new int[]{2, 3, 0}, new int[]{5, 5, 5}));
             //LEFT:
-            put(6,  new Face2(new int[]{4, 0, 3}, new int[]{0, 0, 0}, new int[]{3, 3, 3}));
-            put(7,  new Face2(new int[]{3, 7, 4}, new int[]{0, 0, 0}, new int[]{3, 3, 3}));
+            put(6,  new Face2(new int[]{4, 0, 3}, new int[]{2, 3, 0}, new int[]{3, 3, 3}));
+            put(7,  new Face2(new int[]{3, 7, 4}, new int[]{0, 1, 2}, new int[]{3, 3, 3}));
             //BOTTOM:
-            put(8,  new Face2(new int[]{4, 5, 1}, new int[]{0, 0, 0}, new int[]{4, 4, 4}));
-            put(9,  new Face2(new int[]{1, 0, 4}, new int[]{0, 0, 0}, new int[]{4, 4, 4}));
+            put(8,  new Face2(new int[]{4, 5, 1}, new int[]{2, 3, 0}, new int[]{4, 4, 4}));
+            put(9,  new Face2(new int[]{1, 0, 4}, new int[]{0, 1, 2}, new int[]{4, 4, 4}));
             //TOP:
-            put(10, new Face2(new int[]{3, 2, 6}, new int[]{0, 0, 0}, new int[]{1, 1, 1}));
-            put(11, new Face2(new int[]{6, 7, 3}, new int[]{0, 0, 0}, new int[]{1, 1, 1}));
+            put(10, new Face2(new int[]{3, 2, 6}, new int[]{2, 3, 0}, new int[]{1, 1, 1}));
+            put(11, new Face2(new int[]{6, 7, 3}, new int[]{0, 1, 2}, new int[]{1, 1, 1}));
         }};
         
         findBufferSize();
@@ -116,7 +116,6 @@ final class Cube {
         /*
         TODO:
         
-        - Add texture
         - Add setter methods for vertex attributes
         - Find whether the cube is convex (this will be used to determine collision elegability)
         - Add face & vertex (position) selection
@@ -141,8 +140,8 @@ final class Cube {
         texture = new Texture("img_null.png");
         
         glBindTexture(GL_TEXTURE_2D, texture.handle);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glBindTexture(GL_TEXTURE_2D, 0);
@@ -153,15 +152,9 @@ final class Cube {
         bufferSizeInBytes = numVertices * FLOATS_PER_VERTEX * Float.BYTES;
     }
     
-    double angle;
-    
     void update() {
         normal.set(modelMatrix.invert());
-        
         modelMatrix.translation(position);
-        angle++;
-        modelMatrix.rotateX((float) Math.toRadians(angle));
-        modelMatrix.rotateY((float) Math.toRadians(angle));
         
         if(updateData) {
             try(MemoryStack stack = MemoryStack.stackPush()) {

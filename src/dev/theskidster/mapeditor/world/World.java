@@ -39,7 +39,7 @@ public class World {
     private final Vector3i cursorLocation    = new Vector3i();
     private final Vector3i locationDiff      = new Vector3i();
     
-    private final Cube cube;
+    private final Shape cube;
     
     private final Origin origin;
     
@@ -65,7 +65,7 @@ public class World {
         
         lights[0] = new LightSource(Light.NOON);
         
-        cube = new Cube(new Vector3f(3, 3, -3));
+        cube = new Shape(new Vector3f(3, 3, -3));
     }
     
     public void update(Vector3f camRay) {
