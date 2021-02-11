@@ -26,21 +26,10 @@ import org.lwjgl.system.MemoryStack;
 
 final class Shape {
     
-    private final class Face2 {
-        int[] vp = new int[3];
-        int[] tc = new int[3];
-        int[] n  = new int[3];
-        
-        Face2(int[] vp, int[] tc, int[] n) {
-            this.vp = vp;
-            this.tc = tc;
-            this.n  = n;
-        }
-    }
-    
     private final int FLOATS_PER_VERTEX = 8;
     private int numVertices;
     private int bufferSizeInBytes;
+    int height = 1;
     
     private final int vao = glGenVertexArrays();
     private final int vbo = glGenBuffers();
@@ -50,18 +39,20 @@ final class Shape {
     Vector3f position;
     private Matrix3f normal      = new Matrix3f();
     private Matrix4f modelMatrix = new Matrix4f();
+    private Texture texture;
     
     private Map<Integer, Vector3f> vertexPositions;
     private Map<Integer, Vector2f> texCoords;
     private Map<Integer, Vector3f> normals;
-    private Map<Integer, Face2> faces;
+    private Map<Integer, Face> faces;
     
-    private Texture texture;
+    private final Vector3f[] initialVPs;
     
-    Shape(Vector3f position) {
-        this.position = position;
+    Shape(float x, float y, float z) {
+        position = new Vector3f(x, y, z);
         
-        vertexPositions = new HashMap<>() {{
+        vertexPositions = new TreeMap<>() {{
+            /*
             float halfSize = CELL_SIZE / 2;
             
             put(0, new Vector3f(-halfSize, -halfSize,  halfSize));
@@ -72,7 +63,23 @@ final class Shape {
             put(5, new Vector3f( halfSize, -halfSize, -halfSize));
             put(6, new Vector3f( halfSize,  halfSize, -halfSize));
             put(7, new Vector3f(-halfSize,  halfSize, -halfSize));
+            */
+            
+            put(0, new Vector3f(0,         0,         CELL_SIZE));
+            put(1, new Vector3f(CELL_SIZE, 0,         CELL_SIZE));
+            put(2, new Vector3f(CELL_SIZE, CELL_SIZE, CELL_SIZE));
+            put(3, new Vector3f(0,         CELL_SIZE, CELL_SIZE));
+            put(4, new Vector3f(0,         0,         0));
+            put(5, new Vector3f(CELL_SIZE, 0,         0));
+            put(6, new Vector3f(CELL_SIZE, CELL_SIZE, 0));
+            put(7, new Vector3f(0,         CELL_SIZE, 0));
         }};
+        
+        initialVPs = new Vector3f[vertexPositions.size()];
+        
+        for(int i = 0; i < initialVPs.length; i++) {
+            initialVPs[i] = new Vector3f(vertexPositions.get(i));
+        }
         
         texCoords = new HashMap<>() {{
             put(0, new Vector2f(0, 0));
@@ -92,23 +99,23 @@ final class Shape {
         
         faces = new TreeMap<>() {{
             //FRONT:
-            put(0,  new Face2(new int[]{0, 1, 2}, new int[]{2, 3, 0}, new int[]{2, 2, 2}));
-            put(1,  new Face2(new int[]{2, 3, 0}, new int[]{0, 1, 2}, new int[]{2, 2, 2}));
+            put(0,  new Face(new int[]{0, 1, 2}, new int[]{2, 3, 0}, new int[]{2, 2, 2}));
+            put(1,  new Face(new int[]{2, 3, 0}, new int[]{0, 1, 2}, new int[]{2, 2, 2}));
             //RIGHT:
-            put(2,  new Face2(new int[]{1, 5, 6}, new int[]{2, 3, 0}, new int[]{0, 0, 0}));
-            put(3,  new Face2(new int[]{6, 2, 1}, new int[]{0, 1, 2}, new int[]{0, 0, 0}));
+            put(2,  new Face(new int[]{1, 5, 6}, new int[]{2, 3, 0}, new int[]{0, 0, 0}));
+            put(3,  new Face(new int[]{6, 2, 1}, new int[]{0, 1, 2}, new int[]{0, 0, 0}));
             //BACK:
-            put(4,  new Face2(new int[]{7, 6, 5}, new int[]{0, 1, 2}, new int[]{5, 5, 5}));
-            put(5,  new Face2(new int[]{5, 4, 7}, new int[]{2, 3, 0}, new int[]{5, 5, 5}));
+            put(4,  new Face(new int[]{7, 6, 5}, new int[]{0, 1, 2}, new int[]{5, 5, 5}));
+            put(5,  new Face(new int[]{5, 4, 7}, new int[]{2, 3, 0}, new int[]{5, 5, 5}));
             //LEFT:
-            put(6,  new Face2(new int[]{4, 0, 3}, new int[]{2, 3, 0}, new int[]{3, 3, 3}));
-            put(7,  new Face2(new int[]{3, 7, 4}, new int[]{0, 1, 2}, new int[]{3, 3, 3}));
+            put(6,  new Face(new int[]{4, 0, 3}, new int[]{2, 3, 0}, new int[]{3, 3, 3}));
+            put(7,  new Face(new int[]{3, 7, 4}, new int[]{0, 1, 2}, new int[]{3, 3, 3}));
             //BOTTOM:
-            put(8,  new Face2(new int[]{4, 5, 1}, new int[]{2, 3, 0}, new int[]{4, 4, 4}));
-            put(9,  new Face2(new int[]{1, 0, 4}, new int[]{0, 1, 2}, new int[]{4, 4, 4}));
+            put(8,  new Face(new int[]{4, 5, 1}, new int[]{2, 3, 0}, new int[]{4, 4, 4}));
+            put(9,  new Face(new int[]{1, 0, 4}, new int[]{0, 1, 2}, new int[]{4, 4, 4}));
             //TOP:
-            put(10, new Face2(new int[]{3, 2, 6}, new int[]{2, 3, 0}, new int[]{1, 1, 1}));
-            put(11, new Face2(new int[]{6, 7, 3}, new int[]{0, 1, 2}, new int[]{1, 1, 1}));
+            put(10, new Face(new int[]{3, 2, 6}, new int[]{2, 3, 0}, new int[]{1, 1, 1}));
+            put(11, new Face(new int[]{6, 7, 3}, new int[]{0, 1, 2}, new int[]{1, 1, 1}));
         }};
         
         findBufferSize();
@@ -218,6 +225,54 @@ final class Shape {
         glDrawArrays(GL_TRIANGLES, 0, numVertices);
         
         App.checkGLError();
+    }
+    
+    void resetVertexPos(int index, String axis) {
+        float value;
+        
+        switch(axis) {
+            case "x", "X" -> value = initialVPs[index].x;
+            case "y", "Y" -> value = initialVPs[index].y;
+            case "z", "Z" -> value = initialVPs[index].z;
+            default -> { return; }
+        }
+        
+        setVertexPos(index, axis, value);
+    }
+    
+    void resetVertexPos() {
+        boolean alreadyReset = true;
+        
+        for(int i = 0; i < initialVPs.length; i++) {
+            alreadyReset = initialVPs[i].equals(vertexPositions.get(i));
+            if(!alreadyReset) break;
+        }
+        
+        if(!alreadyReset) {
+            for(int i = 0; i < initialVPs.length; i++) {
+                float yPos = (initialVPs[i].y == CELL_SIZE) ? height : initialVPs[i].y;
+                vertexPositions.put(i, new Vector3f(initialVPs[i].x, yPos, initialVPs[i].z));
+            }
+            
+            updateData = true;
+        }
+    }
+    
+    Vector3f getVertexPos(int index) { return vertexPositions.get(index); }
+    
+    void setVertexPos(int index, String axis, float value) {
+        switch(axis) {
+            case "x", "X" -> vertexPositions.get(index).x = value;
+            case "y", "Y" -> vertexPositions.get(index).y = value;
+            case "z", "Z" -> vertexPositions.get(index).z = value;
+        }
+        
+        updateData = true;
+    }
+    
+    void setVertexPos(int index, float x, float y, float z) {
+        vertexPositions.get(index).set(x - position.x, y, z - position.z);
+        updateData = true;
     }
     
 }

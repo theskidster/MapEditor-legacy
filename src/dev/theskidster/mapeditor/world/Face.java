@@ -7,12 +7,14 @@ package dev.theskidster.mapeditor.world;
 
 final class Face {
     
-    int[] indices = new int[3];
-
-    Face(int vert1, int vert2, int vert3) {
-        indices[0] = vert1;
-        indices[1] = vert2;
-        indices[2] = vert3;
+    int[] vp = new int[3];
+    int[] tc = new int[3];
+    int[] n  = new int[3];
+        
+    Face(int[] vp, int[] tc, int[] n) {
+        this.vp = vp;
+        this.tc = tc;
+        this.n  = n;
     }
     
 }
