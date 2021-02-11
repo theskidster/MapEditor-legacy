@@ -52,19 +52,6 @@ final class Shape {
         position = new Vector3f(x, y, z);
         
         vertexPositions = new TreeMap<>() {{
-            /*
-            float halfSize = CELL_SIZE / 2;
-            
-            put(0, new Vector3f(-halfSize, -halfSize,  halfSize));
-            put(1, new Vector3f( halfSize, -halfSize,  halfSize));
-            put(2, new Vector3f( halfSize,  halfSize,  halfSize));
-            put(3, new Vector3f(-halfSize,  halfSize,  halfSize));
-            put(4, new Vector3f(-halfSize, -halfSize, -halfSize));
-            put(5, new Vector3f( halfSize, -halfSize, -halfSize));
-            put(6, new Vector3f( halfSize,  halfSize, -halfSize));
-            put(7, new Vector3f(-halfSize,  halfSize, -halfSize));
-            */
-            
             put(0, new Vector3f(0,         0,         CELL_SIZE));
             put(1, new Vector3f(CELL_SIZE, 0,         CELL_SIZE));
             put(2, new Vector3f(CELL_SIZE, CELL_SIZE, CELL_SIZE));
@@ -123,12 +110,18 @@ final class Shape {
         /*
         TODO:
         
-        - Add setter methods for vertex attributes
-        - Find whether the cube is convex (this will be used to determine collision elegability)
+        Might remove the model matrix from rendering and instead use it for 
+        making calculations on the data that will be used to generate the shapes
+        vertices.
+        
+        This could be useful for when the time comes to implement 
+        translating/rotating/scaling of shapes.
+        
         - Add face & vertex (position) selection
         - Add face & vertex (position) creation/deletion
         - Add texture coordinate manipulation
         - Add face & vertex (position) manipulation
+        - Find whether the cube is convex (this will be used to determine collision elegability)
         */
         
         glBindVertexArray(vao);
