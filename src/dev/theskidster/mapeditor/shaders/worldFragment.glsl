@@ -65,7 +65,7 @@ void main() {
             ioResult = vec4(ioColor, 0);
             break;
 
-        case 2: //Used for level geometry
+        case 2: case 4: //Used for level geometry and cube test object
             vec3 normal = normalize(ioNormal);
             vec3 result = calcWorldLight(uLights[0], normal);
 
@@ -74,16 +74,12 @@ void main() {
             }
             
             makeTransparent(texture(uTexture, ioTexCoords).a);
-            ioResult = texture(uTexture, ioTexCoords) * vec4(result, 1.0);
+            ioResult = texture(uTexture, ioTexCoords) * vec4(result, 1.0f);
             break;
 
         case 3: //Used for light source icons
             makeTransparent(texture(uTexture, ioTexCoords).a);
-            ioResult = texture(uTexture, ioTexCoords) * vec4(ioColor, 1);
-            break;
-
-        case 4: //Used for cube test object
-            ioResult = vec4(ioColor, 0);
+            ioResult = texture(uTexture, ioTexCoords) * vec4(ioColor, 1.0f);
             break;
     }
 }

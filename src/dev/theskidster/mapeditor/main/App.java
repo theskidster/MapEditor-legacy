@@ -8,6 +8,7 @@ import dev.theskidster.mapeditor.util.Event;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
+import org.joml.Vector3f;
 import static org.lwjgl.glfw.GLFW.*;
 import org.lwjgl.opengl.GL;
 import static org.lwjgl.opengl.GL20.*;
@@ -37,6 +38,7 @@ public final class App {
     private Camera camera;
     private World world;
     private UI ui;
+    private static final Vector3f noValue = new Vector3f();
     
     private static final Queue<Event> events = new LinkedList<>();
     
@@ -150,6 +152,7 @@ public final class App {
             worldProgram.addUniform(ShaderBufferType.MAT4,"uView");
             worldProgram.addUniform(ShaderBufferType.MAT4,"uProjection");
             worldProgram.addUniform(ShaderBufferType.VEC3,"uColor");
+            worldProgram.addUniform(ShaderBufferType.MAT3,"uNormal");
             
             for(int i = 0; i < MAX_LIGHTS; i++) {
                 worldProgram.addUniform(ShaderBufferType.FLOAT, "uLights[" + i + "].brightness");
@@ -223,6 +226,10 @@ public final class App {
     
     public static boolean tick(int cycles) {
         return tickCount % cycles == 0;
+    }
+    
+    public static Vector3f noValue() {
+        return noValue;
     }
     
 }

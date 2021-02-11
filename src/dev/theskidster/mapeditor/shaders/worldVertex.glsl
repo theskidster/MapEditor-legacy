@@ -14,6 +14,7 @@ uniform mat4 uModel;
 uniform mat4 uView;
 uniform mat4 uProjection;
 uniform vec3 uColor;
+uniform mat3 uNormal;
 
 out vec2 ioTexCoords;
 out vec3 ioColor;
@@ -34,7 +35,7 @@ void main() {
 
         case 2: //Used for level geometry
             ioNormal    = aNormal;
-            ioFragPos   = vec3(uModel * vec4(aPosition, 1));
+            ioFragPos   = vec3(uModel * vec4(aPosition, 1.0f));
             gl_Position = uProjection * uView * uModel * vec4(aPosition, 1.0f);
             break;
             
@@ -45,7 +46,8 @@ void main() {
             break;
 
         case 4: //Used for cube test object
-            ioColor     = uColor;
+            ioNormal    = uNormal * aNormal;
+            ioFragPos   = vec3(uModel * vec4(aPosition, 1.0f));
             gl_Position = uProjection * uView * uModel * vec4(aPosition, 1.0f);
             break;
     }

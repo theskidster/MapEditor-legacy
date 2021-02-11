@@ -84,10 +84,9 @@ public class World {
         glEnable(GL_CULL_FACE);
         glEnable(GL_DEPTH_TEST);
         shapes.forEach((id, shape) -> shape.render(program, lights, numLights));
+        cube.render(program, lights, numLights);
         glDisable(GL_DEPTH_TEST);
         glDisable(GL_CULL_FACE);
-        
-        cube.render(program);
         
         for(LightSource light : lights) {
             if(light != null) light.render(program, camPos, camUp);

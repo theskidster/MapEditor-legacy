@@ -26,7 +26,7 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 
 final class Geometry {
 
-    static final Vector3f noValue = new Vector3f();
+    
     
     int height = 1;
     
@@ -235,9 +235,9 @@ final class Geometry {
                 } else {
                     program.setUniform("uLights[" + i + "].brightness", 0);
                     program.setUniform("uLights[" + i + "].contrast",   0);
-                    program.setUniform("uLights[" + i + "].position",   noValue);
-                    program.setUniform("uLights[" + i + "].ambient",    noValue);
-                    program.setUniform("uLights[" + i + "].diffuse",    noValue);
+                    program.setUniform("uLights[" + i + "].position",   App.noValue());
+                    program.setUniform("uLights[" + i + "].ambient",    App.noValue());
+                    program.setUniform("uLights[" + i + "].diffuse",    App.noValue());
                 }
             }
         }
