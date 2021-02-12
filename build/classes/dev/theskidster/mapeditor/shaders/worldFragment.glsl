@@ -65,7 +65,7 @@ void main() {
             ioResult = vec4(ioColor, 0);
             break;
 
-        case 2: case 4: //Used for level geometry and cube test object
+        case 2: //Used for level geometry
             vec3 normal = normalize(ioNormal);
             vec3 result = calcWorldLight(uLights[0], normal);
 
@@ -74,6 +74,7 @@ void main() {
             }
             
             makeTransparent(texture(uTexture, ioTexCoords).a);
+            //vec4 sampled = vec4(1, 1, 1, 0.6f);
             ioResult = texture(uTexture, ioTexCoords) * vec4(result, 1.0f);
             break;
 

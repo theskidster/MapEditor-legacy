@@ -32,22 +32,16 @@ void main() {
             ioColor     = aColOffset;
             gl_Position = uProjection * uView * uModel * vec4(aPosition + aPosOffset, 1.0f);
             break;
-
+            
         case 2: //Used for level geometry
-            ioNormal    = aNormal;
+            ioNormal    = uNormal * aNormal;
             ioFragPos   = vec3(uModel * vec4(aPosition, 1.0f));
             gl_Position = uProjection * uView * uModel * vec4(aPosition, 1.0f);
             break;
-            
+
         case 3: //Used for light source icons
             ioTexCoords = aTexCoords;
             ioColor     = uColor;
-            gl_Position = uProjection * uView * uModel * vec4(aPosition, 1.0f);
-            break;
-
-        case 4: //Used for cube test object
-            ioNormal    = uNormal * aNormal;
-            ioFragPos   = vec3(uModel * vec4(aPosition, 1.0f));
             gl_Position = uProjection * uView * uModel * vec4(aPosition, 1.0f);
             break;
     }

@@ -28,8 +28,12 @@ public final class Background {
         
         glBindVertexArray(g.vao);
         
+        /*
+        +1 added to the end of this buffer because without it rectangles will 
+        flicker when drawn.
+        */
         glBindBuffer(GL_ARRAY_BUFFER, g.vbo);
-        glBufferData(GL_ARRAY_BUFFER, g.vertices.capacity() * Float.BYTES, GL_DYNAMIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, (g.vertices.capacity() + 1) * Float.BYTES, GL_DYNAMIC_DRAW);
         
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, g.ibo);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, g.indices.capacity() * Float.BYTES, GL_DYNAMIC_DRAW);

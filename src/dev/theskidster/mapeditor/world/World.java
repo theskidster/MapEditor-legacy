@@ -42,7 +42,7 @@ public class World {
     private final Origin origin;
     
     private final Map<Vector2i, Boolean> tiles;
-    private final Map<Integer, Shape> shapes = new HashMap<>();
+    private final Map<Integer, Geometry> geometry = new HashMap<>();
     
     private final LightSource[] lights = new LightSource[App.MAX_LIGHTS];
     
@@ -65,7 +65,7 @@ public class World {
     }
     
     public void update(Vector3f camRay) {
-        shapes.forEach((id, shape) -> shape.update());
+        geometry.forEach((id, shape) -> shape.update());
         
         for(LightSource light : lights) {
             if(light != null) light.update();
@@ -75,11 +75,12 @@ public class World {
     public void render(ShaderProgram program, Vector3f camPos, Vector3f camUp) {
         floor.draw(program, tiles);
         
-        glEnable(GL_CULL_FACE);
         glEnable(GL_DEPTH_TEST);
-        shapes.forEach((id, shape) -> shape.render(program, lights, numLights));
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        geometry.forEach((id, shape) -> shape.render(program, lights, numLights));
         glDisable(GL_DEPTH_TEST);
-        glDisable(GL_CULL_FACE);
+        glDisable(GL_BLEND);
         
         for(LightSource light : lights) {
             if(light != null) light.render(program, camPos, camUp);
@@ -104,14 +105,14 @@ public class World {
             initialLocation.set(cursorLocation);
             
             prevShapeIndex = currShapeIndex;
-            currShapeIndex = shapes.size() + 1;
-            shapes.put(currShapeIndex, new Shape(cursorLocation.x, 0, cursorLocation.z));
+            currShapeIndex = geometry.size() + 1;
+            geometry.put(currShapeIndex, new Geometry(cursorLocation.x, 0, cursorLocation.z));
         }
     }
     
     public void stretchGeometry(float verticalChange, boolean ctrlHeld) {
         if(prevShapeIndex != currShapeIndex) {
-            Shape shape = shapes.get(currShapeIndex);
+            Geometry shape = geometry.get(currShapeIndex);
 
             if(ctrlHeld) {
                 shapeHeight += verticalChange;
