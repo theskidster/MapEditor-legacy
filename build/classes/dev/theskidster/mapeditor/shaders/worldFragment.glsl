@@ -74,7 +74,6 @@ void main() {
             }
             
             makeTransparent(texture(uTexture, ioTexCoords).a);
-            //vec4 sampled = vec4(1, 1, 1, 0.6f);
             ioResult = texture(uTexture, ioTexCoords) * vec4(result, 1.0f);
             break;
 

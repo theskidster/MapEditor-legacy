@@ -164,7 +164,7 @@ public final class App {
         }
         
         camera = new Camera();
-        world  = new World(16, 32, 16);
+        world  = new World(16, 32, 16, "img_null.png");
         ui     = new UI();
         
         camera.update(window.width, window.height);

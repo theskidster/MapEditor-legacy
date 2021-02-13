@@ -137,7 +137,7 @@ public final class Window {
             world.selectTile(camera.position, camera.ray);
             
             if(leftHeld ^ middleHeld ^ rightHeld) {
-                if(leftHeld)   world.stretchGeometry(camera.rayVerticalChange, ctrlHeld);
+                if(leftHeld)   world.stretchShape(camera.rayVerticalChange, ctrlHeld);
                 if(middleHeld) camera.setPosition(xPos, yPos);
                 if(rightHeld)  camera.setDirection(xPos, yPos);
             } else {
@@ -154,8 +154,8 @@ public final class Window {
                 case GLFW_MOUSE_BUTTON_LEFT -> {
                     leftHeld = action == GLFW_PRESS;
                     
-                    if(leftHeld) world.addGeometry();
-                    else         world.finalizeGeometry();
+                    if(leftHeld) world.addShape();
+                    else         world.finalizeShape();
                 }
                 
                 case GLFW_MOUSE_BUTTON_MIDDLE -> middleHeld = action == GLFW_PRESS;
