@@ -16,7 +16,7 @@ import dev.theskidster.mapeditor.util.Rectangle;
 class WidgetToolBar extends Widget {
 
     private final int xOffset = 346;
-    private int currTool;
+    int currTool = 0;
     
     private boolean[] buttonHovered = new boolean[5];
     
@@ -46,6 +46,7 @@ class WidgetToolBar extends Widget {
     void update(int width, int height, Mouse mouse) {
         for(int b = 0; b < buttons.length; b++) {
             buttonHovered[b] = buttons[b].intersects(mouse.cursorPos);
+            if(buttonHovered[b] && mouse.clicked) currTool = b;
         }
     }
 
@@ -53,7 +54,15 @@ class WidgetToolBar extends Widget {
     void render(ShaderProgram program, TrueTypeFont font) {
         background.batchStart();
             for(int b = 0; b < buttons.length; b++) {
-                background.drawRectangle(buttons[b], (buttonHovered[b]) ? Color.RGM_MEDIUM_GRAY : Color.RGM_DARK_GRAY);
+                Color color;
+                
+                if(b == currTool) {
+                    color = Color.RGM_BLUE;
+                } else {
+                    color = (buttonHovered[b]) ? Color.RGM_MEDIUM_GRAY : Color.RGM_DARK_GRAY;
+                }
+                
+                background.drawRectangle(buttons[b], color);
             }
         background.batchEnd(program);
         

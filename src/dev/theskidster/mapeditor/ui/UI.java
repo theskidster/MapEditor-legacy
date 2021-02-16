@@ -5,8 +5,9 @@ import dev.theskidster.mapeditor.util.Mouse;
 import com.mlomb.freetypejni.FreeType;
 import dev.theskidster.mapeditor.graphics.Texture;
 import dev.theskidster.mapeditor.main.ShaderProgram;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import static javax.swing.UIManager.put;
 import org.joml.Matrix4f;
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -33,9 +34,9 @@ public class UI {
     public UI() {
         font = new TrueTypeFont(FreeType.newLibrary(), "fnt_karla_regular.ttf");
         
-        widgets = new HashMap<String, Widget>() {{
-            put("Menu Bar", new WidgetMenuBar());
+        widgets = new LinkedHashMap<String, Widget>() {{
             put("Tool Bar", new WidgetToolBar());
+            put("Menu Bar", new WidgetMenuBar());
         }};
     }
     
@@ -58,21 +59,11 @@ public class UI {
         widgets.forEach((name, widget) -> widget.render(program, font));
     }
     
-    static void setFocusable(Focusable obj) {
-        focusable = obj;
-    }
-    
-    static Focusable getFocusable() {
-        return focusable;
-    }
-    
-    static int getViewWidth() {
-        return viewWidth;
-    }
-    
-    static int getViewHeight() {
-        return viewHeight;
-    }
+    static int getViewWidth()         { return viewWidth; }
+    static int getViewHeight()        { return viewHeight; }
+    static Focusable getFocusable()   { return focusable; }
+    public boolean getMenuBarActive() { return ((WidgetMenuBar) widgets.get("Menu Bar")).getMenuBarActive(); }
+    public boolean getToolSelected(int index) { return ((WidgetToolBar) widgets.get("Tool Bar")).currTool == index; } 
     
     public void setMousePosition(double x, double y) {
         mouse.cursorPos.set((int) x, (int) y);
@@ -95,8 +86,8 @@ public class UI {
         projMatrix.setPerspective((float) Math.toRadians(45), (float) width / height, 0.1f, Float.POSITIVE_INFINITY);
     }
     
-    public boolean getMenuBarActive() {
-        return ((WidgetMenuBar) widgets.get("Menu Bar")).getMenuBarActive();
+    static void setFocusable(Focusable obj) {
+        focusable = obj;
     }
     
     public void resetMenuBar() {

@@ -134,10 +134,16 @@ public final class Window {
             ui.setMousePosition(xPos, yPos);
             
             camera.castRay((float) ((2f * xPos) / width - 1f), (float) (1f - (2f * yPos) / height));
-            world.selectTile(camera.position, camera.ray);
+            
+            if(ui.getToolSelected(1)) {
+                world.selectTile(camera.position, camera.ray);
+            }
             
             if(leftHeld ^ middleHeld ^ rightHeld) {
-                if(leftHeld)   world.stretchShape(camera.rayVerticalChange, ctrlHeld);
+                if(leftHeld && ui.getToolSelected(1))   {
+                    world.stretchShape(camera.rayVerticalChange, ctrlHeld);
+                }
+                
                 if(middleHeld) camera.setPosition(xPos, yPos);
                 if(rightHeld)  camera.setDirection(xPos, yPos);
             } else {
@@ -154,8 +160,10 @@ public final class Window {
                 case GLFW_MOUSE_BUTTON_LEFT -> {
                     leftHeld = action == GLFW_PRESS;
                     
-                    if(leftHeld) world.addShape();
-                    else         world.finalizeShape();
+                    if(ui.getToolSelected(1)) {
+                        if(leftHeld) world.addShape();
+                        else         world.finalizeShape();
+                    }
                 }
                 
                 case GLFW_MOUSE_BUTTON_MIDDLE -> middleHeld = action == GLFW_PRESS;
