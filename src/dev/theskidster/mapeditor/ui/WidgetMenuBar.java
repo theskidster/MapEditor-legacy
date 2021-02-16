@@ -38,7 +38,7 @@ public class WidgetMenuBar extends Widget {
     private final List<ElementMenuOption> buttons;
     private final Map<Integer, SubMenu> subMenus = new HashMap<>();
     
-    public WidgetMenuBar() {
+    WidgetMenuBar() {
         rectangle   = new Rectangle(0, 0, 0, HEIGHT);
         background  = new Background(6);
         activeMenu  = new boolean[5];

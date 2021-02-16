@@ -33,6 +33,7 @@ public class UI {
         
         widgets = new HashMap<String, Widget>() {{
             put("Menu Bar", new WidgetMenuBar());
+            put("Tool Bar", new WidgetToolBar());
         }};
     }
     
