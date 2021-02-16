@@ -14,11 +14,6 @@ import org.joml.Vector2i;
  */
 
 final class ElementMenuOption extends Element {
-    
-    private boolean prevPressed;
-    private boolean currPressed;
-    boolean hovered;
-    boolean clicked;
 
     final String text;
     private final Rectangle rectangle;

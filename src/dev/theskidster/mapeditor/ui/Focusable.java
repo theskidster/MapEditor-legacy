@@ -72,7 +72,7 @@ public abstract class Focusable extends Element implements PropertyChangeListene
         rectBack   = new Rectangle(xOffset, yOffset, width, FOCUSABLE_HEIGHT);
         rectFront  = new Rectangle(xOffset, yOffset + 1, width, FOCUSABLE_HEIGHT - 2);
         scissorBox = new Rectangle();
-        carat      = new Icon("spr_icons.png", 15, FOCUSABLE_HEIGHT);
+        carat      = new Icon(UI.iconTexture, 15, FOCUSABLE_HEIGHT);
         
         carat.setSprite(4, 2);
         

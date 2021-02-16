@@ -20,7 +20,7 @@ public class Icon {
     
     private final Graphics g = new Graphics();
     private final Texture texture;
-    private final Atlas atlas;
+    private Atlas atlas;
     
     private Vector2f currCell      = new Vector2f();
     public final Vector2f position = new Vector2f();
@@ -29,7 +29,15 @@ public class Icon {
     
     public Icon(String filename, int cellWidth, int cellHeight) {
         texture = new Texture(filename);
-        
+        init(cellWidth, cellHeight);
+    }
+    
+    public Icon(Texture texture, int cellWidth, int cellHeight) {
+        this.texture = texture;
+        init(cellWidth, cellHeight);
+    }
+    
+    private void init(int cellWidth, int cellHeight) {
         glBindTexture(GL_TEXTURE_2D, texture.handle);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);

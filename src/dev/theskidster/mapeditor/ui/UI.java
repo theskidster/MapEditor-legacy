@@ -3,6 +3,7 @@ package dev.theskidster.mapeditor.ui;
 import dev.theskidster.mapeditor.graphics.TrueTypeFont;
 import dev.theskidster.mapeditor.util.Mouse;
 import com.mlomb.freetypejni.FreeType;
+import dev.theskidster.mapeditor.graphics.Texture;
 import dev.theskidster.mapeditor.main.ShaderProgram;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,6 +21,7 @@ public class UI {
     private static int viewHeight;
     
     private final TrueTypeFont font;
+    static final Texture iconTexture = new Texture("spr_icons.png");
     
     private static Focusable focusable;
     

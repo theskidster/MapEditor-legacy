@@ -40,9 +40,9 @@ final class FocusableSpinBox extends Focusable implements PropertyChangeListener
         
         timer = new Timer(1, 18, this);
         
-        iconLeft   = new Icon("spr_icons.png", 15, FOCUSABLE_HEIGHT);
-        iconMiddle = new Icon("spr_icons.png", 15, FOCUSABLE_HEIGHT);
-        iconRight  = new Icon("spr_icons.png", 15, FOCUSABLE_HEIGHT);
+        iconLeft   = new Icon(UI.iconTexture, 15, FOCUSABLE_HEIGHT);
+        iconMiddle = new Icon(UI.iconTexture, 15, FOCUSABLE_HEIGHT);
+        iconRight  = new Icon(UI.iconTexture, 15, FOCUSABLE_HEIGHT);
         
         iconLeft.setSprite(6, 0);
         iconMiddle.setSprite(6, 1);

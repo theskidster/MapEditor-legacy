@@ -11,7 +11,12 @@ import java.awt.Component;
  * Created: Jan 19, 2021
  */
 
-public abstract class Element extends Component {
+abstract class Element extends Component {
+    
+    protected boolean prevPressed;
+    protected boolean currPressed;
+    protected boolean hovered;
+    protected boolean clicked;
     
     abstract void update(Mouse mouse);
     

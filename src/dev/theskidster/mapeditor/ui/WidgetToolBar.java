@@ -27,7 +27,7 @@ class WidgetToolBar extends Widget {
     WidgetToolBar() {
         for(int b = 0; b < buttons.length; b++) {
             buttons[b] = new Rectangle((57 * b) + xOffset, 41, 44, 44);
-            icons[b]   = new Icon("spr_icons.png", 20, 20);
+            icons[b]   = new Icon(UI.iconTexture, 20, 20);
             
             icons[b].position.set((57 * b) + (xOffset + 12), 73);
             

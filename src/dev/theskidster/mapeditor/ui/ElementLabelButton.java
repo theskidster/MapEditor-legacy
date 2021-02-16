@@ -23,11 +23,6 @@ final class ElementLabelButton extends Element implements PropertyChangeListener
     private final int yOffset;
     private final int width;
     
-    private boolean prevPressed;
-    private boolean currPressed;
-    boolean hovered;
-    boolean clicked;
-    
     private final Rectangle rectangle;
     private final Rectangle aabb;
     private final Icon iconLeft;
@@ -46,8 +41,8 @@ final class ElementLabelButton extends Element implements PropertyChangeListener
         
         rectangle = new Rectangle(xOffset, yOffset, this.width, 30);
         aabb      = new Rectangle(xOffset, yOffset, width, 30);
-        iconLeft  = new Icon("spr_icons.png", 15, 30);
-        iconRight = new Icon("spr_icons.png", 15, 30);
+        iconLeft  = new Icon(UI.iconTexture, 15, 30);
+        iconRight = new Icon(UI.iconTexture, 15, 30);
         
         textPos = new Vector2i();
         

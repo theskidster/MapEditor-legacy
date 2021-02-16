@@ -45,7 +45,7 @@ public class WidgetMenuBar extends Widget {
         hoveredMenu = new boolean[5];
         
         for(int i = 0; i < icons.length; i++) {
-            icons[i] = new Icon("spr_icons.png", 20, 20);
+            icons[i] = new Icon(UI.iconTexture, 20, 20);
         }
         
         icons[0].position.set(12, (HEIGHT * 2) - 4);

@@ -38,7 +38,7 @@ class ElementArrow extends Element {
         this.yOffset = yOffset;
         this.up      = up;
         
-        icon      = new Icon("spr_icons.png", 20, 20);
+        icon      = new Icon(UI.iconTexture, 20, 20);
         rectangle = new Rectangle(xOffset, yOffset, 22, 15);
         
         if(up) {

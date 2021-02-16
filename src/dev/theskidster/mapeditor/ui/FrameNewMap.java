@@ -34,7 +34,7 @@ public final class FrameNewMap extends Frame implements PropertyChangeListener {
     private File skybox;
     
     public FrameNewMap(int xPos, int yPos) {
-        super(new Icon("spr_icons.png", 20, 20), "New Map", xPos, yPos, 488, 320, true);
+        super(new Icon(UI.iconTexture, 20, 20), "New Map", xPos, yPos, 488, 320, true);
         
         background = new Background(23);
         

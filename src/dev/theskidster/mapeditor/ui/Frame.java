@@ -41,7 +41,7 @@ abstract class Frame extends Widget {
                     TITLE_BAR_HEIGHT, 
                     TITLE_BAR_HEIGHT);
             
-            icon = new Icon("spr_icons.png", 20, 20);
+            icon = new Icon(UI.iconTexture, 20, 20);
             icon.setSprite(0, 0);
         }
         

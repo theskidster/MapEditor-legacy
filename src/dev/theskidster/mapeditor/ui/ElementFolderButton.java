@@ -22,7 +22,6 @@ final class ElementFolderButton extends Element implements PropertyChangeListene
 
     private final int xOffset;
     private final int yOffset;
-    private boolean clicked;
 
     private final Rectangle rectangle;
     private final Icon icon;
@@ -34,7 +33,7 @@ final class ElementFolderButton extends Element implements PropertyChangeListene
         this.textArea = textArea;
 
         rectangle = new Rectangle(0, 0, 20, 20);
-        icon      = new Icon("spr_icons.png", 20, 20);
+        icon      = new Icon(UI.iconTexture, 20, 20);
 
         icon.setSprite(1, 0);
     }
