@@ -23,6 +23,11 @@ import static org.lwjgl.opengl.GL20.*;
  */
 public final class App {
     
+    public static final int SELECT_TOOL   = 0;
+    public static final int GEOMETRY_TOOL = 1;
+    public static final int VOLUME_TOOL   = 2;
+    public static final int TRIGGER_TOOL  = 3;
+    public static final int LIGHT_TOOL    = 4;
     public static final int MAX_LIGHTS = 32;
     private static int tickCount = 0;
     
@@ -82,7 +87,7 @@ public final class App {
                 pollEvents();
                 
                 camera.update(window.width, window.height);
-                world.update(camera.ray);
+                world.update(camera.ray, ui.getToolID());
                 ui.update();
             }
             

@@ -7,7 +7,6 @@ import dev.theskidster.mapeditor.graphics.Texture;
 import dev.theskidster.mapeditor.main.ShaderProgram;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import static javax.swing.UIManager.put;
 import org.joml.Matrix4f;
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -64,6 +63,7 @@ public class UI {
     static Focusable getFocusable()   { return focusable; }
     public boolean getMenuBarActive() { return ((WidgetMenuBar) widgets.get("Menu Bar")).getMenuBarActive(); }
     public boolean getToolSelected(int index) { return ((WidgetToolBar) widgets.get("Tool Bar")).currTool == index; } 
+    public int getToolID() { return ((WidgetToolBar) widgets.get("Tool Bar")).currTool; }
     
     public void setMousePosition(double x, double y) {
         mouse.cursorPos.set((int) x, (int) y);

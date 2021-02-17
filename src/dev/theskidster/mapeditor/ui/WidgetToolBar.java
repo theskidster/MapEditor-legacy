@@ -14,7 +14,7 @@ import dev.theskidster.mapeditor.util.Rectangle;
  */
 
 class WidgetToolBar extends Widget {
-
+    
     private final int xOffset = 346;
     int currTool = 0;
     

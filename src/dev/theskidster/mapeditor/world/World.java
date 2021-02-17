@@ -27,12 +27,15 @@ public class World {
     final int height;
     final int depth;
     private int numLights = 1;
+    static int currTool;
     
-    private final Floor floor                = new Floor();
+    final Vector3i initialLocation = new Vector3i();
+    final Vector3i cursorLocation  = new Vector3i();
+    final Vector3f tempVec         = new Vector3f();
+    
     private final RayAabIntersection rayTest = new RayAabIntersection();
-    final Vector3i initialLocation           = new Vector3i();
-    final Vector3i cursorLocation            = new Vector3i();
     
+    private final Floor floor = new Floor();
     private final Origin origin;
     private final Geometry geometry;
     
@@ -59,7 +62,9 @@ public class World {
         lights[0] = new LightSource(Light.NOON);
     }
     
-    public void update(Vector3f camRay) {
+    public void update(Vector3f camRay, int toolID) {
+        currTool = toolID;
+        
         for(LightSource light : lights) {
             if(light != null) light.update();
         }
@@ -76,13 +81,20 @@ public class World {
         origin.render(program);
     }
     
-    public void selectTile(Vector3f camPos, Vector3f camRay) {
+    public void hoverTile(Vector3f camPos, Vector3f camRay) {
         rayTest.set(camPos.x, camPos.y, camPos.z, camRay.x, camRay.y, camRay.z);
         
         tiles.entrySet().forEach((entry) -> {
             Vector2i location = entry.getKey();
             entry.setValue(rayTest.test(location.x, 0, location.y, location.x + CELL_SIZE, 0, location.y + CELL_SIZE));
         });
+    }
+    
+    public void hoverVertex(Vector3f camPos, Vector3f camRay, Vector3f camDir) {
+        camRay.mul(0.5f, tempVec);
+        tempVec.normalize();
+        
+        geometry.hoverVertex(camPos, tempVec, camDir);
     }
     
     public void addShape() {

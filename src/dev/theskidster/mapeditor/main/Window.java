@@ -1,5 +1,6 @@
 package dev.theskidster.mapeditor.main;
 
+import static dev.theskidster.mapeditor.main.App.*;
 import dev.theskidster.mapeditor.ui.UI;
 import dev.theskidster.mapeditor.world.World;
 import java.io.IOException;
@@ -135,12 +136,18 @@ public final class Window {
             
             camera.castRay((float) ((2f * xPos) / width - 1f), (float) (1f - (2f * yPos) / height));
             
-            if(ui.getToolSelected(1)) {
-                world.selectTile(camera.position, camera.ray);
+            switch(ui.getToolID()) {
+                case SELECT_TOOL -> {
+                    world.hoverVertex(camera.position, camera.ray, camera.direction);
+                }
+                
+                case GEOMETRY_TOOL -> {
+                    world.hoverTile(camera.position, camera.ray);
+                }
             }
             
             if(leftHeld ^ middleHeld ^ rightHeld) {
-                if(leftHeld && ui.getToolSelected(1))   {
+                if(leftHeld && ui.getToolSelected(GEOMETRY_TOOL))   {
                     world.stretchShape(camera.rayVerticalChange, ctrlHeld);
                 }
                 
