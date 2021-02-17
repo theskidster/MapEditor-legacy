@@ -81,7 +81,7 @@ public class World {
         origin.render(program);
     }
     
-    public void hoverTile(Vector3f camPos, Vector3f camRay) {
+    public void selectTile(Vector3f camPos, Vector3f camRay) {
         rayTest.set(camPos.x, camPos.y, camPos.z, camRay.x, camRay.y, camRay.z);
         
         tiles.entrySet().forEach((entry) -> {
@@ -90,11 +90,13 @@ public class World {
         });
     }
     
-    public void hoverVertex(Vector3f camPos, Vector3f camRay, Vector3f camDir) {
+    public void selectVertices(Vector3f camPos, Vector3f camRay, boolean retainPrev) {
         camRay.mul(0.5f, tempVec);
         tempVec.normalize();
         
-        geometry.hoverVertex(camPos, tempVec, camDir);
+        if(!retainPrev) geometry.clearSelectedVertices();
+        
+        geometry.selectVertices(camPos, tempVec);
     }
     
     public void addShape() {

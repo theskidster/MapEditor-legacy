@@ -136,15 +136,7 @@ public final class Window {
             
             camera.castRay((float) ((2f * xPos) / width - 1f), (float) (1f - (2f * yPos) / height));
             
-            switch(ui.getToolID()) {
-                case SELECT_TOOL -> {
-                    world.hoverVertex(camera.position, camera.ray, camera.direction);
-                }
-                
-                case GEOMETRY_TOOL -> {
-                    world.hoverTile(camera.position, camera.ray);
-                }
-            }
+            if(ui.getToolSelected(GEOMETRY_TOOL)) world.selectTile(camera.position, camera.ray);
             
             if(leftHeld ^ middleHeld ^ rightHeld) {
                 if(leftHeld && ui.getToolSelected(GEOMETRY_TOOL))   {
@@ -167,9 +159,15 @@ public final class Window {
                 case GLFW_MOUSE_BUTTON_LEFT -> {
                     leftHeld = action == GLFW_PRESS;
                     
-                    if(ui.getToolSelected(1)) {
-                        if(leftHeld) world.addShape();
-                        else         world.finalizeShape();
+                    switch(ui.getToolID()) {
+                        case SELECT_TOOL -> {
+                            world.selectVertices(camera.position, camera.ray, ctrlHeld);
+                        }
+                        
+                        case GEOMETRY_TOOL -> {
+                            if(leftHeld) world.addShape();
+                            else         world.finalizeShape();
+                        }
                     }
                 }
                 

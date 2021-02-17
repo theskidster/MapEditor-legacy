@@ -21,7 +21,6 @@ import org.joml.Matrix3f;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
-import org.joml.Vector3fc;
 import org.joml.Vector3i;
 import static org.lwjgl.opengl.GL30.*;
 import org.lwjgl.system.MemoryUtil;
@@ -50,6 +49,7 @@ final class Geometry {
     private final Matrix3f normal       = new Matrix3f();
     private final Vector3i locationDiff = new Vector3i();
     private Texture texture;
+    private VertexSelector selector = new VertexSelector();
     
     private Map<Integer, Vector2f> texCoords;
     private Map<Integer, Vector3f> normals;
@@ -57,8 +57,7 @@ final class Geometry {
     private LinkedHashMap<Integer, Vector3f> vertexPositions = new LinkedHashMap<>();
     private LinkedHashMap<Integer, Face> faces               = new LinkedHashMap<>();
     
-    private Vector3f color        = Color.convert(Color.WHITE);
-    private Vector2f sphereResult = new Vector2f();
+    private Vector3f color = Color.convert(Color.WHITE);
     
     Geometry(String filename) {
         texCoords = new HashMap<>() {{
@@ -109,34 +108,29 @@ final class Geometry {
     
     void draw(ShaderProgram program, LightSource[] lights, int numLights) {
         if(updateData) {
-            try {
-                findBufferSize();
-                
-                FloatBuffer vertices = MemoryUtil.memAllocFloat(bufferSizeInBytes);
-                
-                faces.forEach((index, face) -> {
-                    for(int i = 0; i < 3; i++) {
-                        Vector3f pos    = vertexPositions.get(face.vp[i]);
-                        Vector2f coords = texCoords.get(face.tc[i]);
-                        Vector3f norm   = normals.get(face.n);
-                        
-                        vertices.put(pos.x).put(pos.y).put(pos.z)
-                                .put(coords.x).put(coords.y)
-                                .put(norm.x).put(norm.y).put(norm.z);
-                    }
-                });
-                
-                vertices.flip();
-                
-                glBindBuffer(GL_ARRAY_BUFFER, vbo);
-                glBufferSubData(GL_ARRAY_BUFFER, 0, vertices);
-                
-            } catch(BufferOverflowException e) {
-                Logger.setStackTrace(e);
-                Logger.log(LogLevel.SEVERE, "Geometry buffer experienced overflow.");
-            }
+            findBufferSize();
+
+            FloatBuffer vertices = MemoryUtil.memAllocFloat(bufferSizeInBytes);
+
+            faces.forEach((index, face) -> {
+                for(int i = 0; i < 3; i++) {
+                    Vector3f pos    = vertexPositions.get(face.vp[i]);
+                    Vector2f coords = texCoords.get(face.tc[i]);
+                    Vector3f norm   = normals.get(face.n);
+
+                    vertices.put(pos.x).put(pos.y).put(pos.z)
+                            .put(coords.x).put(coords.y)
+                            .put(norm.x).put(norm.y).put(norm.z);
+                }
+            });
+
+            vertices.flip();
+
+            glBindBuffer(GL_ARRAY_BUFFER, vbo);
+            glBufferSubData(GL_ARRAY_BUFFER, 0, vertices);
             
             updateData = false;
+            MemoryUtil.memFree(vertices);
         }
         
         glEnable(GL_CULL_FACE);
@@ -171,18 +165,11 @@ final class Geometry {
         glDisable(GL_CULL_FACE);
         glDisable(GL_DEPTH_TEST);
         
-        if(World.currTool == SELECT_TOOL) {
-            glPointSize(6);
-            glBindVertexArray(vao);
-            
-            program.setUniform("uType", 0);
-            program.setUniform("uColor", color);
-            
-            glDrawArrays(GL_POINTS, 0, numVertices);
-            glPointSize(1);
-        }
-        
         App.checkGLError();
+        
+        if(World.currTool == SELECT_TOOL) {
+            selector.draw(program, vertexPositions);
+        }
     }
     
     void addShape(float x, float y, float z) {
@@ -371,9 +358,7 @@ final class Geometry {
         }
     }
     
-    List<Integer> hoverVertex(Vector3f camPos, Vector3f camRay, Vector3f camDir) {
-        List<Integer> vertices = new LinkedList<>();
-        
+    void selectVertices(Vector3f camPos, Vector3f camRay) {
         vertexPositions.forEach((index, position) -> {
             float distance = (float) Math.sqrt(
                     Math.pow((position.x - camPos.x), 2) + 
@@ -382,60 +367,13 @@ final class Geometry {
                     0.0003f;
 
             if(Intersectionf.testRaySphere(camPos, camRay, position, distance)) {
-                vertices.add(index);
+                selector.addVertex(index);
             }
         });
-        
-        if(vertices.size() > 0) {
-            color.set(Color.RED.r, Color.RED.g, Color.RED.b);
-        } else {
-            color.set(Color.WHITE.r, Color.WHITE.g, Color.WHITE.b);
-        }
-        
-        return vertices;
     }
     
-    public static boolean testRaySphere(Vector3fc origin, Vector3fc dir, Vector3fc center, float radiusSquared, String d) {
-        System.out.println(d);
-        return testRaySphere(origin.x(), origin.y(), origin.z(), dir.x(), dir.y(), dir.z(), center.x(), center.y(), center.z(), radiusSquared);
-    }
-    
-    public static boolean testRaySphere(float originX, float originY, float originZ, float dirX, float dirY, float dirZ,
-            float centerX, float centerY, float centerZ, float radiusSquared) {
-        
-        float Lx = centerX - originX;
-        float Ly = centerY - originY;
-        float Lz = centerZ - originZ;
-        
-        //System.out.println("L: " + Lx + ", " + Ly + ", " + Lz);
-        
-        float tca = Lx * dirX + Ly * dirY + Lz * dirZ;
-        
-        System.out.println("TCA: " + tca);
-        
-        float d2 = Lx * Lx + Ly * Ly + Lz * Lz - tca * tca;
-        
-        System.out.println("D2: " + d2);
-        
-        if (d2 > radiusSquared) {
-            System.out.println("false");
-            return false;
-        }
-        float thc = (float) org.joml.Math.sqrt(radiusSquared - d2);
-        float t0 = tca - thc;
-        float t1 = tca + thc;
-        
-        //System.out.println("thc: " + thc);
-        //System.out.println("t0: " + t0);
-        //System.out.println("t1: " + t1);
-        
-        boolean result = t0 < t1 && t1 >= 0.0f;
-        
-        if(result) {
-            System.out.println("true");
-        }
-        
-        return result;
+    void clearSelectedVertices() {
+        selector.clear();
     }
     
     Vector3f getVertexPos(int index) { return vertexPositions.get(index); }

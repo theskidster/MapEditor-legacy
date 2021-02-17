@@ -4,7 +4,7 @@
 layout (location = 0) in vec3 aPosition;
 layout (location = 1) in vec2 aTexCoords;
 layout (location = 2) in vec3 aNormal;
-layout (location = 3) in int  aSelected;
+layout (location = 3) in vec3 aColor;
 
 //Instanced attributes
 layout (location = 4) in vec3 aPosOffset;
@@ -43,6 +43,11 @@ void main() {
         case 3: //Used for light source icons
             ioTexCoords = aTexCoords;
             ioColor     = uColor;
+            gl_Position = uProjection * uView * uModel * vec4(aPosition, 1.0f);
+            break;
+
+        case 4: //Used for indicating vertex selection
+            ioColor     = aColor;
             gl_Position = uProjection * uView * uModel * vec4(aPosition, 1.0f);
             break;
     }

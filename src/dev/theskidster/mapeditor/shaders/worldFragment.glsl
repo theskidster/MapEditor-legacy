@@ -61,7 +61,7 @@ vec3 calcPointLight(Light light, vec3 normal, vec3 fragPos) {
 
 void main() {
     switch(uType) {
-        case 0: case 1: //Used for the world origin indicator and floor tiles
+        case 0: case 1: case 4: //Used for the world origin indicator, floor tiles, and vertex selection
             ioResult = vec4(ioColor, 0);
             break;
 
