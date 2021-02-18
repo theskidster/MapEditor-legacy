@@ -5,7 +5,6 @@ import dev.theskidster.mapeditor.graphics.Texture;
 import dev.theskidster.mapeditor.main.App;
 import static dev.theskidster.mapeditor.main.App.SELECT_TOOL;
 import dev.theskidster.mapeditor.main.ShaderProgram;
-import dev.theskidster.mapeditor.util.Color;
 import static dev.theskidster.mapeditor.world.World.CELL_SIZE;
 import java.nio.FloatBuffer;
 import java.util.HashMap;
@@ -52,8 +51,6 @@ final class Geometry {
     private LinkedHashMap<Integer, Vector3f> vertexPositions = new LinkedHashMap<>();
     private LinkedHashMap<Integer, Face> faces               = new LinkedHashMap<>();
     private LinkedHashMap<Integer, Vector3f> positionSubMap  = new LinkedHashMap<>();
-    
-    private Vector3f color = Color.convert(Color.WHITE);
     
     Geometry(String filename) {
         texCoords = new HashMap<>() {{
@@ -373,6 +370,7 @@ final class Geometry {
     }
     
     Vector3f getVertexPos(int index) { return vertexPositions.get(index); }
+    boolean getEmpty() { return vertexPositions.isEmpty(); }
     
     Map<Integer, Vector3f> getSelectedVertices() {
         positionSubMap.clear();

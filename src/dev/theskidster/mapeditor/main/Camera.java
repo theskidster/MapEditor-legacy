@@ -14,7 +14,9 @@ import org.joml.Vector4f;
  */
 public final class Camera {
     
+    private float prevRayX;
     private float prevRayY;
+    float rayHorizontalChange;
     float rayVerticalChange;
     
     private float pitch;
@@ -96,7 +98,8 @@ public final class Camera {
     }
     
     public void castRay(float x, float y) {
-        prevRayY = ray.y; //Store the previous value of the rays Y component.
+        prevRayX = ray.x;
+        prevRayY = ray.y;
         
         tempVec3.set(x, y, -1f, 1f);
         
@@ -111,7 +114,8 @@ public final class Camera {
         
         ray.set(tempVec3.x, tempVec3.y, tempVec3.z);
         
-        rayVerticalChange = getChangeIntensity(ray.y, prevRayY, 35f);
+        rayHorizontalChange = getChangeIntensity(ray.x, prevRayX, 35f);
+        rayVerticalChange   = getChangeIntensity(ray.y, prevRayY, 35f);
     }
     
 }

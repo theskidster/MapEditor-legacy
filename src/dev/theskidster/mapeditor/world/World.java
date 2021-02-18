@@ -76,7 +76,9 @@ public class World {
         
         vertexSelected = selectedVertices.size() > 0;
         
-        cursor.update(selectedVertices);
+        if(World.currTool == SELECT_TOOL && vertexSelected) {
+            cursor.update(selectedVertices);
+        }
         
         selectedVertices.clear();
         
@@ -118,6 +120,14 @@ public class World {
         geometry.selectVertices(camPos, tempVec);
     }
     
+    public void selectCursor(Vector3f camPos, Vector3f camRay) {
+        cursor.selectArrow(camPos, camRay);
+    }
+    
+    public void moveCursor(float rayChangeX, float rayChangeY) {
+        cursor.moveArrow(rayChangeX, rayChangeY);
+    }
+    
     public void addShape() {
         if(tiles.containsValue(true)) {
             Vector2i tileLocation = tiles.entrySet().stream().filter(entry -> entry.getValue()).findAny().get().getKey();
@@ -135,5 +145,12 @@ public class World {
     public void finalizeShape() {
         geometry.shapeHeight = 0;
     }
+    
+    public boolean geometryEmpty() {
+        return geometry.getEmpty();
+    }
+    
+    public boolean getVertexSelected() { return vertexSelected; }
+    public boolean getCursorSelected() { return cursor.getSelected(); }
     
 }

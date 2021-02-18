@@ -139,8 +139,30 @@ public final class Window {
             if(ui.getToolSelected(GEOMETRY_TOOL)) world.selectTile(camera.position, camera.ray);
             
             if(leftHeld ^ middleHeld ^ rightHeld) {
-                if(leftHeld && ui.getToolSelected(GEOMETRY_TOOL))   {
-                    world.stretchShape(camera.rayVerticalChange, ctrlHeld);
+                if(leftHeld) {
+                    switch(ui.getToolID()) {
+                        case SELECT_TOOL -> {
+                            //TODO: only require mouse movement along the currently selected axis
+                            
+                            /*
+                            Maybe just increase the size of the bounding box along the perpendicular
+                            axis while its moving- might exhibit the same effect.
+                            */
+                            
+                            /*
+                            world.selectCursor(camera.position, camera.ray);
+                            
+                            if(world.getCursorSelected()) {
+                                world.moveCursor(camera.rayHorizontalChange, camera.rayVerticalChange);
+                            }*/
+                        }
+                        
+                        case GEOMETRY_TOOL -> {
+                            if(!world.geometryEmpty()) {
+                                world.stretchShape(camera.rayVerticalChange, ctrlHeld);
+                            }
+                        }
+                    }
                 }
                 
                 if(middleHeld) camera.setPosition(xPos, yPos);
@@ -161,7 +183,13 @@ public final class Window {
                     
                     switch(ui.getToolID()) {
                         case SELECT_TOOL -> {
-                            world.selectVertices(camera.position, camera.ray, ctrlHeld);
+                            if(world.getVertexSelected()) {
+                                world.selectCursor(camera.position, camera.ray);
+                            }
+                            
+                            if(!world.getCursorSelected() && action == GLFW_PRESS) {
+                                world.selectVertices(camera.position, camera.ray, ctrlHeld);
+                            }
                         }
                         
                         case GEOMETRY_TOOL -> {
