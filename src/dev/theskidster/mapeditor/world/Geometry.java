@@ -4,17 +4,12 @@ import dev.theskidster.mapeditor.graphics.LightSource;
 import dev.theskidster.mapeditor.graphics.Texture;
 import dev.theskidster.mapeditor.main.App;
 import static dev.theskidster.mapeditor.main.App.SELECT_TOOL;
-import dev.theskidster.mapeditor.main.LogLevel;
-import dev.theskidster.mapeditor.main.Logger;
 import dev.theskidster.mapeditor.main.ShaderProgram;
 import dev.theskidster.mapeditor.util.Color;
 import static dev.theskidster.mapeditor.world.World.CELL_SIZE;
-import java.nio.BufferOverflowException;
 import java.nio.FloatBuffer;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import org.joml.Intersectionf;
 import org.joml.Matrix3f;
@@ -56,6 +51,7 @@ final class Geometry {
     private LinkedHashMap<Integer, Vector3f> initialVPs      = new LinkedHashMap<>();
     private LinkedHashMap<Integer, Vector3f> vertexPositions = new LinkedHashMap<>();
     private LinkedHashMap<Integer, Face> faces               = new LinkedHashMap<>();
+    private LinkedHashMap<Integer, Vector3f> positionSubMap  = new LinkedHashMap<>();
     
     private Vector3f color = Color.convert(Color.WHITE);
     
@@ -129,8 +125,8 @@ final class Geometry {
             glBindBuffer(GL_ARRAY_BUFFER, vbo);
             glBufferSubData(GL_ARRAY_BUFFER, 0, vertices);
             
-            updateData = false;
             MemoryUtil.memFree(vertices);
+            updateData = false;
         }
         
         glEnable(GL_CULL_FACE);
@@ -377,6 +373,18 @@ final class Geometry {
     }
     
     Vector3f getVertexPos(int index) { return vertexPositions.get(index); }
+    
+    Map<Integer, Vector3f> getSelectedVertices() {
+        positionSubMap.clear();
+        
+        for(int i = 0; i < vertexPositions.size(); i++) {
+            if(selector.contains(i)) {
+                positionSubMap.put(i, vertexPositions.get(i));
+            }
+        }
+        
+        return positionSubMap;
+    }
     
     void setVertexPos(int index, String axis, float value) {
         switch(axis) {

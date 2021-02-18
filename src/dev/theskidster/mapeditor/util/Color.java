@@ -36,7 +36,7 @@ public final class Color {
     public static final Color RGM_DARK_GRAY   = new Color(41, 45, 62);
     public static final Color RGM_BLACK       = new Color(32, 35, 51);
     public static final Color RGM_RED         = new Color(232, 17, 35);
-    public static final Color RGM_GREEN       = new Color(4, 168, 0);
+    public static final Color RGM_GREEN       = new Color(4, 186, 0);
     public static final Color RGM_BLUE        = new Color(51, 102, 204);
     public static final Color RGM_NAVY        = new Color(19, 22, 29);
     public static final Color RGM_PINK        = new Color(130, 83, 140);

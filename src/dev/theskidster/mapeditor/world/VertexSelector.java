@@ -22,7 +22,7 @@ class VertexSelector {
     public final int vao = glGenVertexArrays();
     public final int vbo = glGenBuffers();
     
-    private List<Integer> selectedVertices = new LinkedList<>();
+    private final List<Integer> selectedVertices = new LinkedList<>();
     
     VertexSelector() {
         glBindVertexArray(vao);
@@ -44,7 +44,8 @@ class VertexSelector {
     }
     
     void draw(ShaderProgram program, LinkedHashMap<Integer, Vector3f> vertexPositions) {
-        glPointSize(6);
+        glPointSize(7);
+        glDepthFunc(GL_ALWAYS);
         glBindVertexArray(vao);
         
         findBufferSize(vertexPositions.size());
@@ -55,7 +56,7 @@ class VertexSelector {
             
             if(selectedVertices.contains(i)) {
                 vertexBuf.put(position.x).put(position.y).put(position.z)
-                         .put(1).put(0).put(0);
+                         .put(1).put(1).put(0);
             } else {
                 vertexBuf.put(position.x).put(position.y).put(position.z)
                          .put(1).put(1).put(1);
@@ -73,6 +74,7 @@ class VertexSelector {
         
         glDrawArrays(GL_POINTS, 0, vertexPositions.size());
         glPointSize(1);
+        glDepthFunc(GL_LESS);
         
         App.checkGLError();
     }
@@ -87,6 +89,14 @@ class VertexSelector {
     
     void clear() {
         selectedVertices.clear();
+    }
+    
+    boolean contains(int index) {
+        return selectedVertices.contains(index);
+    }
+    
+    List<Integer> getSelectedVertices() {
+        return selectedVertices;
     }
     
 }

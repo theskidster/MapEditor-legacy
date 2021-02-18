@@ -3,8 +3,10 @@ package dev.theskidster.mapeditor.world;
 import dev.theskidster.mapeditor.graphics.Light;
 import dev.theskidster.mapeditor.graphics.LightSource;
 import dev.theskidster.mapeditor.main.App;
+import static dev.theskidster.mapeditor.main.App.SELECT_TOOL;
 import dev.theskidster.mapeditor.main.ShaderProgram;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import org.joml.Vector3f;
 import org.joml.RayAabIntersection;
@@ -29,6 +31,8 @@ public class World {
     private int numLights = 1;
     static int currTool;
     
+    private boolean vertexSelected;
+    
     final Vector3i initialLocation = new Vector3i();
     final Vector3i cursorLocation  = new Vector3i();
     final Vector3f tempVec         = new Vector3f();
@@ -40,8 +44,11 @@ public class World {
     private final Geometry geometry;
     
     final Map<Vector2i, Boolean> tiles;
+    private final Map<Integer, Vector3f> selectedVertices = new LinkedHashMap<>();
     
     private final LightSource[] lights = new LightSource[App.MAX_LIGHTS];
+    
+    MovementCursor cursor = new MovementCursor(new Vector3f(0, 1, 1));
     
     public World(int width, int height, int depth, String filename) {
         this.width  = width;
@@ -65,6 +72,14 @@ public class World {
     public void update(Vector3f camRay, int toolID) {
         currTool = toolID;
         
+        selectedVertices.putAll(geometry.getSelectedVertices());
+        
+        vertexSelected = selectedVertices.size() > 0;
+        
+        cursor.update(selectedVertices);
+        
+        selectedVertices.clear();
+        
         for(LightSource light : lights) {
             if(light != null) light.update();
         }
@@ -76,6 +91,10 @@ public class World {
         
         for(LightSource light : lights) {
             if(light != null) light.render(program, camPos, camUp);
+        }
+        
+        if(World.currTool == SELECT_TOOL && vertexSelected) {
+            cursor.render(program);
         }
         
         origin.render(program);
