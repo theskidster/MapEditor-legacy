@@ -142,19 +142,9 @@ public final class Window {
                 if(leftHeld) {
                     switch(ui.getToolID()) {
                         case SELECT_TOOL -> {
-                            //TODO: only require mouse movement along the currently selected axis
-                            
-                            /*
-                            Maybe just increase the size of the bounding box along the perpendicular
-                            axis while its moving- might exhibit the same effect.
-                            */
-                            
-                            /*
-                            world.selectCursor(camera.position, camera.ray);
-                            
-                            if(world.getCursorSelected()) {
+                            if(world.getVertexSelected()) {
                                 world.moveCursor(camera.rayHorizontalChange, camera.rayVerticalChange);
-                            }*/
+                            }
                         }
                         
                         case GEOMETRY_TOOL -> {

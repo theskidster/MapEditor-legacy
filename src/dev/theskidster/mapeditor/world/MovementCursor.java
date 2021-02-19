@@ -17,6 +17,8 @@ import org.lwjgl.system.MemoryStack;
 
 final class MovementCursor {
     
+    private int arrow;
+    
     private final float START  = 0.1f;
     private final float LENGTH = 0.5f;
     
@@ -115,40 +117,48 @@ final class MovementCursor {
                     min.set(position.x - LENGTH, position.y - distance, position.z - distance);
                     max.set(position.x - START, position.y + distance, position.z + distance);
                 }
-                /*
                 case 1 -> {
-                    min.set(position.x + START, position.y, position.z);
-                    max.set(position.x + LENGTH, position.y, position.z);
+                    min.set(position.x + START, position.y - distance, position.z - distance);
+                    max.set(position.x + LENGTH, position.y + distance, position.z + distance);
                 }
                 case 2 -> {
-                    min.set(position.x, position.y - START, position.z);
-                    max.set(position.x, position.y - LENGTH, position.z);
+                    min.set(position.x - distance, position.y - LENGTH, position.z - distance);
+                    max.set(position.x + distance, position.y - START, position.z + distance);
                 }
                 case 3 -> {
-                    min.set(position.x, position.y + START, position.z);
-                    max.set(position.x, position.y + LENGTH, position.z);
+                    min.set(position.x - distance, position.y + START, position.z - distance);
+                    max.set(position.x + distance, position.y + LENGTH, position.z + distance);
                 }
                 case 4 -> {
-                    min.set(position.x, position.y, position.z - START);
-                    max.set(position.x, position.y, position.z - LENGTH);
+                    min.set(position.x - distance, position.y - distance, position.z - LENGTH);
+                    max.set(position.x + distance, position.y + distance, position.z - START);
                 }
                 case 5 -> {
-                    min.set(position.x, position.y, position.z + START);
-                    max.set(position.x, position.y, position.z + LENGTH);
+                    min.set(position.x - distance, position.y - distance, position.z + START);
+                    max.set(position.x + distance, position.y + distance, position.z + LENGTH);
                 }
-                */
             }
             
             result = Intersectionf.testRayAab(camPos, camRay, min, max);
-            if(result) break;
+            
+            if(result) {
+                arrow = i;
+                break;
+            }
         }
         
         selected = result;
     }
     
     void moveArrow(float rayChangeX, float rayChangeY) {
-        System.out.println("moving");
-        //TODO: move vertices along the axis of the selected arrow
+        /*
+        TODO:
+        
+        maybe use a cross product to determine the slected arrows direction
+        from the camera then determine how mouse movement effects it?
+        */
+        
+        System.out.println("moving " + arrow);
     }
     
     boolean getSelected() { return selected; }
