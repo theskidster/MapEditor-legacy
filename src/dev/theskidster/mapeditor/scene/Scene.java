@@ -32,6 +32,7 @@ public class Scene {
     static int currTool;
     
     private boolean vertexSelected;
+    private boolean snapToGrid;
     
     private Movement cursorMovement = new Movement();
     final Vector3i initialLocation  = new Vector3i();
@@ -46,6 +47,8 @@ public class Scene {
     
     final Map<Vector2i, Boolean> tiles;
     private final Map<Integer, Vector3f> selectedVertices = new LinkedHashMap<>();
+    private final Map<Integer, Vector3f> initialVertPos   = new LinkedHashMap<>();
+    private final Map<Integer, Vector3f> newVertPos       = new LinkedHashMap<>();
     
     private final LightSource[] lights = new LightSource[App.MAX_LIGHTS];
     
@@ -75,14 +78,41 @@ public class Scene {
         
         selectedVertices.putAll(geometry.getSelectedVertices());
         
+        if(snapToGrid) {
+            if(initialVertPos.isEmpty()) {
+                selectedVertices.forEach((index, position) -> initialVertPos.put(index, new Vector3f(position)));
+            }
+        } else {
+            initialVertPos.clear();
+        }
+        
+        selectedVertices.forEach((index, position) -> {
+            if(!newVertPos.containsKey(index)) {
+                newVertPos.put(index, new Vector3f(position));
+            } else {
+                if(newVertPos.get(index).equals(position.x, position.y, position.z)) {
+                    newVertPos.put(index, new Vector3f(position));
+                }
+            }
+        });
+        
         vertexSelected = selectedVertices.size() > 0;
         
         if(Scene.currTool == SELECT_TOOL && vertexSelected) {
             selectedVertices.forEach((index, position) -> {
                 switch(cursorMovement.axis) {
-                    case "x", "X" -> geometry.setVertexPos(index, position.x += cursorMovement.value, position.y, position.z);
-                    case "y", "Y" -> geometry.setVertexPos(index, position.x, position.y += cursorMovement.value, position.z);
-                    case "z", "Z" -> geometry.setVertexPos(index, position.x, position.y, position.z += cursorMovement.value);
+                    case "x", "X" -> newVertPos.get(index).set(position.x += cursorMovement.value, position.y, position.z);
+                    case "y", "Y" -> newVertPos.get(index).set(position.x, position.y += cursorMovement.value, position.z);
+                    case "z", "Z" -> newVertPos.get(index).set(position.x, position.y, position.z += cursorMovement.value);
+                }
+                
+                Vector3f newPos = newVertPos.get(index);
+                
+                if(!snapToGrid) {
+                    geometry.setVertexPos(index, newPos.x, newPos.y, newPos.z);
+                    geometry.udpateData();
+                } else {
+                    
                 }
             });
             
@@ -136,7 +166,8 @@ public class Scene {
         cursor.selectArrow(camPos, camRay);
     }
     
-    public void moveCursor(Vector3f camDir, Vector3f rayChange) {
+    public void moveCursor(Vector3f camDir, Vector3f rayChange, boolean ctrlHeld) {
+        snapToGrid     = ctrlHeld;
         cursorMovement = cursor.moveArrow(camDir, rayChange);
     }
     

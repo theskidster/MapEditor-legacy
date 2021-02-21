@@ -396,6 +396,13 @@ final class Geometry {
     
     void setVertexPos(int index, float x, float y, float z) {
         vertexPositions.get(index).set(x, y, z);
+    }
+    
+    void snapVertexPos(int index) {
+        vertexPositions.get(index).round();
+    }
+    
+    void udpateData() {
         updateData = true;
     }
     

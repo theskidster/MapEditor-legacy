@@ -143,7 +143,7 @@ public final class Window {
                     switch(ui.getToolID()) {
                         case SELECT_TOOL -> {
                             if(scene.getVertexSelected()) {
-                                scene.moveCursor(camera.direction, camera.rayChange);
+                                scene.moveCursor(camera.direction, camera.rayChange, ctrlHeld);
                             }
                         }
                         
