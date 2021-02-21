@@ -143,13 +143,13 @@ public final class Window {
                     switch(ui.getToolID()) {
                         case SELECT_TOOL -> {
                             if(world.getVertexSelected()) {
-                                world.moveCursor(camera.rayHorizontalChange, camera.rayVerticalChange);
+                                world.moveCursor(camera.direction, camera.rayChange);
                             }
                         }
                         
                         case GEOMETRY_TOOL -> {
                             if(!world.geometryEmpty()) {
-                                world.stretchShape(camera.rayVerticalChange, ctrlHeld);
+                                world.stretchShape(camera.rayChange.y, ctrlHeld);
                             }
                         }
                     }

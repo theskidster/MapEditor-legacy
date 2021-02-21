@@ -17,45 +17,59 @@ import org.lwjgl.system.MemoryStack;
 
 final class MovementCursor {
     
-    private int arrow;
+    private int arrowID;
     
     private final float START  = 0.1f;
     private final float LENGTH = 0.5f;
+    private float sensitivityX = 9.5f;
+    private float sensitivityY = 23.5f;
+    private float distance;
     
     private boolean selected;
     
-    private Vector3f position;
+    private final Vector3f position;
+    private final Vector3f[] directions;
     
-    private final Graphics g1       = new Graphics();
+    private final Graphics g        = new Graphics();
     private final Vector3f colorVec = new Vector3f();
     private final Vector3f avg      = new Vector3f();
     private final Vector3f min      = new Vector3f();
     private final Vector3f max      = new Vector3f();
+    private final Vector3f normDir  = new Vector3f();
     
     MovementCursor(Vector3f position) {
         this.position = position;
         
+        directions = new Vector3f[6];
+        
+        directions[0] = new Vector3f(-1,  0,  0);
+        directions[1] = new Vector3f( 1,  0,  0);
+        directions[2] = new Vector3f( 0, -1,  0);
+        directions[3] = new Vector3f( 0,  1,  0);
+        directions[4] = new Vector3f( 0,  0, -1);
+        directions[5] = new Vector3f( 0,  0,  1);
+        
         try(MemoryStack stack = MemoryStack.stackPush()) {
-            g1.vertices = stack.mallocFloat(36);
+            g.vertices = stack.mallocFloat(36);
             
             //(vec3 position)
-            g1.vertices.put(-START) .put(0)      .put(0);
-            g1.vertices.put(-LENGTH).put(0)      .put(0);
-            g1.vertices.put( START) .put(0)      .put(0);
-            g1.vertices.put( LENGTH).put(0)      .put(0);
-            g1.vertices.put(0)      .put(-START) .put(0);
-            g1.vertices.put(0)      .put(-LENGTH).put(0);
-            g1.vertices.put(0)      .put( START) .put(0);
-            g1.vertices.put(0)      .put( LENGTH).put(0);
-            g1.vertices.put(0)      .put(0)      .put( START);
-            g1.vertices.put(0)      .put(0)      .put( LENGTH);
-            g1.vertices.put(0)      .put(0)      .put(-START);
-            g1.vertices.put(0)      .put(0)      .put(-LENGTH);
+            g.vertices.put(-START) .put(0)      .put(0);
+            g.vertices.put(-LENGTH).put(0)      .put(0);
+            g.vertices.put( START) .put(0)      .put(0);
+            g.vertices.put( LENGTH).put(0)      .put(0);
+            g.vertices.put(0)      .put(-START) .put(0);
+            g.vertices.put(0)      .put(-LENGTH).put(0);
+            g.vertices.put(0)      .put( START) .put(0);
+            g.vertices.put(0)      .put( LENGTH).put(0);
+            g.vertices.put(0)      .put(0)      .put( START);
+            g.vertices.put(0)      .put(0)      .put( LENGTH);
+            g.vertices.put(0)      .put(0)      .put(-START);
+            g.vertices.put(0)      .put(0)      .put(-LENGTH);
             
-            g1.vertices.flip();
+            g.vertices.flip();
         }
         
-        g1.bindBuffers();
+        g.bindBuffers();
         
         glVertexAttribPointer(0, 3, GL_FLOAT, false, (3 * Float.BYTES), 0);
         
@@ -77,12 +91,12 @@ final class MovementCursor {
             avg.set(0);
         }
         
-        g1.modelMatrix.translation(position);
+        g.modelMatrix.translation(position);
     }
     
     void render(ShaderProgram program) {
         glLineWidth(3);
-        glBindVertexArray(g1.vao);
+        glBindVertexArray(g.vao);
         
         for(int i = 0; i < 6; i++) {
             switch(i) {
@@ -92,7 +106,7 @@ final class MovementCursor {
             }
             
             program.setUniform("uType", 0);
-            program.setUniform("uModel", false, g1.modelMatrix);
+            program.setUniform("uModel", false, g.modelMatrix);
             program.setUniform("uColor", colorVec);
             
             glDrawArrays(GL_LINES, 2 * i, (2 * i) + 2);
@@ -105,7 +119,7 @@ final class MovementCursor {
     void selectArrow(Vector3f camPos, Vector3f camRay) {
         boolean result = false;
         
-        float distance = (float) Math.sqrt(
+        distance = (float) Math.sqrt(
                     Math.pow((position.x - camPos.x), 2) + 
                     Math.pow((position.y - camPos.y), 2) +
                     Math.pow((position.z - camPos.z), 2)) *
@@ -142,7 +156,7 @@ final class MovementCursor {
             result = Intersectionf.testRayAab(camPos, camRay, min, max);
             
             if(result) {
-                arrow = i;
+                arrowID = i;
                 break;
             }
         }
@@ -150,17 +164,70 @@ final class MovementCursor {
         selected = result;
     }
     
-    void moveArrow(float rayChangeX, float rayChangeY) {
-        /*
-        TODO:
+    Movement moveArrow(Vector3f camDir, Vector3f rayChange) {
+        camDir.normalize(normDir);
+        float dot = normDir.dot(directions[arrowID]);
         
-        maybe use a cross product to determine the slected arrows direction
-        from the camera then determine how mouse movement effects it?
-        */
+        Movement movement = new Movement();
         
-        System.out.println("moving " + arrow);
+        switch(arrowID) {
+            case 0 -> {
+                if(Math.abs(dot) < 0.65f) {
+                    movement.axis  = "X";
+                    movement.value = rayChange.x * (distance * sensitivityX);
+                } else {
+                    movement.axis  = "X";
+                    movement.value = ((dot > 0) ? rayChange.y * -1 : rayChange.y) * (distance * sensitivityY);
+                }
+            }
+            
+            case 1 -> {
+                if(Math.abs(dot) < 0.65f) {
+                    movement.axis  = "X";
+                    movement.value = rayChange.x * (distance * sensitivityX);
+                } else {
+                    movement.axis  = "X";
+                    movement.value = ((dot > 0) ? rayChange.y : rayChange.y * -1) * (distance * sensitivityY);
+                }
+            }
+            
+            case 2, 3 -> {
+                movement.axis = "Y";
+                movement.value = rayChange.y * (distance * ((Math.abs(dot) < 0.65f) ? sensitivityX : sensitivityY));
+            }
+            
+            case 4 -> {
+                if(Math.abs(dot) < 0.65f) {
+                    movement.axis  = "Z";
+                    movement.value = rayChange.z * (distance * sensitivityX);
+                } else {
+                    movement.axis  = "Z";
+                    movement.value = ((dot > 0) ? rayChange.y * -1 : rayChange.y) * (distance * sensitivityY);
+                }
+            }
+            
+            case 5 -> {
+                if(Math.abs(dot) < 0.65f) {
+                    movement.axis  = "Z";
+                    movement.value = rayChange.z * (distance * sensitivityX);
+                } else {
+                    movement.axis  = "Z";
+                    movement.value = ((dot > 0) ? rayChange.y : rayChange.y * -1) * (distance * sensitivityY);
+                }
+            }
+        }
+        
+        return movement;
     }
     
     boolean getSelected() { return selected; }
+    
+    void setSensitivityX(float value) {
+        sensitivityX = value;
+    }
+    
+    void setSensitivityY(float value) {
+        sensitivityY = value;
+    }
     
 }

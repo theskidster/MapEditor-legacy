@@ -33,9 +33,10 @@ public class World {
     
     private boolean vertexSelected;
     
-    final Vector3i initialLocation = new Vector3i();
-    final Vector3i cursorLocation  = new Vector3i();
-    final Vector3f tempVec         = new Vector3f();
+    private Movement cursorMovement = new Movement();
+    final Vector3i initialLocation  = new Vector3i();
+    final Vector3i cursorLocation   = new Vector3i();
+    final Vector3f tempVec          = new Vector3f();
     
     private final RayAabIntersection rayTest = new RayAabIntersection();
     
@@ -77,7 +78,18 @@ public class World {
         vertexSelected = selectedVertices.size() > 0;
         
         if(World.currTool == SELECT_TOOL && vertexSelected) {
+            selectedVertices.forEach((index, position) -> {
+                switch(cursorMovement.axis) {
+                    case "x", "X" -> geometry.setVertexPos(index, position.x += cursorMovement.value, position.y, position.z);
+                    case "y", "Y" -> geometry.setVertexPos(index, position.x, position.y += cursorMovement.value, position.z);
+                    case "z", "Z" -> geometry.setVertexPos(index, position.x, position.y, position.z += cursorMovement.value);
+                }
+            });
+            
             cursor.update(selectedVertices);
+            
+            cursorMovement.axis  = "";
+            cursorMovement.value = 0;
         }
         
         selectedVertices.clear();
@@ -124,8 +136,8 @@ public class World {
         cursor.selectArrow(camPos, camRay);
     }
     
-    public void moveCursor(float rayChangeX, float rayChangeY) {
-        cursor.moveArrow(rayChangeX, rayChangeY);
+    public void moveCursor(Vector3f camDir, Vector3f rayChange) {
+        cursorMovement = cursor.moveArrow(camDir, rayChange);
     }
     
     public void addShape() {
