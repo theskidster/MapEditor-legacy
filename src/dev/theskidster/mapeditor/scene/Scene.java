@@ -90,7 +90,7 @@ public class Scene {
             if(!newVertPos.containsKey(index)) {
                 newVertPos.put(index, new Vector3f(position));
             } else {
-                if(newVertPos.get(index).equals(position.x, position.y, position.z)) {
+                if(!snapToGrid && !newVertPos.get(index).equals(position.x, position.y, position.z)) {
                     newVertPos.put(index, new Vector3f(position));
                 }
             }
@@ -100,19 +100,21 @@ public class Scene {
         
         if(Scene.currTool == SELECT_TOOL && vertexSelected) {
             selectedVertices.forEach((index, position) -> {
-                switch(cursorMovement.axis) {
-                    case "x", "X" -> newVertPos.get(index).set(position.x += cursorMovement.value, position.y, position.z);
-                    case "y", "Y" -> newVertPos.get(index).set(position.x, position.y += cursorMovement.value, position.z);
-                    case "z", "Z" -> newVertPos.get(index).set(position.x, position.y, position.z += cursorMovement.value);
-                }
-                
                 Vector3f newPos = newVertPos.get(index);
+                
+                switch(cursorMovement.axis) {
+                    case "x", "X" -> newVertPos.get(index).set(newPos.x += cursorMovement.value, newPos.y, newPos.z);
+                    case "y", "Y" -> newVertPos.get(index).set(newPos.x, newPos.y += cursorMovement.value, newPos.z);
+                    case "z", "Z" -> newVertPos.get(index).set(newPos.x, newPos.y, newPos.z += cursorMovement.value);
+                }
                 
                 if(!snapToGrid) {
                     geometry.setVertexPos(index, newPos.x, newPos.y, newPos.z);
                     geometry.udpateData();
                 } else {
-                    
+                    geometry.setVertexPos(index, newPos.x, newPos.y, newPos.z);
+                    geometry.snapVertexPos(index);
+                    geometry.udpateData();
                 }
             });
             
