@@ -2,7 +2,7 @@ package dev.theskidster.mapeditor.main;
 
 import static dev.theskidster.mapeditor.main.App.*;
 import dev.theskidster.mapeditor.ui.UI;
-import dev.theskidster.mapeditor.world.World;
+import dev.theskidster.mapeditor.scene.Scene;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -99,7 +99,7 @@ public final class Window {
      * 
      * @param monitor the monitor to display this window on
      */
-    void show(Monitor monitor, UI ui, Camera camera, World world) {
+    void show(Monitor monitor, UI ui, Camera camera, Scene scene) {
         setWindowIcon("img_logo.png");
         
         glfwSetWindowMonitor(handle, NULL, position.x, position.y, width, height, monitor.refreshRate);
@@ -136,20 +136,20 @@ public final class Window {
             
             camera.castRay((float) ((2f * xPos) / width - 1f), (float) (1f - (2f * yPos) / height));
             
-            if(ui.getToolSelected(GEOMETRY_TOOL)) world.selectTile(camera.position, camera.ray);
+            if(ui.getToolSelected(GEOMETRY_TOOL)) scene.selectTile(camera.position, camera.ray);
             
             if(leftHeld ^ middleHeld ^ rightHeld) {
                 if(leftHeld) {
                     switch(ui.getToolID()) {
                         case SELECT_TOOL -> {
-                            if(world.getVertexSelected()) {
-                                world.moveCursor(camera.direction, camera.rayChange);
+                            if(scene.getVertexSelected()) {
+                                scene.moveCursor(camera.direction, camera.rayChange);
                             }
                         }
                         
                         case GEOMETRY_TOOL -> {
-                            if(!world.geometryEmpty()) {
-                                world.stretchShape(camera.rayChange.y, ctrlHeld);
+                            if(!scene.geometryEmpty()) {
+                                scene.stretchShape(camera.rayChange.y, ctrlHeld);
                             }
                         }
                     }
@@ -173,18 +173,18 @@ public final class Window {
                     
                     switch(ui.getToolID()) {
                         case SELECT_TOOL -> {
-                            if(world.getVertexSelected()) {
-                                world.selectCursor(camera.position, camera.ray);
+                            if(scene.getVertexSelected()) {
+                                scene.selectCursor(camera.position, camera.ray);
                             }
                             
-                            if(!world.getCursorSelected() && action == GLFW_PRESS) {
-                                world.selectVertices(camera.position, camera.ray, ctrlHeld);
+                            if(!scene.getCursorSelected() && action == GLFW_PRESS) {
+                                scene.selectVertices(camera.position, camera.ray, ctrlHeld);
                             }
                         }
                         
                         case GEOMETRY_TOOL -> {
-                            if(leftHeld) world.addShape();
-                            else         world.finalizeShape();
+                            if(leftHeld) scene.addShape();
+                            else         scene.finalizeShape();
                         }
                     }
                 }

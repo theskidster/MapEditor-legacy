@@ -1,11 +1,11 @@
-package dev.theskidster.mapeditor.world;
+package dev.theskidster.mapeditor.scene;
 
 import dev.theskidster.mapeditor.graphics.LightSource;
 import dev.theskidster.mapeditor.graphics.Texture;
 import dev.theskidster.mapeditor.main.App;
 import static dev.theskidster.mapeditor.main.App.SELECT_TOOL;
 import dev.theskidster.mapeditor.main.ShaderProgram;
-import static dev.theskidster.mapeditor.world.World.CELL_SIZE;
+import static dev.theskidster.mapeditor.scene.Scene.CELL_SIZE;
 import java.nio.FloatBuffer;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -160,7 +160,7 @@ final class Geometry {
         
         App.checkGLError();
         
-        if(World.currTool == SELECT_TOOL) {
+        if(Scene.currTool == SELECT_TOOL) {
             selector.draw(program, vertexPositions);
         }
     }
@@ -208,7 +208,7 @@ final class Geometry {
         updateData = true;
     }
     
-    void stretchShape(float verticalChange, boolean ctrlHeld, World world) {
+    void stretchShape(float verticalChange, boolean ctrlHeld, Scene world) {
         if(ctrlHeld) {
             shapeHeight += verticalChange;
             shapeHeight = (shapeHeight > world.height) ? world.height : shapeHeight;

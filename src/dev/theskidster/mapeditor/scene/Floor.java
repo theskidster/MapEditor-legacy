@@ -1,10 +1,10 @@
-package dev.theskidster.mapeditor.world;
+package dev.theskidster.mapeditor.scene;
 
 import dev.theskidster.mapeditor.graphics.Graphics;
 import dev.theskidster.mapeditor.main.App;
 import dev.theskidster.mapeditor.main.ShaderProgram;
 import dev.theskidster.mapeditor.util.Color;
-import static dev.theskidster.mapeditor.world.World.CELL_SIZE;
+import static dev.theskidster.mapeditor.scene.Scene.CELL_SIZE;
 import java.nio.FloatBuffer;
 import java.util.Map;
 import org.joml.Vector2i;

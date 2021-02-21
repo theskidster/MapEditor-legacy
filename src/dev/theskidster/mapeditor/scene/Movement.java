@@ -1,4 +1,4 @@
-package dev.theskidster.mapeditor.world;
+package dev.theskidster.mapeditor.scene;
 
 /**
  * @author J Hoffman

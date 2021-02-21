@@ -1,4 +1,4 @@
-package dev.theskidster.mapeditor.world;
+package dev.theskidster.mapeditor.scene;
 
 import dev.theskidster.mapeditor.main.App;
 import dev.theskidster.mapeditor.main.ShaderProgram;

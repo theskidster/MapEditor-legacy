@@ -1,6 +1,6 @@
 package dev.theskidster.mapeditor.main;
 
-import dev.theskidster.mapeditor.world.World;
+import dev.theskidster.mapeditor.scene.Scene;
 import dev.theskidster.mapeditor.ui.FrameNewMap;
 import dev.theskidster.mapeditor.ui.UI;
 import dev.theskidster.mapeditor.util.Color;
@@ -38,10 +38,10 @@ public final class App {
     
     private Monitor monitor;
     private static Window window;
-    private static ShaderProgram worldProgram;
+    private static ShaderProgram sceneProgram;
     private ShaderProgram uiProgram;
     private Camera camera;
-    private World world;
+    private Scene scene;
     private UI ui;
     private static final Vector3f noValue = new Vector3f();
     
@@ -60,7 +60,7 @@ public final class App {
         
         setClearColor(Color.RGM_NAVY);
         
-        window.show(monitor, ui, camera, world);
+        window.show(monitor, ui, camera, scene);
         Logger.printSystemInfo();
         
         final double TARGET_DELTA = 1 / 60.0;
@@ -87,15 +87,15 @@ public final class App {
                 pollEvents();
                 
                 camera.update(window.width, window.height);
-                world.update(camera.ray, ui.getToolID());
+                scene.update(camera.ray, ui.getToolID());
                 ui.update();
             }
             
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             
-            worldProgram.use();
-            camera.render(worldProgram);
-            world.render(worldProgram, camera.position, camera.up);
+            sceneProgram.use();
+            camera.render(sceneProgram);
+            scene.render(sceneProgram, camera.position, camera.up);
             
             uiProgram.use();
             ui.render(uiProgram);
@@ -111,7 +111,7 @@ public final class App {
             }
         }
         
-        glDeleteProgram(worldProgram.handle);
+        glDeleteProgram(sceneProgram.handle);
         GL.destroy();
         Logger.close();
         glfwTerminate();
@@ -141,39 +141,39 @@ public final class App {
             uiProgram.addUniform(ShaderBufferType.MAT4, "uProjection");
         }
         
-        //Initialize world shader
+        //Initialize scene shader
         {
             var shaderSourceFiles = new ArrayList<ShaderSource>() {{
-                add(new ShaderSource("worldVertex.glsl", GL_VERTEX_SHADER));
-                add(new ShaderSource("worldFragment.glsl", GL_FRAGMENT_SHADER));
+                add(new ShaderSource("sceneVertex.glsl", GL_VERTEX_SHADER));
+                add(new ShaderSource("sceneFragment.glsl", GL_FRAGMENT_SHADER));
             }};
         
-            worldProgram = new ShaderProgram(shaderSourceFiles);
-            worldProgram.use();
+            sceneProgram = new ShaderProgram(shaderSourceFiles);
+            sceneProgram.use();
             
-            worldProgram.addUniform(ShaderBufferType.INT, "uType");
-            worldProgram.addUniform(ShaderBufferType.INT, "uNumLights");
-            worldProgram.addUniform(ShaderBufferType.MAT4,"uModel");
-            worldProgram.addUniform(ShaderBufferType.MAT4,"uView");
-            worldProgram.addUniform(ShaderBufferType.MAT4,"uProjection");
-            worldProgram.addUniform(ShaderBufferType.VEC3,"uColor");
-            worldProgram.addUniform(ShaderBufferType.MAT3,"uNormal");
+            sceneProgram.addUniform(ShaderBufferType.INT, "uType");
+            sceneProgram.addUniform(ShaderBufferType.INT, "uNumLights");
+            sceneProgram.addUniform(ShaderBufferType.MAT4,"uModel");
+            sceneProgram.addUniform(ShaderBufferType.MAT4,"uView");
+            sceneProgram.addUniform(ShaderBufferType.MAT4,"uProjection");
+            sceneProgram.addUniform(ShaderBufferType.VEC3,"uColor");
+            sceneProgram.addUniform(ShaderBufferType.MAT3,"uNormal");
             
             for(int i = 0; i < MAX_LIGHTS; i++) {
-                worldProgram.addUniform(ShaderBufferType.FLOAT, "uLights[" + i + "].brightness");
-                worldProgram.addUniform(ShaderBufferType.FLOAT, "uLights[" + i + "].contrast");
-                worldProgram.addUniform(ShaderBufferType.VEC3,  "uLights[" + i + "].position");
-                worldProgram.addUniform(ShaderBufferType.VEC3,  "uLights[" + i + "].ambient");
-                worldProgram.addUniform(ShaderBufferType.VEC3,  "uLights[" + i + "].diffuse");
+                sceneProgram.addUniform(ShaderBufferType.FLOAT, "uLights[" + i + "].brightness");
+                sceneProgram.addUniform(ShaderBufferType.FLOAT, "uLights[" + i + "].contrast");
+                sceneProgram.addUniform(ShaderBufferType.VEC3,  "uLights[" + i + "].position");
+                sceneProgram.addUniform(ShaderBufferType.VEC3,  "uLights[" + i + "].ambient");
+                sceneProgram.addUniform(ShaderBufferType.VEC3,  "uLights[" + i + "].diffuse");
             }
         }
         
         camera = new Camera();
-        world  = new World(16, 32, 16, "img_null.png");
+        scene  = new Scene(16, 32, 16, "img_null.png");
         ui     = new UI();
         
         camera.update(window.width, window.height);
-        camera.render(worldProgram);
+        camera.render(sceneProgram);
         
         return true;
     }

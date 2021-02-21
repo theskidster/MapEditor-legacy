@@ -1,4 +1,4 @@
-package dev.theskidster.mapeditor.world;
+package dev.theskidster.mapeditor.scene;
 
 import dev.theskidster.mapeditor.graphics.Light;
 import dev.theskidster.mapeditor.graphics.LightSource;
@@ -21,7 +21,7 @@ import org.joml.Vector3i;
 /**
  * Represents a three-dimensional space that will contain all renderable objects.
  */
-public class World {
+public class Scene {
     
     public static final float CELL_SIZE = 1f;
     
@@ -51,7 +51,7 @@ public class World {
     
     MovementCursor cursor = new MovementCursor(new Vector3f(0, 1, 1));
     
-    public World(int width, int height, int depth, String filename) {
+    public Scene(int width, int height, int depth, String filename) {
         this.width  = width;
         this.height = height;
         this.depth  = depth;
@@ -77,7 +77,7 @@ public class World {
         
         vertexSelected = selectedVertices.size() > 0;
         
-        if(World.currTool == SELECT_TOOL && vertexSelected) {
+        if(Scene.currTool == SELECT_TOOL && vertexSelected) {
             selectedVertices.forEach((index, position) -> {
                 switch(cursorMovement.axis) {
                     case "x", "X" -> geometry.setVertexPos(index, position.x += cursorMovement.value, position.y, position.z);
@@ -107,7 +107,7 @@ public class World {
             if(light != null) light.render(program, camPos, camUp);
         }
         
-        if(World.currTool == SELECT_TOOL && vertexSelected) {
+        if(Scene.currTool == SELECT_TOOL && vertexSelected) {
             cursor.render(program);
         }
         
