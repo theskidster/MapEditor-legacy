@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
+import org.joml.AABBf;
 import org.joml.Vector2i;
 import static org.lwjgl.glfw.GLFW.*;
 import org.lwjgl.glfw.GLFWImage;
@@ -144,6 +145,8 @@ public final class Window {
                         case SELECT_TOOL -> {
                             if(scene.getVertexSelected()) {
                                 scene.moveCursor(camera.direction, camera.rayChange, ctrlHeld);
+                            } else {
+                                //TODO: add marquee selection
                             }
                         }
                         

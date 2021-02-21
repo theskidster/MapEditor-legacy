@@ -47,7 +47,6 @@ public class Scene {
     
     final Map<Vector2i, Boolean> tiles;
     private final Map<Integer, Vector3f> selectedVertices = new LinkedHashMap<>();
-    private final Map<Integer, Vector3f> initialVertPos   = new LinkedHashMap<>();
     private final Map<Integer, Vector3f> newVertPos       = new LinkedHashMap<>();
     
     private final LightSource[] lights = new LightSource[App.MAX_LIGHTS];
@@ -78,14 +77,6 @@ public class Scene {
         
         selectedVertices.putAll(geometry.getSelectedVertices());
         
-        if(snapToGrid) {
-            if(initialVertPos.isEmpty()) {
-                selectedVertices.forEach((index, position) -> initialVertPos.put(index, new Vector3f(position)));
-            }
-        } else {
-            initialVertPos.clear();
-        }
-        
         selectedVertices.forEach((index, position) -> {
             if(!newVertPos.containsKey(index)) {
                 newVertPos.put(index, new Vector3f(position));
@@ -110,11 +101,9 @@ public class Scene {
                 
                 if(!snapToGrid) {
                     geometry.setVertexPos(index, newPos.x, newPos.y, newPos.z);
-                    geometry.udpateData();
                 } else {
                     geometry.setVertexPos(index, newPos.x, newPos.y, newPos.z);
                     geometry.snapVertexPos(index);
-                    geometry.udpateData();
                 }
             });
             
