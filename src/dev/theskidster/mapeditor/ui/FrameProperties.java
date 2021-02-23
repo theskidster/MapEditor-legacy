@@ -69,7 +69,7 @@ public final class FrameProperties extends Frame {
             background.drawRectangle(titleBar, Color.RGM_BLACK);
             background.drawRectangle(content, Color.RGM_DARK_GRAY);
             background.drawRectangle(rectangles[0], Color.RGM_LIGHT_GRAY);
-            background.drawRectangle(rectangles[1], Color.RGM_DARK_GRAY);
+            background.drawRectangle(rectangles[1], Color.RGM_BLACK);
             closeButton.renderBackground(background);
             scrollBar.renderBackground(background);
         background.batchEnd(program);
@@ -79,6 +79,8 @@ public final class FrameProperties extends Frame {
         closeButton.renderIcon(program);
         
         font.drawString(program, title, xPos + 45, yPos - (TITLE_BAR_HEIGHT / 3), 1, Color.RGM_WHITE);
+        font.drawString(program, "Property:", xPos + 12,  yPos + 25, 1, Color.RGM_WHITE);
+        font.drawString(program, "Value:",    xPos + 149, yPos + 25, 1, Color.RGM_WHITE);
     }
 
     @Override

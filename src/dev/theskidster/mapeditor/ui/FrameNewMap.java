@@ -30,6 +30,7 @@ public final class FrameNewMap extends Frame implements PropertyChangeListener {
     
     private final Observable observable = new Observable(this);
     
+    //TODO: specifiy world light
     //TODO: parse files using location provided from text areas
     private File skybox;
     

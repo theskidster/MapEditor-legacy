@@ -42,7 +42,7 @@ public class UI {
         widgets = new LinkedHashMap<String, Widget>() {{
             put("Tool Bar",   new WidgetToolBar());
             put("Menu Bar",   new WidgetMenuBar());
-            put("Properties", new FrameProperties(viewWidth - 333, 81));
+            //put("Properties", new FrameProperties(viewWidth - 333, 81));
         }};
     }
     
