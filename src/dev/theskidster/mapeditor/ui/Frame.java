@@ -7,6 +7,10 @@ import dev.theskidster.mapeditor.util.Rectangle;
 import dev.theskidster.mapeditor.util.Mouse;
 import dev.theskidster.mapeditor.main.ShaderProgram;
 import dev.theskidster.mapeditor.util.Color;
+import org.joml.Vector2i;
+import static org.lwjgl.glfw.GLFW.GLFW_ARROW_CURSOR;
+import static org.lwjgl.glfw.GLFW.GLFW_HAND_CURSOR;
+import static org.lwjgl.glfw.GLFW.GLFW_IBEAM_CURSOR;
 
 /**
  * @author J Hoffman
@@ -28,7 +32,7 @@ abstract class Frame extends Widget {
     protected final Rectangle content;
     protected final CloseButton closeButton;
     
-    protected final class CloseButton {
+    protected final class CloseButton extends Element {
         
         private final Rectangle rectangle;
         private final Icon icon;
@@ -45,15 +49,19 @@ abstract class Frame extends Widget {
             icon.setSprite(0, 0);
         }
         
+        @Override
         void update(Mouse mouse) {
             if(rectangle.intersects(mouse.cursorPos)) {
-                color = Color.RGM_RED;
+                hovered = true;
+                color   = Color.RGM_RED;
+                
                 if(mouse.clicked) {
                     close();
                     removeRequest = true;
                 }
             } else {
-                color = Color.RGM_BLACK;
+                hovered = false;
+                color   = Color.RGM_BLACK;
             }
             
             rectangle.xPos = xPos + (width - TITLE_BAR_HEIGHT);
@@ -62,13 +70,18 @@ abstract class Frame extends Widget {
             icon.position.set(rectangle.xPos + 9, yPos - 9);
         }
         
+        @Override
         void renderBackground(Background background) {
             background.drawRectangle(rectangle, color);
         }
         
+        @Override
         void renderIcon(ShaderProgram program) {
             icon.render(program);
         }
+
+        @Override
+        void renderText(ShaderProgram program, TrueTypeFont font) {}
     }
     
     public Frame(int xPos, int yPos, int width, int height, boolean closeable) {
@@ -77,9 +90,11 @@ abstract class Frame extends Widget {
         this.width  = width;
         this.height = height;
         
-        titleBar    = new Rectangle(0, 0, width, TITLE_BAR_HEIGHT);
-        content     = new Rectangle(0, 0, width, height);
+        titleBar    = new Rectangle(xPos, yPos - TITLE_BAR_HEIGHT, width, TITLE_BAR_HEIGHT);
+        content     = new Rectangle(xPos, yPos, width, height);
         closeButton = (closeable) ? new CloseButton() : null;
+        
+        if(closeable) elements.add(closeButton);
     }
     
     public Frame(String title, int xPos, int yPos, int width, int height, boolean closable) {
@@ -104,12 +119,20 @@ abstract class Frame extends Widget {
         xPos = (width / 2) - ((int) content.width / 2);
         yPos = (height / 2) - ((int) content.height / 2);
         
-        if(icon != null) icon.position.set(xPos + 13, yPos - 9);
+        setIconPos();
         
         titleBar.xPos = xPos;
         titleBar.yPos = yPos - TITLE_BAR_HEIGHT;
         content.xPos  = xPos;
         content.yPos  = yPos;
+    }
+    
+    protected void setIconPos() {
+        if(icon != null) icon.position.set(xPos + 13, yPos - 9);
+    }
+    
+    void findHovered(Vector2i cursorPos) {
+        hovered = content.intersects(cursorPos) || titleBar.intersects(cursorPos);
     }
     
 }

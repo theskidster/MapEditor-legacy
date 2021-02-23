@@ -27,8 +27,8 @@ final class FocusableSpinBox extends Focusable implements PropertyChangeListener
     private final Icon iconMiddle;
     private final Icon iconRight;
     
-    private final ElementArrow upArr;
-    private final ElementArrow downArr;
+    final ElementArrow upArr;
+    final ElementArrow downArr;
     
     public FocusableSpinBox(int xOffset, int yOffset, int width, String unit, int value) {
         super(xOffset, yOffset, width);
@@ -48,8 +48,8 @@ final class FocusableSpinBox extends Focusable implements PropertyChangeListener
         iconMiddle.setSprite(6, 1);
         iconRight.setSprite(7, 0);
         
-        upArr   = new ElementArrow(width, 0, true, this);
-        downArr = new ElementArrow(width, 15, false, this);
+        upArr   = new ElementArrow(width, 0, 22, 15, true, this);
+        downArr = new ElementArrow(width, 15, 22, 15, false, this);
     }
 
     private void parseValue() {
@@ -135,6 +135,8 @@ final class FocusableSpinBox extends Focusable implements PropertyChangeListener
         if(App.tick(18) && caratIdle) caratBlink = !caratBlink;
         
         if(rectFront.intersects(mouse.cursorPos)) {
+            hovered = true;
+            
             if(mouse.clicked) {
                 if(hasFocus) {
                     if(typed.length() > 0) {
@@ -148,6 +150,7 @@ final class FocusableSpinBox extends Focusable implements PropertyChangeListener
             }
         } else {
             if(mouse.clicked) unfocus();
+            hovered = false;
         }
         
         scissorBox.width  = width;

@@ -30,8 +30,6 @@ public abstract class Focusable extends Element implements PropertyChangeListene
     private int lengthToIndex;
     private int textOffset;
     
-    protected final int xOffset;
-    protected final int yOffset;
     protected final int width;
     
     protected boolean hasFocus;

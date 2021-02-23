@@ -17,14 +17,7 @@ import java.beans.PropertyChangeListener;
 
 class ElementArrow extends Element {
     
-    private final int xOffset;
-    private final int yOffset;
-    
     private final boolean up;
-    private boolean prevPressed;
-    private boolean currPressed;
-    boolean hovered;
-    boolean clicked;
     
     private final Icon icon;
     private final Rectangle rectangle;
@@ -33,13 +26,13 @@ class ElementArrow extends Element {
     
     Observable observable = new Observable(this);
     
-    ElementArrow(int xOffset, int yOffset, boolean up, PropertyChangeListener observer) {
+    ElementArrow(int xOffset, int yOffset, int rectWidth, int rectHeight, boolean up, PropertyChangeListener observer) {
         this.xOffset = xOffset;
         this.yOffset = yOffset;
         this.up      = up;
         
         icon      = new Icon(UI.iconTexture, 20, 20);
-        rectangle = new Rectangle(xOffset, yOffset, 22, 15);
+        rectangle = new Rectangle(xOffset, yOffset, rectWidth, rectHeight);
         
         if(up) {
             icon.setSprite(0, 3);
@@ -74,7 +67,8 @@ class ElementArrow extends Element {
             
             color = (currPressed) ? Color.RGM_BLUE : Color.RGM_MEDIUM_GRAY;
         } else {
-            color = Color.RGM_DARK_GRAY;
+            hovered = false;
+            color   = Color.RGM_DARK_GRAY;
         }
     }
     

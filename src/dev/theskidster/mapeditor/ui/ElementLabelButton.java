@@ -19,8 +19,6 @@ import org.joml.Vector2i;
 
 final class ElementLabelButton extends Element implements PropertyChangeListener {
 
-    private final int xOffset;
-    private final int yOffset;
     private final int width;
     
     private final Rectangle rectangle;
@@ -63,7 +61,8 @@ final class ElementLabelButton extends Element implements PropertyChangeListener
             iconLeft.setSprite(4, 1);
             iconRight.setSprite(5, 1);
         } else {
-            color = Color.RGM_MEDIUM_GRAY;
+            color   = Color.RGM_MEDIUM_GRAY;
+            hovered = false;
             iconLeft.setSprite(4, 0);
             iconRight.setSprite(5, 0);
         }

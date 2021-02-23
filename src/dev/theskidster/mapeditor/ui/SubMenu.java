@@ -13,9 +13,7 @@ import java.util.List;
  * Created: Jan 8, 2021
  */
 
-class SubMenu {
-    
-    boolean hovered;
+class SubMenu extends Element {
 
     private final Background background;
     private final Rectangle rectangle;
@@ -29,6 +27,7 @@ class SubMenu {
         background = new Background(buttons.size() + 1);
     }
 
+    @Override
     void update(Mouse mouse) {
         hovered = rectangle.intersects(mouse.cursorPos);
         buttons.forEach(button -> button.update(mouse));
@@ -42,5 +41,14 @@ class SubMenu {
 
         buttons.forEach(button -> button.renderText(program, text));
     }
+
+    @Override
+    void renderBackground(Background background) {}
+
+    @Override
+    void renderIcon(ShaderProgram program) {}
+
+    @Override
+    void renderText(ShaderProgram program, TrueTypeFont font) {}
 
 }

@@ -63,8 +63,8 @@ final class ElementMenuOption extends Element {
     
     @Override
     void renderText(ShaderProgram program, TrueTypeFont font) {
-        int xOffset = rectangle.xPos + padding.x;
-        int yOffset = rectangle.yPos + padding.y + TrueTypeFont.FONT_HEIGHT;
+        xOffset = rectangle.xPos + padding.x;
+        yOffset = rectangle.yPos + padding.y + TrueTypeFont.FONT_HEIGHT;
 
         font.drawString(program, text, xOffset, yOffset, 1, Color.RGM_WHITE);
     }

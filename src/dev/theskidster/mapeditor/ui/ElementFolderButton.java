@@ -20,9 +20,6 @@ import javax.swing.JFileChooser;
 
 final class ElementFolderButton extends Element implements PropertyChangeListener {
 
-    private final int xOffset;
-    private final int yOffset;
-
     private final Rectangle rectangle;
     private final Icon icon;
     private final FocusableTextArea textArea;
@@ -41,6 +38,8 @@ final class ElementFolderButton extends Element implements PropertyChangeListene
     @Override
     void update(Mouse mouse) {
         if(rectangle.intersects(mouse.cursorPos)) {
+            hovered = true;
+            
             if(mouse.clicked) {
                 if(!clicked) {
                     JFileChooser fc = new JFileChooser();
@@ -61,6 +60,8 @@ final class ElementFolderButton extends Element implements PropertyChangeListene
             } else {
                 clicked = false;
             }
+        } else {
+            hovered = false;
         }
     }
 

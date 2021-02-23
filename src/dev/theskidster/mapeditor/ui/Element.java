@@ -13,6 +13,9 @@ import java.awt.Component;
 
 abstract class Element extends Component {
     
+    protected int xOffset;
+    protected int yOffset;
+    
     protected boolean prevPressed;
     protected boolean currPressed;
     protected boolean hovered;

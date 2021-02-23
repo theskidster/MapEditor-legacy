@@ -404,4 +404,8 @@ final class Geometry {
         updateData = true;
     }
     
+    void selectAll() {
+        vertexPositions.forEach((index, position) -> selector.addVertex(index));
+    }
+    
 }

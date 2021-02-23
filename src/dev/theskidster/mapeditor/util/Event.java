@@ -13,8 +13,11 @@ public class Event {
     
     public boolean resolved;
     
-    public Event(int type) {
+    public Object data;
+    
+    public Event(int type, Object data) {
         this.type = type;
+        this.data = data;
     }
     
 }

@@ -184,6 +184,10 @@ public class Scene {
         return geometry.getEmpty();
     }
     
+    public void selectAll() {
+        geometry.selectAll();
+    }
+    
     public boolean getVertexSelected() { return vertexSelected; }
     public boolean getCursorSelected() { return cursor.getSelected(); }
     

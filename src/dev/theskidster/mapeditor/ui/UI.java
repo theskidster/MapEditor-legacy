@@ -5,6 +5,7 @@ import dev.theskidster.mapeditor.util.Mouse;
 import com.mlomb.freetypejni.FreeType;
 import dev.theskidster.mapeditor.graphics.Texture;
 import dev.theskidster.mapeditor.main.ShaderProgram;
+import dev.theskidster.mapeditor.main.Window;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.joml.Matrix4f;
@@ -25,17 +26,23 @@ public class UI {
     
     private static Focusable focusable;
     
-    private final Mouse mouse         = new Mouse();
+    private final Mouse mouse;
     private final Matrix4f projMatrix = new Matrix4f();
     
-    private final Map<String, Widget> widgets;
+    private static Map<String, Widget> widgets = new LinkedHashMap<>();
     
-    public UI() {
+    public UI(Window window) {
+        mouse = new Mouse(window.handle);
+        
+        viewWidth  = window.width;
+        viewHeight = window.height;
+        
         font = new TrueTypeFont(FreeType.newLibrary(), "fnt_karla_regular.ttf");
         
         widgets = new LinkedHashMap<String, Widget>() {{
-            put("Tool Bar", new WidgetToolBar());
-            put("Menu Bar", new WidgetMenuBar());
+            put("Tool Bar",   new WidgetToolBar());
+            put("Menu Bar",   new WidgetMenuBar());
+            put("Properties", new FrameProperties(viewWidth - 333, 81));
         }};
     }
     
@@ -61,6 +68,7 @@ public class UI {
     static int getViewWidth()         { return viewWidth; }
     static int getViewHeight()        { return viewHeight; }
     static Focusable getFocusable()   { return focusable; }
+    static boolean getWidgetHovered() { return widgets.values().stream().anyMatch((widget -> widget.hovered)); }
     public boolean getMenuBarActive() { return ((WidgetMenuBar) widgets.get("Menu Bar")).getMenuBarActive(); }
     public boolean getToolSelected(int index) { return ((WidgetToolBar) widgets.get("Tool Bar")).currTool == index; } 
     public int getToolID() { return ((WidgetToolBar) widgets.get("Tool Bar")).currTool; }

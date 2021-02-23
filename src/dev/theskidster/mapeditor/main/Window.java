@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
-import org.joml.AABBf;
 import org.joml.Vector2i;
 import static org.lwjgl.glfw.GLFW.*;
 import org.lwjgl.glfw.GLFWImage;
@@ -130,6 +129,16 @@ public final class Window {
             ui.enterText(key, action);
             shiftHeld = (key == GLFW_KEY_LEFT_SHIFT && action == GLFW_PRESS);
             ctrlHeld  = (key == GLFW_KEY_LEFT_CONTROL && action == GLFW_PRESS);
+            
+            switch(ui.getToolID()) {
+                case SELECT_TOOL -> {
+                    switch(key) {
+                        case GLFW_KEY_A -> {
+                            scene.selectAll();
+                        }
+                    }
+                }
+            }
         });
         
         glfwSetCursorPosCallback(handle, (window, xPos, yPos) -> {
@@ -146,7 +155,7 @@ public final class Window {
                             if(scene.getVertexSelected()) {
                                 scene.moveCursor(camera.direction, camera.rayChange, ctrlHeld);
                             } else {
-                                //TODO: add marquee selection
+                                //TODO: add marquee selection?
                             }
                         }
                         
@@ -193,7 +202,16 @@ public final class Window {
                 }
                 
                 case GLFW_MOUSE_BUTTON_MIDDLE -> middleHeld = action == GLFW_PRESS;
-                case GLFW_MOUSE_BUTTON_RIGHT  -> rightHeld = action == GLFW_PRESS;
+                
+                case GLFW_MOUSE_BUTTON_RIGHT  -> {
+                    rightHeld = action == GLFW_PRESS;
+                    
+                    switch(ui.getToolID()) {
+                        case SELECT_TOOL -> {
+                            //TODO: open menu
+                        }
+                    }
+                }
             }
         });
     }

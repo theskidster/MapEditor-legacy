@@ -46,6 +46,20 @@ public final class FrameNewMap extends Frame implements PropertyChangeListener {
         lButton1 = new ElementLabelButton(368, 219, 96, "Save As...", this);
         lButton2 = new ElementLabelButton(368, 262, 96, "Cancel", this);
         
+        elements.add(textArea);
+        elements.add(fButton);
+        elements.add(spinBox1);
+        elements.add(spinBox1.upArr);
+        elements.add(spinBox1.downArr);
+        elements.add(spinBox2);
+        elements.add(spinBox2.upArr);
+        elements.add(spinBox2.downArr);
+        elements.add(spinBox3);
+        elements.add(spinBox3.upArr);
+        elements.add(spinBox3.downArr);
+        elements.add(lButton1);
+        elements.add(lButton2);
+        
         observable.properties.put("parentX", xPos);
         observable.properties.put("parentY", yPos);
         observable.addObserver(textArea);
@@ -73,6 +87,9 @@ public final class FrameNewMap extends Frame implements PropertyChangeListener {
         spinBox3.update(mouse);
         lButton1.update(mouse);
         lButton2.update(mouse);
+        
+        findHovered(mouse.cursorPos);
+        updateCursorShape(mouse);
     }
 
     @Override
@@ -103,7 +120,7 @@ public final class FrameNewMap extends Frame implements PropertyChangeListener {
         lButton1.renderIcon(program);
         lButton2.renderIcon(program);
         
-        font.drawString(program, "New Map", xPos + 45, yPos - (TITLE_BAR_HEIGHT / 3), 1, Color.RGM_WHITE);
+        font.drawString(program, title, xPos + 45, yPos - (TITLE_BAR_HEIGHT / 3), 1, Color.RGM_WHITE);
         font.drawString(program, "Skybox:", xPos + 12, yPos + 24, 1, Color.RGM_WHITE);
         font.drawString(program, "Source:", xPos + 26, yPos + 73, 1, Color.RGM_WHITE);
         font.drawString(program, "Dimensions:", xPos + 12, yPos + 134, 1, Color.RGM_WHITE);

@@ -170,7 +170,7 @@ public final class App {
         
         camera = new Camera();
         scene  = new Scene(16, 32, 16, "img_null.png");
-        ui     = new UI();
+        ui     = new UI(window);
         
         camera.update(window.width, window.height);
         camera.render(sceneProgram);

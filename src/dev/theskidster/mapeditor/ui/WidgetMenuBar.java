@@ -94,11 +94,11 @@ public class WidgetMenuBar extends Widget {
             Vector2i padding = new Vector2i(42, 2);
             
             List<ElementMenuOption> subMenuButtons = new ArrayList<>() {{
-                add(new ElementMenuOption("New Map...",       rectangles.get(0), padding));
-                add(new ElementMenuOption("Open Map...",      rectangles.get(1), padding));
-                add(new ElementMenuOption("Save",             rectangles.get(2), padding));
-                add(new ElementMenuOption("Save As...",       rectangles.get(3), padding));
-                add(new ElementMenuOption("Quit",             rectangles.get(4), padding));
+                add(new ElementMenuOption("New Map...",  rectangles.get(0), padding));
+                add(new ElementMenuOption("Open Map...", rectangles.get(1), padding));
+                add(new ElementMenuOption("Save",        rectangles.get(2), padding));
+                add(new ElementMenuOption("Save As...",  rectangles.get(3), padding));
+                add(new ElementMenuOption("Exit",        rectangles.get(4), padding));
             }};
             
             subMenus.put(0, new SubMenu(subMenuButtons, new Rectangle(0, HEIGHT, 320, (HEIGHT * 5) + 1)));
@@ -123,6 +123,9 @@ public class WidgetMenuBar extends Widget {
         {
             subMenus.put(4, new SubMenu(new ArrayList<>(), new Rectangle(198, HEIGHT, 280, 350)));
         }
+        
+        subMenus.forEach((id, menu) -> elements.add(menu));
+        buttons.forEach(button -> elements.add(button));
     }
     
     @Override
@@ -143,8 +146,8 @@ public class WidgetMenuBar extends Widget {
             subMenus.get(currMenuIndex).buttons.forEach((button -> {
                 if(button.clicked) {
                     switch(button.text) {
-                        case "New Map..." -> App.addEvent(new Event(WIDGET_NEW_MAP));    
-                        case "Quit"       -> App.end();
+                        case "New Map..." -> App.addEvent(new Event(WIDGET_NEW_MAP, null));    
+                        case "Exit"       -> App.end();
                     }
                     
                     resetState();

@@ -103,6 +103,8 @@ final class FocusableTextArea extends Focusable {
         if(App.tick(18) && caratIdle) caratBlink = !caratBlink;
         
         if(rectFront.intersects(mouse.cursorPos)) {
+            hovered = true;
+            
             if(mouse.clicked) {
                 if(hasFocus) {
                     if(typed.length() > 0) {
@@ -116,6 +118,7 @@ final class FocusableTextArea extends Focusable {
             }
         } else {
             if(mouse.clicked) unfocus();
+            hovered = false;
         }
         
         scissorBox.width  = width;
