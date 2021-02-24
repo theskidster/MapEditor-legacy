@@ -154,6 +154,8 @@ public class WidgetMenuBar extends Widget {
                 }
             }));
         }
+        
+        updateCursorShape(mouse);
     }
 
     @Override
