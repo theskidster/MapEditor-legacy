@@ -16,3 +16,6 @@ Remember to include the freetype26MT_x64.dll file (located in this projects lib 
 
 TODO: create installer that solves this.
 
+
+## STATUS:
+Abandoning this project for its cooler younger brother -> https://github.com/theskidster/RGME
